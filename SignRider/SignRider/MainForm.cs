@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Collections;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -24,8 +26,21 @@ namespace SignRider
 
     private void doStuff()
     {
-        FeatureRecognizer test = new FeatureRecognizer();
-        test.doTest();
+        //FeatureRecognizer test = new FeatureRecognizer();
+        //test.doTest();
+
+        //-> to load and save multiple images from and to file:
+        loadAndStoreColourResults();
+
+        //-> one image at a time:
+        //ColourSegmenter segmenter = new ColourSegmenter();
+        //List<ColourSegment> segments = segmenter.determineColourSegments(BGR_img);
+        //segments[i].rgbCrop to get RGB Cropped image
+        //segments[i].binaryCrop to get binary Cropped image
+        //segments[i].contour to get segment contour image
+        //segments[i].colour to get sign colour image
+
+
             
             //Create an image of 400x200 of Blue color
             using (Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0)))
@@ -40,6 +55,74 @@ namespace SignRider
                 ImageViewer.Show(img, "Test Window");
             }
             //ImageViewer.Show(test.getImg(), "Test Window");
+        }
+
+
+        private void loadAndStoreColourResults()
+        {
+            string inputDir = "";
+            string outputDir = "";
+            ArrayList arrayList = new ArrayList();
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                inputDir = folderBrowserDialog1.SelectedPath + "/";
+            }
+            outputDir = inputDir + "Colour Segmentation Results/";
+
+            string tempdir = inputDir;
+            string path = @tempdir;
+            string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG" };
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            FileInfo[] fileInfo = directoryInfo.GetFiles();
+            foreach (FileInfo fi in fileInfo)
+                foreach (string s in filter)
+                    if (s == fi.Extension)
+                        arrayList.Add(fi.FullName);
+
+            for (int k = 0; k < arrayList.Count; k++)
+            {
+                string pictureName = (string)arrayList[k];
+                tempdir = tempdir.Replace("/", "\\");
+                pictureName = pictureName.Replace(tempdir, "");
+                foreach (string imageType in filter)
+                {
+                    pictureName = pictureName.Replace(imageType, "");
+                }
+
+                if (!Directory.Exists(outputDir + pictureName))
+                {
+                    Directory.CreateDirectory(outputDir + pictureName);
+                }
+                else
+                {
+                    System.IO.DirectoryInfo myDirInfo = new DirectoryInfo(outputDir + pictureName);
+                    foreach (FileInfo file in myDirInfo.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+
+                try 
+                {
+                    using (Image<Bgr, Byte> image = new Image<Bgr, Byte>(arrayList[k].ToString()))
+                    {
+                        ColourSegmenter segmenter = new ColourSegmenter();
+                        List<ColourSegment> segments = segmenter.determineColourSegments(image);
+
+                        for (int i = 0; i < segments.Count; i++)
+                        {
+                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_RGB_" + i.ToString() + ".png");
+                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_Binary_" + i.ToString() + ".png");
+                        }
+                    }
+                } 
+                catch (OutOfMemoryException oome)
+                {
+                  GC.Collect();
+                }
+            }
+            
         }
     }
 }
