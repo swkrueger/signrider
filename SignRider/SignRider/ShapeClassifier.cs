@@ -45,6 +45,7 @@ namespace SignRider
         private bool preprocessorPyr = true;
         private bool preprocessorBlur = true;
         private bool preprocessorStripBorder = true;
+        private bool preprocessorConvexHullFill = false;
 
         // Debugging output settings
         private bool debugPlotFeatureVector = false;
@@ -62,7 +63,7 @@ namespace SignRider
             SvmParameters = new SVMParams();
             SvmParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
             SvmParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
-            SvmParameters.C = 1;
+            SvmParameters.C = 2;
             SvmParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
         }
 
@@ -178,6 +179,23 @@ namespace SignRider
 
             if (debugPreprocessor)
                 showImage(image, "After thresholding");
+
+            if (preprocessorConvexHullFill)
+            {
+                // TODO: Check FindContour parameters
+                // var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP);
+                GrayImage filledImage = image;
+                for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                {
+                    Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                    Point[] points = pointsSeq.ToArray();
+                    filledImage.FillConvexPoly(points, new Gray(255));
+                }
+                image = filledImage;
+
+                if (debugPreprocessor)
+                    showImage(image, "After hull");
+            }
 
             // Crop border
             if (preprocessorStripBorder)

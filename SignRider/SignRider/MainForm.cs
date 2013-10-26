@@ -42,7 +42,7 @@ namespace SignRider
             
             string tempdir = inputDir;
             string path = @tempdir;
-            string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG" };
+            string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG", ".ppm" };
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
             FileInfo[] fileInfo = directoryInfo.GetFiles();
             foreach (FileInfo fi in fileInfo)

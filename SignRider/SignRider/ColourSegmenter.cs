@@ -38,6 +38,8 @@ namespace SignRider
                 Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
                 Image<Gray, byte> binaryCrop = null;
                 Image<Bgr, byte> rgbCrop = null;
+
+                // TODO: Check FindContour parameters
                 for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
                 {
                     if (contour.Area > minimumContourArea)
