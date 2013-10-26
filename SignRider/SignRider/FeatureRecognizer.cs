@@ -22,31 +22,6 @@ using System.Diagnostics;
 
 using System.Windows.Forms;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using System;
-using System.Numerics;
-
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
-using Emgu.CV.ML;
-using Emgu.CV.ML.Structure;
-
-using System.Drawing;
-
-using Emgu.CV.UI;
-
-using System.Diagnostics;
-
 namespace SignRider
 {
     class FeatureRecognizer
@@ -72,7 +47,8 @@ namespace SignRider
                 img.Draw("Hendri se: \"Hello, world\"", ref f, new Point(10, 80), new Bgr(255, 255, 0));
 
                 //Show the image using ImageViewer from Emgu.CV.UI
-                ImageViewer.Show(img, "Test Window2");
+                // CvInvoke.cvShowImage(img, "Test Window2");
+                CvInvoke.cvShowImage("Hello World Test Window", img.Ptr);
             }
         }
 
@@ -216,12 +192,7 @@ namespace SignRider
                             //testCrop = new Image<Gray, byte>(200, 200);
                             //Image<Gray, float> testCrop21 = new Image<Gray, float>(10, 10);
                             //Image<Gray, float> testCrop3 = new  Image<Gray, float>(75, 75);
-
-                            //FOUT HIER!!
-                            //Image<Gray, float> testCrop3 = testCrop.Convolution(ckernel);
-
-                            //TEMP REG (DELETE ME)
-                            Image<Gray, float> testCrop3 = new  Image<Gray, float>(75, 75);
+                            Image<Gray, float> testCrop3 = testCrop.Convolution(ckernel);
                             
                             testCrop3 = testCrop3.ThresholdBinary(new Gray(0.1), new Gray(1));
                             //CvInvoke.cvShowImage("Testcrop", testCrop);
@@ -303,16 +274,17 @@ namespace SignRider
             Matrix<float> trainData2 = trainData.RemoveRows(7, 9);
             //MessageBox.Show(trainData2.Rows.ToString());
 
-            //FOUT HIER!!
-            /*
+
             SVM model = new SVM();
             bool trained = model.Train(trainData2, trainClasses, null, null, p);
 
             // MessageBox.Show(trained.ToString());
             MessageBox.Show(model.Predict(trainData.GetRow(7)).ToString());
             MessageBox.Show(model.Predict(trainData.GetRow(8)).ToString());
-             */
+        }
 
+        public void getSign()
+        {
 
         }
 
