@@ -30,7 +30,7 @@
         {
             this.helloWorldTestButton = new System.Windows.Forms.Button();
             this.colourSegmentiseTestButton = new System.Windows.Forms.Button();
-            this.ReconizerTestButton = new System.Windows.Forms.Button();
+            this.RecognizerTestButton = new System.Windows.Forms.Button();
             this.shapeClassifierTestButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -54,16 +54,16 @@
             this.colourSegmentiseTestButton.UseVisualStyleBackColor = true;
             this.colourSegmentiseTestButton.Click += new System.EventHandler(this.colourSegmentiseTestButton_Click);
             // 
-            // ReconizerTestButton
+            // RecognizerTestButton
             // 
-            this.ReconizerTestButton.Location = new System.Drawing.Point(77, 95);
-            this.ReconizerTestButton.Name = "ReconizerTestButton";
-            this.ReconizerTestButton.Size = new System.Drawing.Size(221, 23);
-            this.ReconizerTestButton.TabIndex = 2;
-            this.ReconizerTestButton.Text = "Reconizer Test";
-            this.ReconizerTestButton.UseVisualStyleBackColor = true;
-            this.ReconizerTestButton.Click += new System.EventHandler(this.FeutureRecognizerTestButton_Click);
-            //
+            this.RecognizerTestButton.Location = new System.Drawing.Point(77, 100);
+            this.RecognizerTestButton.Name = "RecognizerTestButton";
+            this.RecognizerTestButton.Size = new System.Drawing.Size(221, 23);
+            this.RecognizerTestButton.TabIndex = 2;
+            this.RecognizerTestButton.Text = "Recognizer Test";
+            this.RecognizerTestButton.UseVisualStyleBackColor = true;
+            this.RecognizerTestButton.Click += new System.EventHandler(this.FeutureRecognizerTestButton_Click);
+            // 
             // shapeClassifierTestButton
             // 
             this.shapeClassifierTestButton.Location = new System.Drawing.Point(77, 71);
@@ -79,7 +79,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 256);
-            this.Controls.Add(this.ReconizerTestButton);
+            this.Controls.Add(this.RecognizerTestButton);
             this.Controls.Add(this.shapeClassifierTestButton);
             this.Controls.Add(this.colourSegmentiseTestButton);
             this.Controls.Add(this.helloWorldTestButton);
@@ -93,7 +93,7 @@
 
         private System.Windows.Forms.Button helloWorldTestButton;
         private System.Windows.Forms.Button colourSegmentiseTestButton;
-        private System.Windows.Forms.Button ReconizerTestButton;
+        private System.Windows.Forms.Button RecognizerTestButton;
         private System.Windows.Forms.Button shapeClassifierTestButton;
     }
 }
