@@ -21,42 +21,7 @@ namespace SignRider
         public MainForm()
         {
             InitializeComponent();
-            doStuff();
         }
-
-    private void doStuff()
-    {
-        //FeatureRecognizer test = new FeatureRecognizer();
-        //test.doTest();
-
-        //-> to load and save multiple images from and to file:
-        loadAndStoreColourResults();
-
-        //-> one image at a time:
-        //ColourSegmenter segmenter = new ColourSegmenter();
-        //List<ColourSegment> segments = segmenter.determineColourSegments(BGR_img);
-        //segments[i].rgbCrop to get RGB Cropped image
-        //segments[i].binaryCrop to get binary Cropped image
-        //segments[i].contour to get segment contour image
-        //segments[i].colour to get sign colour image
-
-
-            
-            //Create an image of 400x200 of Blue color
-            using (Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0)))
-            {
-                //Create the font
-                MCvFont f = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
-
-                //Draw "Hello, world." on the image using the specific font
-                img.Draw("Hello, world", ref f, new Point(10, 80), new Bgr(0, 255, 0));
-
-                //Show the image using ImageViewer from Emgu.CV.UI
-                ImageViewer.Show(img, "Test Window");
-            }
-            //ImageViewer.Show(test.getImg(), "Test Window");
-        }
-
 
         private void loadAndStoreColourResults()
         {
@@ -123,6 +88,36 @@ namespace SignRider
                 }
             }
             
+        }
+
+        private void colourSegmentiseTestButton_Click(object sender, EventArgs e)
+        {
+            //-> to load and save multiple images from and to file:
+            loadAndStoreColourResults();
+
+            //-> one image at a time:
+            //ColourSegmenter segmenter = new ColourSegmenter();
+            //List<ColourSegment> segments = segmenter.determineColourSegments(BGR_img);
+            //segments[i].rgbCrop to get RGB Cropped image
+            //segments[i].binaryCrop to get binary Cropped image
+            //segments[i].contour to get segment contour image
+            //segments[i].colour to get sign colour image
+        }
+
+        private void helloWorldTestButton_Click(object sender, EventArgs e)
+        {
+            //Create an image of 400x200 of Blue color
+            using (Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0)))
+            {
+                //Create the font
+                MCvFont f = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
+
+                //Draw "Hello, world." on the image using the specific font
+                img.Draw("Hello, world", ref f, new Point(10, 80), new Bgr(0, 255, 0));
+
+                //Show the image using ImageViewer from Emgu.CV.UI
+                CvInvoke.cvShowImage("Hello World Test Window", img.Ptr);
+            }
         }
     }
 }
