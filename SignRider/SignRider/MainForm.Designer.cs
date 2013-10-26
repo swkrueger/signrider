@@ -31,6 +31,7 @@
             this.helloWorldTestButton = new System.Windows.Forms.Button();
             this.colourSegmentiseTestButton = new System.Windows.Forms.Button();
             this.ReconizerTestButton = new System.Windows.Forms.Button();
+            this.shapeClassifierTestButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // helloWorldTestButton
@@ -62,6 +63,16 @@
             this.ReconizerTestButton.Text = "Reconizer Test";
             this.ReconizerTestButton.UseVisualStyleBackColor = true;
             this.ReconizerTestButton.Click += new System.EventHandler(this.FeutureRecognizerTestButton_Click);
+            //
+            // shapeClassifierTestButton
+            // 
+            this.shapeClassifierTestButton.Location = new System.Drawing.Point(77, 71);
+            this.shapeClassifierTestButton.Name = "shapeClassifierTestButton";
+            this.shapeClassifierTestButton.Size = new System.Drawing.Size(221, 23);
+            this.shapeClassifierTestButton.TabIndex = 2;
+            this.shapeClassifierTestButton.Text = "Test Shape Classifier";
+            this.shapeClassifierTestButton.UseVisualStyleBackColor = true;
+            this.shapeClassifierTestButton.Click += new System.EventHandler(this.shapeClassifierTestButton_Click);
             // 
             // MainForm
             // 
@@ -69,6 +80,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 256);
             this.Controls.Add(this.ReconizerTestButton);
+            this.Controls.Add(this.shapeClassifierTestButton);
             this.Controls.Add(this.colourSegmentiseTestButton);
             this.Controls.Add(this.helloWorldTestButton);
             this.Name = "MainForm";
@@ -82,6 +94,7 @@
         private System.Windows.Forms.Button helloWorldTestButton;
         private System.Windows.Forms.Button colourSegmentiseTestButton;
         private System.Windows.Forms.Button ReconizerTestButton;
+        private System.Windows.Forms.Button shapeClassifierTestButton;
     }
 }
 

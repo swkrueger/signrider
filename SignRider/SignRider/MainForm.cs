@@ -13,6 +13,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
+using System.Diagnostics;
 
 namespace SignRider
 {
@@ -21,6 +22,9 @@ namespace SignRider
         public MainForm()
         {
             InitializeComponent();
+
+            // Setup debugging output
+            Debug.AutoFlush = true;
         }
 
         private void loadAndStoreColourResults()
@@ -128,5 +132,121 @@ namespace SignRider
             featureRecognizer.doTest();
         }
 
+        private static string[] GetFiles(string sourceFolder, string filters, System.IO.SearchOption searchOption)
+        {
+            return filters.Split('|').SelectMany(filter => System.IO.Directory.GetFiles(sourceFolder, filter, searchOption)).ToArray();
+        }
+
+        private void shapeClassifierTestButton_Click(object sender, EventArgs e)
+        {
+            /****
+             * Note:
+             ****
+             * Before clicking the button, copy everything from
+             *   \\143.160.9.0\vbsucknet\ShapeTestData
+             *   (\\192.168.0.62\ on Kiber network)
+             * to
+             *   C:\Users\%USERNAME%\Source\Repos\signrider\SignRider\SignRider\bin\TestData\
+             ****/
+
+            string trainDirectory = "..\\ShapeTestData\\train\\";
+            string testDirectory = "..\\ShapeTestData\\test\\";
+            ShapeClassifier classifier = new ShapeClassifier();
+
+            List<TrainingExample> examples = new List<TrainingExample>();
+
+            int numTrainingExamples = 0;
+
+            // Retrieve training images
+            foreach (SignShape shape in Enum.GetValues(typeof(SignShape)))
+            {
+                string dir = trainDirectory + shape.ToString() + "\\";
+
+                if (System.IO.Directory.Exists(dir))
+                {
+                    string[] files = GetFiles(dir, ".jpg|*.png", SearchOption.TopDirectoryOnly);
+
+                    foreach (string file in files)
+                    {
+                        TrainingExample example = new TrainingExample();
+
+                        // TODO: Catch exception
+                        example.image = new Image<Gray, Byte>(file);
+                        example.shape = shape;
+
+                        Debug.WriteLine("Loaded training example " + file);
+                        Debug.Flush();
+
+                        examples.Add(example);
+
+                        numTrainingExamples++;
+                    }
+                }
+            }
+
+            if (numTrainingExamples == 0)
+            {
+                MessageBox.Show("No training examples found! Please put training images in " + trainDirectory);
+                return;
+            }
+
+            // Perform training
+            classifier.train(examples);
+
+            // Perform testing
+            int numTested = 0;
+            int numSuccess = 0;
+            int numGarbageTested = 0;
+            int numGarbageSuccess = 0;
+
+            foreach (SignShape expectedShape in Enum.GetValues(typeof(SignShape)))
+            {
+                string dir = testDirectory + expectedShape.ToString() + "\\";
+
+                if (System.IO.Directory.Exists(dir))
+                {
+                    string[] files = GetFiles(dir, ".jpg|*.png", SearchOption.TopDirectoryOnly);
+
+                    foreach (string file in files)
+                    {
+                        using (Image<Gray, Byte> image = new Image<Gray, Byte>(file))
+                        {
+                            SignShape shape = classifier.classify(image);
+                            //SignShape shape = SignShape.Garbage;
+                            Debug.WriteLine(String.Format("{0}: Expected: {1}; Got: {2}", file, expectedShape, shape));
+                            Debug.Flush();
+
+                            if (expectedShape != SignShape.Garbage)
+                            {
+                                numTested++;
+                                if (shape == expectedShape) numSuccess++;
+                            }
+                            else
+                            {
+                                numGarbageTested++;
+                                if (shape == expectedShape) numGarbageSuccess++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            string message = "";
+
+            message += String.Format("Trained from {0} examples\n", numTrainingExamples);
+
+            if (numTested!=0)
+                message += String.Format("Non-garbage success rate: {0}\n", numSuccess*100/numTested);
+            else
+                message += "No non-garbage images specified";
+
+            if (numGarbageTested!=0)
+                message += String.Format("Garbage success rate: {0}\n", numGarbageSuccess*100/numGarbageTested);
+            else
+                message += "No garbage images specified";
+
+            Debug.Write(message);
+            MessageBox.Show(message);
+        }
     }
 }
