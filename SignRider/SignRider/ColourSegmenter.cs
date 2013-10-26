@@ -17,7 +17,7 @@ using Emgu.CV.Structure;
 namespace SignRider
 {
     //-> enum containing the road sign colours
-    public enum SignColour { RED, GREEN, BLUE };
+    public enum SignColour { RED, BLUE }; // TODO: Add yellow and/or white
 
     //-> class executing colour segmentation
     public class ColourSegmenter
@@ -93,15 +93,15 @@ namespace SignRider
                     EndRangeR = 85;
                 }
 
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRangeB = 0;
-                    EndRangeB = 178;
-                    StartRangeG = 123;
-                    EndRangeG = 255;
-                    StartRangeR = 0;
-                    EndRangeR = 101;
-                }
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRangeB = 0;
+                //     EndRangeB = 178;
+                //     StartRangeG = 123;
+                //     EndRangeG = 255;
+                //     StartRangeR = 0;
+                //     EndRangeR = 101;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
@@ -130,11 +130,11 @@ namespace SignRider
                     EndRange = 135;
                 }
 
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRange = 40;
-                    EndRange = 99;
-                }
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRange = 40;
+                //     EndRange = 99;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
