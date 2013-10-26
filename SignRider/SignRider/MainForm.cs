@@ -82,8 +82,8 @@ namespace SignRider
 
                         for (int i = 0; i < segments.Count; i++)
                         {
-                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_RGB_" + i.ToString() + ".png");
-                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_Binary_" + i.ToString() + ".png");
+                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + pictureName + "_" + segments[i].colour + "_RGB_" + i.ToString() + ".png");
+                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + pictureName + "_" + segments[i].colour + "_Binary_" + i.ToString() + ".png");
                         }
                     }
                 } 
