@@ -25,6 +25,7 @@ namespace SignRider
 
         private void loadAndStoreColourResults()
         {
+            colourSegmentiseTestButton.Text = "Running";
             string inputDir = "";
             string outputDir = "";
             ArrayList arrayList = new ArrayList();
@@ -34,7 +35,7 @@ namespace SignRider
                 inputDir = folderBrowserDialog1.SelectedPath + "/";
             }
             outputDir = inputDir + "Colour Segmentation Results/";
-
+            
             string tempdir = inputDir;
             string path = @tempdir;
             string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG" };
@@ -94,7 +95,7 @@ namespace SignRider
         {
             //-> to load and save multiple images from and to file:
             loadAndStoreColourResults();
-
+            colourSegmentiseTestButton.Text = "Bulk Segmentise Images in Directory";
             //-> one image at a time:
             //ColourSegmenter segmenter = new ColourSegmenter();
             //List<ColourSegment> segments = segmenter.determineColourSegments(BGR_img);

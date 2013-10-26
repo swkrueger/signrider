@@ -31,6 +31,7 @@ namespace SignRider
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
+            image._GammaCorrect(2.2f);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
                 Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);
@@ -138,7 +139,7 @@ namespace SignRider
                 if (Colour == SignColour.RED)
                 {
                     StartRange = 10;
-                    EndRange = 170;
+                    EndRange = 175;
                 }
                 Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>();
                 Image<Gray, Byte>[] channels = hsv.Split();
@@ -147,7 +148,7 @@ namespace SignRider
                 {
                     channels[0]._Not();
                 }
-                channels[1]._ThresholdBinary(new Gray(50), new Gray(255.0));
+                channels[1]._ThresholdBinary(new Gray(100), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
                 return channels[0];
             }
