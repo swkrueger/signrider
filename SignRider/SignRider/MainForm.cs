@@ -119,5 +119,13 @@ namespace SignRider
                 CvInvoke.cvShowImage("Hello World Test Window", img.Ptr);
             }
         }
+
+        private void FeutureRecognizerTestButton_Click(object sender, EventArgs e)
+        {
+            FeatureRecognizer featureRecognizer = new FeatureRecognizer();
+            featureRecognizer.helloTest();
+            featureRecognizer.doTest();
+        }
+
     }
 }
