@@ -49,9 +49,6 @@
     <Reference Include="Emgu.CV.OCR">
       <HintPath>lib\Emgu.CV.OCR.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.OpenCL">
-      <HintPath>lib\Emgu.CV.OpenCL.dll</HintPath>
-    </Reference>
     <Reference Include="Emgu.CV.Stitching">
       <HintPath>lib\Emgu.CV.Stitching.dll</HintPath>
     </Reference>

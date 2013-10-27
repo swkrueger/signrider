@@ -28,13 +28,20 @@ namespace SignRider
     {
         public FeatureRecognizer()
         {
-
+            p = new SVMParams();
+            p.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
+            //p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
+            //p.Gamma = 3;
+            p.C = 1;
+            p.TermCrit = new MCvTermCriteria(100, 0.00001);
         }
         Image<Bgr, Byte> img2;
         public Image<Bgr, Byte> getImg()
         {
             return img2;
         }
+        SVMParams p;
 
         public void helloTest()
         {
@@ -82,6 +89,16 @@ namespace SignRider
             return GW;
         }
 
+        private void preFilter()
+        {
+
+        }
+
+        private void calculateParameters()
+        {
+
+        }
+        //showCalulated parameters
         public void doTest()
         {
             string[] filenames = new string[20];
@@ -254,14 +271,6 @@ namespace SignRider
                 CvInvoke.cvShowImage("Test crop", testCrop);*/
             }
 
-            SVMParams p = new SVMParams();
-            p.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
-            //p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
-            p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
-            //p.Gamma = 3;
-            p.C = 1;
-            p.TermCrit = new MCvTermCriteria(100, 0.00001);
-
             Matrix<float> trainClasses = new Matrix<float>(Tmax - 2, 1);
             trainClasses[0, 0] = 30;
             trainClasses[1, 0] = 30;
@@ -288,5 +297,9 @@ namespace SignRider
 
         }
 
+        public void trainFeutureReconizer()
+        {
+
+        }
     }
 }

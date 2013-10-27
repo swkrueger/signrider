@@ -127,5 +127,73 @@ namespace SignRider
             featureRecognizer.doTest();
         }
 
+        private void TrainFeutureRecognizerButton(object sender, EventArgs e)
+        {
+            TrainFeutureRecognizer();
+        }
+
+        private void TrainFeutureRecognizer()
+        {
+            string inputDir = "";
+            ArrayList arrayList = new ArrayList();
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                inputDir = folderBrowserDialog1.SelectedPath + "/";
+            }
+            /*
+            string path = inputDir;
+            string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG" };
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            FileInfo[] fileInfo = directoryInfo.GetFiles();
+            foreach (FileInfo fi in fileInfo)
+                foreach (string s in filter)
+                    if (s == fi.Extension)
+                        arrayList.Add(fi.FullName);
+
+            for (int k = 0; k < arrayList.Count; k++)
+            {
+                string pictureName = (string)arrayList[k];
+                tempdir = tempdir.Replace("/", "\\");
+                pictureName = pictureName.Replace(tempdir, "");
+                foreach (string imageType in filter)
+                {
+                    pictureName = pictureName.Replace(imageType, "");
+                }
+
+                if (!Directory.Exists(outputDir + pictureName))
+                {
+                    Directory.CreateDirectory(outputDir + pictureName);
+                }
+                else
+                {
+                    System.IO.DirectoryInfo myDirInfo = new DirectoryInfo(outputDir + pictureName);
+                    foreach (FileInfo file in myDirInfo.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+
+                try
+                {
+                    using (Image<Bgr, Byte> image = new Image<Bgr, Byte>(arrayList[k].ToString()))
+                    {
+                        ColourSegmenter segmenter = new ColourSegmenter();
+                        List<ColourSegment> segments = segmenter.determineColourSegments(image);
+
+                        for (int i = 0; i < segments.Count; i++)
+                        {
+                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_RGB_" + i.ToString() + ".png");
+                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + segments[i].colour + "_Binary_" + i.ToString() + ".png");
+                        }
+                    }
+                }
+                catch (OutOfMemoryException oome)
+                {
+                    GC.Collect();
+                }
+            }*/
+        }
+
     }
 }
