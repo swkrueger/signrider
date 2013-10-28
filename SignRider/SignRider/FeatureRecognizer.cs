@@ -21,6 +21,9 @@ using Emgu.CV.ML.Structure;
 using System.Diagnostics;
 
 using System.Windows.Forms;
+using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
+using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+
 
 namespace SignRider
 {
@@ -98,7 +101,9 @@ namespace SignRider
         }
 
         private void preProcessor()
-        {/*
+        {
+            
+            /*
             switch (caseSwitch)
             {
                 case 1:
@@ -117,10 +122,105 @@ namespace SignRider
         {
 
         }
+
+        public void trainImage(TestImage ttimage)
+        {
+            BGRImage rgbiamge = ttimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            GrayImage grayiamge = ttimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+
+            GrayImage image = grayiamge;
+            CvInvoke.cvShowImage("Original", rgbiamge);
+            CvInvoke.cvShowImage("Original gray", grayiamge);
+            CvInvoke.cvShowImage("BEFORE", rgbiamge.Canny(500, 300));
+            CvInvoke.cvShowImage("Before hull", image);
+            GrayImage filledImage = image;
+            for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+            {
+                Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                Point[] points = pointsSeq.ToArray();
+                filledImage.FillConvexPoly(points, new Gray(255));
+            }
+            image = filledImage;
+            CvInvoke.cvShowImage("After hull", image);
+            //if (debugPreprocessor)
+            //    showImage(image, "After hull");
+
+            rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
+            int i = (int)(300 * 0.10);
+            Rectangle rect = new Rectangle(i/2, i/2, 300 - i, 300 - i);
+            rgbiamge = rgbiamge.GetSubRect(rect);
+            CvInvoke.cvShowImage("Test Window1", rgbiamge);
+                CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
+
+                //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
+               // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
+                //Image<Hls, Byte> hlk = new Image<Hls, Byte>(new Size(300, 300));
+                Image<Hsv, Byte> hlk = rgbiamge.Convert<Hsv, Byte>();
+                //hlk = hlk.ThresholdToZero(new Hls(0, 150, 0));
+                Image<Gray, Byte>[] splitimg = hlk.Split();
+                CvInvoke.cvShowImage("Test light", splitimg[2]);
+                    CvInvoke.cvShowImage("Test sha",splitimg[1]);
+            //TODO: avarage color insert
+                    splitimg[2]._EqualizeHist();
+                    CvInvoke.cvShowImage("Test light after hosto", splitimg[2]);
+                splitimg[2] = splitimg[2].ThresholdBinary(new Gray(100), new Gray(255));
+                    //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(100));
+                splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(150), new Gray(255));
+                    //splitimg[1] = splitimg[1].ThresholdToZeroInv(new Gray(150));
+               // splitimg[2]._Not();
+                 splitimg[2] = splitimg[2].And(splitimg[1]);
+                CvInvoke.cvShowImage("Test light2", splitimg[2]);
+                CvInvoke.cvShowImage("Test sha2", splitimg[1]);
+                CvInvoke.cvMerge(splitimg[0], IntPtr.Zero, splitimg[2], IntPtr.Zero, hlk);
+                 CvInvoke.cvShowImage("Test Window3", hlk.Convert<Bgr, Byte>());
+                 hlk._Erode(1);
+                //TODO: FILL small holes
+                 //TODO: Remove tidy dots (better than holrs)
+
+                 CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(500, 300));
+
+                 CvInvoke.cvShowImage("Test Window4", hlk.Convert<Bgr, Byte>());
+                 Image<Gray, byte> grayImage = hlk.Convert<Gray, byte>();
+                 filledImage = grayImage;
+                 for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                 {
+                     Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                     Point[] points = pointsSeq.ToArray();
+                     filledImage.FillConvexPoly(points, new Gray(255));
+                 }
+               //  BGRImage rgbiamge2 = hlk.Convert<Bgr, Byte>();
+                 
+                 CvInvoke.cvShowImage("After hull2", filledImage);
+                 rgbiamge[0] = rgbiamge[0].And(filledImage);
+                 rgbiamge[1] = rgbiamge[1].And(filledImage);
+                 rgbiamge[2] = rgbiamge[2].And(filledImage);
+                 CvInvoke.cvShowImage("Final", rgbiamge);
+                 CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));
+                       //         hlk[0]._And(;
+
+            /*
+                Contour<Point> contoura = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_EXTERNAL);
+                {
+                    Rectangle rect1 = contoura.BoundingRectangle;
+                    //MessageBox.Show(rect1.ToString());
+                    grayImage = grayImage.GetSubRect(rect1);
+                    //grayImage.Draw(rect1, new Gray(128), -1);
+                   // MessageBox.Show(contoura.First().ToString());
+
+                }
+                CvInvoke.cvShowImage("Test Windo6", grayImage);
+                CvInvoke.cvShowImage("Test Window5", grayImage.Canny(500, 300));*/
+           //     grayImage.Laplace(3);
+            //    CvInvoke.cvShowImage("Test Windo7", grayImage);
+            //CvInvoke.cvCvtColor(rgbiamge,hlk,
+            
+        }
+
         //showCalulated parameters
         public void doTest()
         {
 
+            return;
 
             string[] filenames = new string[20];
             filenames[0] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_1_bw.png";
