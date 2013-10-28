@@ -15,6 +15,9 @@ using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using System.Diagnostics;
 
+using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+using RGBImage = Emgu.CV.Image<Emgu.CV.Structure.Rgb, System.Byte>;
+
 namespace SignRider
 {
     public partial class MainForm : Form
@@ -82,8 +85,8 @@ namespace SignRider
 
                         for (int i = 0; i < segments.Count; i++)
                         {
-                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + pictureName + "_" + segments[i].colour + "_RGB_" + i.ToString() + ".png");
-                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + pictureName + "_" + segments[i].colour + "_Binary_" + i.ToString() + ".png");
+                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_RGB"  + ".png");
+                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_BW" + ".png");
                         }
                     }
                 } 
@@ -127,6 +130,8 @@ namespace SignRider
 
         private void FeutureRecognizerTestButton_Click(object sender, EventArgs e)
         {
+            loadTestDirectory("..\\ShapeTestData\\train2\\");
+            return;
             FeatureRecognizer featureRecognizer = new FeatureRecognizer();
             featureRecognizer.helloTest();
             featureRecognizer.doTest();
@@ -203,6 +208,83 @@ namespace SignRider
         private static string[] GetFiles(string sourceFolder, string filters, System.IO.SearchOption searchOption)
         {
             return filters.Split('|').SelectMany(filter => System.IO.Directory.GetFiles(sourceFolder, filter, searchOption)).ToArray();
+        }
+
+        struct TestImage    //TODO: NETER naam kry soos TestImage
+        {
+            public string name;
+            public GrayImage grayImage;
+            public RGBImage rgbImage;
+            public SignShape shape;
+            public SignType type;
+            public SignColour color;
+        }
+
+        private  List<TestImage> loadTestDirectory(string dir)      //TODO: beter naam kry soos loadTestandTranDirectory
+        {
+            Debug.WriteLine("Loading test Directory example " + dir);
+            List<TestImage> testImages = new List<TestImage>();
+              if (System.IO.Directory.Exists(dir))
+                {
+                    string[] files =  GetFiles(dir, "*BW.jpg|*BW.png", SearchOption.AllDirectories);
+
+                    foreach (string file in files)
+                    {
+                        string rgbFile = file.Replace("_BW", "_RGB");
+                        if (!System.IO.File.Exists(rgbFile))
+                            continue;
+
+                        Debug.WriteLine("Loaded image: " + file);
+                        Debug.Flush();
+
+                        //TODO: Beter manier van opslit hier is ugly finnig metode:
+                        string[] filename = file.Split('\\');
+                        int filenameCount = filename.Count();
+                        if (filenameCount < 3)
+                            continue;
+
+                        string typeString = filename[filenameCount - 2];
+                        string shapeString = filename[filenameCount - 3];
+                        SignShape shape;
+                        SignType type;
+
+                        if (Enum.IsDefined(typeof(SignShape), shapeString))
+                            shape = (SignShape)Enum.Parse(typeof(SignShape), shapeString);
+                        else
+                            continue;
+
+                        if (Enum.IsDefined(typeof(SignType), typeString))
+                            type = (SignType)Enum.Parse(typeof(SignType), typeString);
+                        else
+                            continue;
+
+                        string[] filetype = file.Split('\\').Last().Split('_');
+                        if (filetype.Count() < 3)
+                            continue;
+
+                        string colorString = filetype[1];
+                        SignColour color;
+
+                        if (Enum.IsDefined(typeof(SignColour), colorString))
+                            color = (SignColour)Enum.Parse(typeof(SignColour), colorString);
+                        else
+                            continue;
+
+                        TestImage img = new TestImage();
+                        GrayImage grayImg = new GrayImage(file);
+                        RGBImage rgbImg = new RGBImage(rgbFile);
+                        img.color = color;
+                        img.shape = shape;
+                        img.type = type;
+                        img.grayImage = grayImg;
+                        img.rgbImage = rgbImg;
+
+                        testImages.Add(img);
+
+                        //Debug.WriteLine(shapeString + " " + typeString + " " + colorString);
+                    }
+                }
+              return testImages;
         }
 
         private void shapeClassifierTestButton_Click(object sender, EventArgs e)

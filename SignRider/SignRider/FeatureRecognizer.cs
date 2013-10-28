@@ -24,6 +24,9 @@ using System.Windows.Forms;
 
 namespace SignRider
 {
+    //TODO:
+    public enum SignType { SpeedLimit30, Stop };
+
     class FeatureRecognizer
     {
         public FeatureRecognizer()
@@ -94,6 +97,22 @@ namespace SignRider
 
         }
 
+        private void preProcessor()
+        {/*
+            switch (caseSwitch)
+            {
+                case 1:
+                    Console.WriteLine("Case 1");
+                    break;
+                case 2:
+                    Console.WriteLine("Case 2");
+                    break;
+                default:
+                    Console.WriteLine("Default case");
+                    break;
+            }*/
+        }
+
         private void calculateParameters()
         {
 
@@ -101,6 +120,8 @@ namespace SignRider
         //showCalulated parameters
         public void doTest()
         {
+
+
             string[] filenames = new string[20];
             filenames[0] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_1_bw.png";
             filenames[1] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_2_bw.png";
