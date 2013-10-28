@@ -63,7 +63,7 @@ namespace SignRider
             SvmParameters = new SVMParams();
             SvmParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
             SvmParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
-            SvmParameters.C = 2;
+            SvmParameters.C = 1;
             SvmParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
         }
 
