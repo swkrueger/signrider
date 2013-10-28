@@ -17,7 +17,7 @@ using Emgu.CV.Structure;
 namespace SignRider
 {
     //-> enum containing the road sign colours
-    public enum SignColour { RED, GREEN, BLUE };
+    public enum SignColour { RED, BLUE }; // TODO: Add yellow and/or white
 
     //-> class executing colour segmentation
     public class ColourSegmenter
@@ -31,12 +31,15 @@ namespace SignRider
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
+            image._GammaCorrect(2.2f);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
                 Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);
                 Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
                 Image<Gray, byte> binaryCrop = null;
                 Image<Bgr, byte> rgbCrop = null;
+
+                // TODO: Check FindContour parameters
                 for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
                 {
                     if (contour.Area > minimumContourArea)
@@ -92,15 +95,15 @@ namespace SignRider
                     EndRangeR = 85;
                 }
 
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRangeB = 0;
-                    EndRangeB = 178;
-                    StartRangeG = 123;
-                    EndRangeG = 255;
-                    StartRangeR = 0;
-                    EndRangeR = 101;
-                }
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRangeB = 0;
+                //     EndRangeB = 178;
+                //     StartRangeG = 123;
+                //     EndRangeG = 255;
+                //     StartRangeR = 0;
+                //     EndRangeR = 101;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
@@ -129,16 +132,16 @@ namespace SignRider
                     EndRange = 135;
                 }
 
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRange = 40;
-                    EndRange = 99;
-                }
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRange = 40;
+                //     EndRange = 99;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
                     StartRange = 10;
-                    EndRange = 170;
+                    EndRange = 175;
                 }
                 Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>();
                 Image<Gray, Byte>[] channels = hsv.Split();
@@ -147,7 +150,7 @@ namespace SignRider
                 {
                     channels[0]._Not();
                 }
-                channels[1]._ThresholdBinary(new Gray(50), new Gray(255.0));
+                channels[1]._ThresholdBinary(new Gray(100), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
                 return channels[0];
             }
