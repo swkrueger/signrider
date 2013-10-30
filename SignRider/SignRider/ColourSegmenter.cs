@@ -17,7 +17,7 @@ using Emgu.CV.Structure;
 namespace SignRider
 {
     //-> enum containing the road sign colours
-    public enum SignColour { RED, GREEN, BLUE };
+    public enum SignColour { RED, BLUE };
 
     //-> class executing colour segmentation
     public class ColourSegmenter
@@ -31,7 +31,7 @@ namespace SignRider
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
-            image._GammaCorrect(2.2f);
+            image._GammaCorrect(2.2);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
                 Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);
@@ -92,7 +92,7 @@ namespace SignRider
                     StartRangeR = 0;
                     EndRangeR = 85;
                 }
-
+                /*
                 if (Colour == SignColour.GREEN)
                 {
                     StartRangeB = 0;
@@ -101,7 +101,7 @@ namespace SignRider
                     EndRangeG = 255;
                     StartRangeR = 0;
                     EndRangeR = 101;
-                }
+                }*/
 
                 if (Colour == SignColour.RED)
                 {
@@ -129,12 +129,12 @@ namespace SignRider
                     StartRange = 100;
                     EndRange = 135;
                 }
-
+                /*
                 if (Colour == SignColour.GREEN)
                 {
                     StartRange = 40;
                     EndRange = 99;
-                }
+                }*/
 
                 if (Colour == SignColour.RED)
                 {
