@@ -14,7 +14,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-namespace SignRider
+namespace Signrider
 {
     //-> enum containing the road sign colours
     public enum SignColour { RED, BLUE }; // TODO: Add yellow and/or white

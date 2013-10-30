@@ -18,7 +18,7 @@ using System.Diagnostics;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 using RGBImage = Emgu.CV.Image<Emgu.CV.Structure.Rgb, System.Byte>;
 
-namespace SignRider
+namespace Signrider
 {
     public partial class MainForm : Form
     {

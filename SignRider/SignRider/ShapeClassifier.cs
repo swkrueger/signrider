@@ -14,7 +14,7 @@ using Emgu.CV.ML.Structure;
 
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 
-namespace SignRider
+namespace Signrider
 {
     public enum SignShape
     {

@@ -22,7 +22,7 @@ using System.Diagnostics;
 
 using System.Windows.Forms;
 
-namespace SignRider
+namespace Signrider
 {
     //TODO:
     public enum SignType { SpeedLimit30, Stop };
