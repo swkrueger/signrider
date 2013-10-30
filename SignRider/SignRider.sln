@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignRider", "SignRider\SignRider.csproj", "{DE4A7CFC-51AA-4B98-9380-D04CA888A794}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignRiderWinForm", "SignRiderOldUi\SignRiderWinForm.csproj", "{DE4A7CFC-51AA-4B98-9380-D04CA888A794}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signrider", "Signrider\Signrider.csproj", "{D5DCDC65-5FF3-4CB8-ADAB-62A17E13A665}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroMvvm", "MicroMvvm\MicroMvvm.csproj", "{9EFE6CBD-DF21-436E-9F81-E258BAB0B653}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,14 @@ Global
 		{DE4A7CFC-51AA-4B98-9380-D04CA888A794}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE4A7CFC-51AA-4B98-9380-D04CA888A794}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE4A7CFC-51AA-4B98-9380-D04CA888A794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5DCDC65-5FF3-4CB8-ADAB-62A17E13A665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5DCDC65-5FF3-4CB8-ADAB-62A17E13A665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5DCDC65-5FF3-4CB8-ADAB-62A17E13A665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5DCDC65-5FF3-4CB8-ADAB-62A17E13A665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EFE6CBD-DF21-436E-9F81-E258BAB0B653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EFE6CBD-DF21-436E-9F81-E258BAB0B653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EFE6CBD-DF21-436E-9F81-E258BAB0B653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EFE6CBD-DF21-436E-9F81-E258BAB0B653}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

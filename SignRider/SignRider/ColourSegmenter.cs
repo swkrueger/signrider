@@ -14,10 +14,10 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-namespace SignRider
+namespace Signrider
 {
     //-> enum containing the road sign colours
-    public enum SignColour { RED, BLUE };
+    public enum SignColour { RED, BLUE }; // TODO: Add yellow and/or white
 
     //-> class executing colour segmentation
     public class ColourSegmenter
@@ -38,6 +38,8 @@ namespace SignRider
                 Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
                 Image<Gray, byte> binaryCrop = null;
                 Image<Bgr, byte> rgbCrop = null;
+
+                // TODO: Check FindContour parameters
                 for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
                 {
                     if (contour.Area > minimumContourArea)
@@ -92,16 +94,16 @@ namespace SignRider
                     StartRangeR = 0;
                     EndRangeR = 85;
                 }
-                /*
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRangeB = 0;
-                    EndRangeB = 178;
-                    StartRangeG = 123;
-                    EndRangeG = 255;
-                    StartRangeR = 0;
-                    EndRangeR = 101;
-                }*/
+
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRangeB = 0;
+                //     EndRangeB = 178;
+                //     StartRangeG = 123;
+                //     EndRangeG = 255;
+                //     StartRangeR = 0;
+                //     EndRangeR = 101;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
@@ -129,12 +131,12 @@ namespace SignRider
                     StartRange = 100;
                     EndRange = 135;
                 }
-                /*
-                if (Colour == SignColour.GREEN)
-                {
-                    StartRange = 40;
-                    EndRange = 99;
-                }*/
+
+                // if (Colour == SignColour.GREEN)
+                // {
+                //     StartRange = 40;
+                //     EndRange = 99;
+                // }
 
                 if (Colour == SignColour.RED)
                 {
