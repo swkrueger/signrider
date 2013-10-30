@@ -18,7 +18,7 @@ using System.Diagnostics;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 
-namespace SignRider
+namespace Signrider
 {
     struct TestImage    //TODO: BETER naam kry
     {

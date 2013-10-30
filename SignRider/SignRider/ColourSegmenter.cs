@@ -14,7 +14,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-namespace SignRider
+namespace Signrider
 {
     //-> enum containing the road sign colours
     public enum SignColour { RED, BLUE }; // TODO: Add yellow and/or white
@@ -31,7 +31,7 @@ namespace SignRider
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
-            image._GammaCorrect(2.2f);
+            image._GammaCorrect(2.2);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
                 Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);

@@ -25,7 +25,7 @@ using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 
 
-namespace SignRider
+namespace Signrider
 {
     //TODO:
     public enum SignType { SpeedLimit30, Stop };
