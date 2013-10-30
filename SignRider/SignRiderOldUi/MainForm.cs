@@ -16,10 +16,21 @@ using Emgu.CV.UI;
 using System.Diagnostics;
 
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
-using RGBImage = Emgu.CV.Image<Emgu.CV.Structure.Rgb, System.Byte>;
+using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 
 namespace Signrider
 {
+    struct TestImage    //TODO: BETER naam kry
+    {
+        public string name;
+        public GrayImage grayImage;
+        public BGRImage rgbImage;
+        public SignShape shape;
+        public SignType type;
+        public SignColour color;
+    }
+
+
     public partial class MainForm : Form
     {
         public MainForm()
@@ -130,11 +141,9 @@ namespace Signrider
 
         private void FeutureRecognizerTestButton_Click(object sender, EventArgs e)
         {
-            loadTestDirectory("..\\ShapeTestData\\train2\\");
-            return;
+            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train2\\");
             FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.helloTest();
-            featureRecognizer.doTest();
+            featureRecognizer.trainImage(images[0]);
         }
 
         private void TrainFeutureRecognizerButton(object sender, EventArgs e)
@@ -210,17 +219,7 @@ namespace Signrider
             return filters.Split('|').SelectMany(filter => System.IO.Directory.GetFiles(sourceFolder, filter, searchOption)).ToArray();
         }
 
-        struct TestImage    //TODO: NETER naam kry soos TestImage
-        {
-            public string name;
-            public GrayImage grayImage;
-            public RGBImage rgbImage;
-            public SignShape shape;
-            public SignType type;
-            public SignColour color;
-        }
-
-        private  List<TestImage> loadTestDirectory(string dir)      //TODO: beter naam kry soos loadTestandTranDirectory
+        private  List<TestImage> loadTestDirectory(string dir)      //TODO: beter naam kry
         {
             Debug.WriteLine("Loading test Directory example " + dir);
             List<TestImage> testImages = new List<TestImage>();
@@ -272,7 +271,7 @@ namespace Signrider
 
                         TestImage img = new TestImage();
                         GrayImage grayImg = new GrayImage(file);
-                        RGBImage rgbImg = new RGBImage(rgbFile);
+                        BGRImage rgbImg = new BGRImage(rgbFile);
                         img.color = color;
                         img.shape = shape;
                         img.type = type;
