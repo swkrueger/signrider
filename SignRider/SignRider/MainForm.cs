@@ -141,9 +141,9 @@ namespace SignRider
 
         private void FeutureRecognizerTestButton_Click(object sender, EventArgs e)
         {
-            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train2\\");
+            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train3\\");
             FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.trainImage(images[0]);
+            featureRecognizer.trainImage(images[15]);
         }
 
         private void TrainFeutureRecognizerButton(object sender, EventArgs e)
@@ -258,10 +258,11 @@ namespace SignRider
                             continue;
 
                         string[] filetype = file.Split('\\').Last().Split('_');
-                        if (filetype.Count() < 3)
+                        int dashCount = filetype.Count();
+                        if (dashCount < 3)
                             continue;
 
-                        string colorString = filetype[1];
+                        string colorString = filetype[dashCount - 2];
                         SignColour color;
 
                         if (Enum.IsDefined(typeof(SignColour), colorString))
