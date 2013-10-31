@@ -43,8 +43,6 @@ namespace Signrider
         #region Private Functions
         void loadPhotos(string[] filenames)
         {
-            List<PhotoViewModel> newPhotos = new List<PhotoViewModel>();
-
             loadingProgress = 0;
             isBusyLoading = true;
 
