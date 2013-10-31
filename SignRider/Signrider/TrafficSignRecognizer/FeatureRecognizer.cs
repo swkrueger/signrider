@@ -26,7 +26,11 @@ using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 namespace Signrider
 {
     //TODO:
-    public enum SignType { SpeedLimit30, Stop };
+    public enum SignType {
+        Garbage,
+        SpeedLimit30,
+        Stop
+    };
 
     public struct FeatureExample
     {

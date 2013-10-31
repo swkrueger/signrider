@@ -110,7 +110,9 @@
     <Compile Include="MicroMvvm\ObservableObject.cs" />
     <Compile Include="MicroMvvm\PropertySupport.cs" />
     <Compile Include="MicroMvvm\RelayCommand.cs" />
+    <Compile Include="Models\Segment.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
+    <Compile Include="ViewModels\SegmentViewModel.cs" />
     <Compile Include="Views\HomeMenuView.xaml.cs">
       <DependentUpon>HomeMenuView.xaml</DependentUpon>
     </Compile>

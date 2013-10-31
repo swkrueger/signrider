@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+using System.Collections.ObjectModel;
 
 namespace Signrider
 {
@@ -41,6 +42,7 @@ namespace Signrider
         bool isActive;
         private Image<Bgr, Byte> image;
         private Image<Bgr, Byte> resizedImage;
+        ObservableCollection<ViewModels.SegmentViewModel> segmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
         #endregion
 
         #region Properties
@@ -58,6 +60,14 @@ namespace Signrider
 
                 // Create thumbnail
                 thumbnail = _photo.generateThumbnail(thumbnailWidth, thumbnailHeight);
+            }
+        }
+
+        public ObservableCollection<ViewModels.SegmentViewModel> SegmentViews
+        {
+            get
+            {
+                return segmentViews;
             }
         }
 

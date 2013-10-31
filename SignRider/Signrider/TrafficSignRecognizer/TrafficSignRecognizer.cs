@@ -13,13 +13,10 @@ using Point = System.Drawing.Point;
 
 namespace Signrider
 {
-    public class TrafficSignRecognizer
+    public static class TrafficSignRecognizer
     {
-        public TrafficSignRecognizer()
-        {
-            Segmenter = new ColourSegmenter();
-        }
-
-        public ColourSegmenter Segmenter { get; private set; }
+        static public ColourSegmenter Segmenter = new ColourSegmenter();
+        static public FeatureRecognizer FeatureRecognizer = new FeatureRecognizer();
+        static public ShapeClassifier ShapeClassifier = new ShapeClassifier();
     }
 }

@@ -36,8 +36,6 @@ namespace Signrider
         {
             InitializeComponent();
 
-            SignRecognizer = new TrafficSignRecognizer();
-
             homeMenu = new HomeMenuView();
 
             goHome();
@@ -62,8 +60,6 @@ namespace Signrider
         //         }
         //     }
         // }
-
-        public TrafficSignRecognizer SignRecognizer { get; private set; }
 
         private void photosListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
