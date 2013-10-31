@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
+using System.Windows.Forms;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -17,20 +18,27 @@ using Emgu.CV.UI;
 
 using Emgu.CV.ML;
 using Emgu.CV.ML.Structure;
+using System.IO;
 
-using System.Diagnostics;
-
-using System.Windows.Forms;
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
-
 
 namespace Signrider
 {
     //TODO:
     public enum SignType { SpeedLimit30, Stop };
 
-    class FeatureRecognizer
+    public struct FeatureExample
+    {
+        public string name;
+        public GrayImage grayImage;
+        public BGRImage rgbImage;
+        public SignShape shape;
+        public SignType type;
+        public SignColour color;
+    }
+
+    public class FeatureRecognizer
     {
         public FeatureRecognizer()
         {
@@ -123,7 +131,7 @@ namespace Signrider
 
         }
 
-        public void trainImage(TestImage ttimage)
+        public void trainImage(FeatureExample ttimage)
         {
             BGRImage rgbiamge = ttimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
             GrayImage grayiamge = ttimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
@@ -418,9 +426,78 @@ namespace Signrider
 
         }
 
-        public void trainFeutureReconizer()
+        public void trainFeatureReconizer()
         {
 
+        }
+
+        public static List<FeatureExample> extractExamplesFromDirectory(string dir)
+        {
+            Debug.WriteLine("Loading test Directory example " + dir);
+
+            List<FeatureExample> examples = new List<FeatureExample>();
+
+            if (System.IO.Directory.Exists(dir))
+            {
+                string[] files = Utilities.GetFiles(dir, "*BW.jpg|*BW.png", SearchOption.AllDirectories);
+
+                foreach (string bwFile in files)
+                {
+                    string rgbFile = bwFile.Replace("_BW", "_RGB");
+
+                    if (!System.IO.File.Exists(rgbFile))
+                        continue;
+
+                    Debug.WriteLine("Loaded image: " + bwFile);
+                    Debug.Flush();
+
+                    string[] pathDirectories = bwFile.Split(Path.DirectorySeparatorChar);
+                    int numPathDirectories = pathDirectories.Count();
+
+                    if (numPathDirectories < 3)
+                        continue;
+
+                    string signTypeString = pathDirectories[numPathDirectories - 2];
+                    string signShapeString = pathDirectories[numPathDirectories - 3];
+
+                    SignShape shape;
+                    if (Enum.IsDefined(typeof(SignShape), signShapeString))
+                        shape = (SignShape)Enum.Parse(typeof(SignShape), signShapeString);
+                    else
+                        continue;
+
+                    SignType type;
+                    if (Enum.IsDefined(typeof(SignType), signTypeString))
+                        type = (SignType)Enum.Parse(typeof(SignType), signTypeString);
+                    else
+                        continue;
+
+                    string[] nameTokens = Path.GetFileNameWithoutExtension(bwFile).Split('_');
+                    if (nameTokens.Count() < 3)
+                        continue;
+
+                    string signColorString = nameTokens[nameTokens.Count() - 2];
+                    SignColour color;
+
+                    if (Enum.IsDefined(typeof(SignColour), signColorString))
+                        color = (SignColour)Enum.Parse(typeof(SignColour), signColorString);
+                    else
+                        continue;
+
+                    FeatureExample example = new FeatureExample();
+                    example.name = bwFile;
+                    example.grayImage = new GrayImage(bwFile);
+                    example.rgbImage = new BGRImage(rgbFile);
+                    example.color = color;
+                    example.shape = shape;
+                    example.type = type;
+
+                    examples.Add(example);
+
+                    //Debug.WriteLine(shapeString + " " + typeString + " " + colorString);
+                }
+            }
+            return examples;
         }
     }
 }

@@ -14,6 +14,9 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
+using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
+using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+
 namespace Signrider
 {
     //-> enum containing the road sign colours
@@ -22,15 +25,14 @@ namespace Signrider
     //-> class executing colour segmentation
     public class ColourSegmenter
     {
-        private List<ColourSegment> colourSegmentList = new List<ColourSegment>();
         private int minimumContourArea = 1000;
         private int minimumSegmentWidth = 30;
         private int minimumSegmentHeight = 30;
         private int minimumAspectRatio = 3; //1:??
 
-
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
+            List<ColourSegment> colourSegmentList = new List<ColourSegment>();
             image._GammaCorrect(2.2);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
@@ -153,6 +155,58 @@ namespace Signrider
                 channels[1]._ThresholdBinary(new Gray(100), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
                 return channels[0];
+            }
+        }
+
+        public void explodePhotoToSegmentFiles(string filePath, string outputDir)
+        {
+            string pictureName = Path.GetFileNameWithoutExtension(filePath);
+
+            try 
+            {
+                using (BGRImage image = new BGRImage(filePath))
+                {
+                    List<ColourSegment> segments = determineColourSegments(image);
+
+                    for (int i = 0; i < segments.Count; i++)
+                    {
+                        string basePath = 
+                            Path.Combine(
+                                outputDir,
+
+                                string.Format(
+                                    "{0}{1}_{2}",
+                                    pictureName,
+                                    i,
+                                    segments[i].colour
+                                )
+                            );
+
+                        segments[i].rgbCrop.Save(basePath + "_RGB" + ".png");
+                        segments[i].binaryCrop.Save(basePath + "_BW" + ".png");
+                    }
+                }
+            } 
+            catch (OutOfMemoryException)
+            {
+              GC.Collect();
+            }
+        }
+
+        public void explodePhotosToSegmentFiles(string[] files, string outputDir)
+        {
+            foreach (string filePath in files)
+            {
+                string pictureName = Path.GetFileNameWithoutExtension(filePath);
+                string imageOutputDir = Path.Combine(outputDir, pictureName);
+
+                if (!Directory.Exists(imageOutputDir))
+                {
+                    Directory.CreateDirectory(imageOutputDir);
+                }
+                // TODO: else delete files
+
+                explodePhotoToSegmentFiles(filePath, imageOutputDir);
             }
         }
     }
