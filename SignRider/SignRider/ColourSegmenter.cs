@@ -31,7 +31,7 @@ namespace Signrider
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
-            image._GammaCorrect(2.2);
+            //image._GammaCorrect(2.2);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
                 Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);

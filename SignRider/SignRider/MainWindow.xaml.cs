@@ -336,11 +336,18 @@ namespace Signrider
               return testImages;
         }
 
+        private void featureRecognizerTrainButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train4\\");
+            FeatureRecognizer featureRecognizer = new FeatureRecognizer();
+            featureRecognizer.trainImages(images);
+        }
+
         private void featureRecognizerTestButton_Click(object sender, RoutedEventArgs e)
         {
-            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train2\\");
+            List<TestImage> images = loadTestDirectory("..\\ShapeTestData\\train4\\");
             FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.trainImage(images[0]);
+            featureRecognizer.testImages(images);
         }
 
         private void trainFeatureRecognizerButton_Click(object sender, RoutedEventArgs e)

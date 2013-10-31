@@ -74,7 +74,7 @@
             <Button x:Name="colourSegmentiseTestButton" Margin="5" Content="Bulk Segmentise Images in Directory" Click="colourSegmentiseTestButton_Click" />
             <Button x:Name="shapeClassifierTestButton" Margin="5" Content="Test Shape Classifier" Click="shapeClassifierTestButton_Click" />
             <Button x:Name="featureRecognizerTestButton" Margin="5" Content="Recognizer Test" Click="featureRecognizerTestButton_Click" />
-            <Button x:Name="trainFeatureRecognizerButton" Margin="5" Content="Train Feature Recognizer" Click="trainFeatureRecognizerButton_Click" />
+            <Button x:Name="trainFeatureRecognizerButton" Margin="5" Content="Train Feature Recognizer" Click="featureRecognizerTrainButton_Click" />
         </StackPanel>
     </DockPanel>
 </Controls:MetroWindow>

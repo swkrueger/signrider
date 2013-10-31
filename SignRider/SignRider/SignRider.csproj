@@ -56,9 +56,6 @@
     <Reference Include="Emgu.CV.OCR">
       <HintPath>lib\Emgu.CV.OCR.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.OpenCL">
-      <HintPath>lib\Emgu.CV.OpenCL.dll</HintPath>
-    </Reference>
     <Reference Include="Emgu.CV.Stitching">
       <HintPath>lib\Emgu.CV.Stitching.dll</HintPath>
     </Reference>
@@ -77,7 +74,6 @@
     <Reference Include="MicroMvvm">
       <HintPath>..\MicroMvvm\bin\Debug\MicroMvvm.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="PropertyChanged">
       <HintPath>..\packages\PropertyChanged.Fody.1.41.0.0\Lib\NET35\PropertyChanged.dll</HintPath>
@@ -118,9 +114,6 @@
     <Compile Include="Photo.cs" />
     <Compile Include="PhotoViewModel.cs" />
     <Compile Include="ShapeClassifier.cs" />
-    <Compile Include="WelcomeView.xaml.cs">
-      <DependentUpon>WelcomeView.xaml</DependentUpon>
-    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -138,10 +131,6 @@
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WelcomeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
