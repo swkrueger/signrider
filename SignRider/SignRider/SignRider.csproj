@@ -114,20 +114,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AlbumViewModel.cs" />
-    <Compile Include="HomeMenuView.xaml.cs">
+    <Compile Include="ViewModels\AlbumViewModel.cs" />
+    <Compile Include="Views\HomeMenuView.xaml.cs">
       <DependentUpon>HomeMenuView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Photo.cs" />
-    <Compile Include="PhotoViewModel.cs" />
-    <Compile Include="ShapeClassifier.cs" />
-    <Compile Include="TrafficSignRecognizer.cs" />
+    <Compile Include="Models\Photo.cs" />
+    <Compile Include="ViewModels\PhotoViewModel.cs" />
+    <Compile Include="TrafficSignRecognizer\ShapeClassifier.cs" />
+    <Compile Include="TrafficSignRecognizer\TrafficSignRecognizer.cs" />
     <Compile Include="Utilities.cs" />
-    <Page Include="GlobalResourceDictionary.xaml">
+    <Page Include="Resources\GlobalResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HomeMenuView.xaml">
+    <Page Include="Views\HomeMenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -139,8 +139,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ColourSegmenter.cs" />
-    <Compile Include="FeatureRecognizer.cs" />
+    <Compile Include="TrafficSignRecognizer\ColourSegmenter.cs" />
+    <Compile Include="TrafficSignRecognizer\FeatureRecognizer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -189,6 +189,7 @@
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="Fody.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
