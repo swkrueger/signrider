@@ -108,8 +108,276 @@ namespace Signrider
 
         }
 
-        private void preProcessor()
+        private GrayImage preprocess(FeatureExample aimage)
         {
+            BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            //BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_CUBIC);
+            //GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_CUBIC);
+
+            GrayImage image = grayiamge;
+            CvInvoke.cvShowImage("Original", rgbiamge);
+            CvInvoke.cvShowImage("Original gray", grayiamge);
+            CvInvoke.cvShowImage("BEFORE", rgbiamge.Canny(500, 300));
+            CvInvoke.cvShowImage("Before hull", image);
+            GrayImage filledImage = image;
+            /*
+            for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+            {
+                Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                Point[] points = pointsSeq.ToArray();
+                filledImage.FillConvexPoly(points, new Gray(255));
+            }*/
+            image = filledImage;
+            CvInvoke.cvShowImage("After hull", image);
+            //if (debugPreprocessor)
+            //    showImage(image, "After hull");
+
+            rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
+            int i = (int)(300 * 0.10);
+            Rectangle rect = new Rectangle(i / 2, i / 2, 300 - i, 300 - i);
+            rgbiamge = rgbiamge.GetSubRect(rect);
+            CvInvoke.cvShowImage("Test Window1", rgbiamge);
+            //rgbiamge._EqualizeHist();
+            CvInvoke.cvShowImage("Test Window1 EQL", rgbiamge);
+            CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
+
+            //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
+            // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
+            //Image<Hls, Byte> hlk = new Image<Hls, Byte>(new Size(300, 300));
+            Image<Hsv, Byte> hlk = rgbiamge.Convert<Hsv, Byte>();
+            //hlk = hlk.ThresholdToZero(new Hls(0, 150, 0));
+            Image<Gray, Byte>[] splitimg = hlk.Split();
+            CvInvoke.cvShowImage("Test light", splitimg[2]);
+            CvInvoke.cvShowImage("Test sha", splitimg[1]);
+            //TODO: avarage color insert
+            //splitimg[2]._EqualizeHist();
+            //splitimg[2]._GammaCorrect(0.5d);
+            //Console.WriteLine("max ligtess: "  +splitimg[2].ma);
+            //CvInvoke.cvShowImage("Test light after hosto", splitimg[2]);
+            //splitimg[2] = splitimg[2].ThresholdAdaptive(new Gray(255), Emgu.CV.CvEnum.ADAPTIVE_THRESHOLD_TYPE.CV_ADAPTIVE_THRESH_MEAN_C,Emgu.CV.CvEnum.THRESH.CV_THRESH_BINARY,31, new Gray(180));
+
+            splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(150), new Gray(255));
+            splitimg[2] = splitimg[2].And(splitimg[1]);
+            splitimg[1] = splitimg[1].ThresholdBinary(new Gray(255), new Gray(255));
+
+           // DenseHistogram histo = new DenseHistogram(255, new RangeF(0, 255));
+           // histo.Calculate(new Image<Gray, Byte>[] { splitimg[2] }, true, null);
+            //Console.WriteLine("histo dim: " + histo.BinDimension.Count().ToString);
+            //Console.WriteLine("Average: "CvInvoke.cvAvg(splitimg[2]));
+
+            //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(150));
+
+            int ijk = 10;
+            Point point2 = new Point(0, 0);
+            Image<Gray, Byte> histogram = new Image<Gray, Byte>(700,600);
+            double som;
+            double scaler = 1;
+
+            Image<Gray, Byte> temp = splitimg[2];
+            double count = 0;
+            MCvScalar gemiddeld = CvInvoke.cvSum(temp);
+            int gem = (int)(gemiddeld.v0 / 255 * 0.2);
+
+            for (int n = 0; n <= 250; n+=5)
+            {
+                Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n),new Gray(255));
+                MCvScalar sum = CvInvoke.cvSum(ttemp);
+                som = sum.v0 / 255 - count;
+                Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                count += som;
+
+                if (n > 100 && count < gem)
+                    scaler = (double)n / (double)70;
+                
+               // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
+
+                //Contour<Point> points;// = new Point[10];
+                //Point[] points = new Point[128];
+               // points[ijk] = new Point(ijk * 2, 1000 - (int)som / 10);
+                //pointts[ijk] = dotprot;
+                //trainData[T, ijk] = (float)dotprot;
+                //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
+                int intValue = 1;
+                bool result = intValue == 1;
+                //histogram.DrawPolyline(points, result, new Gray(1), 1);
+                if (n != 0)
+                    histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+                point2 = new Point(ijk * 10, 500 - (int)som / 20);
+                ijk++;
+            }
+            som = 300 * 300 - count;
+            Debug.WriteLine("som: " + som.ToString() + "count: " + count);
+            histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+            CvInvoke.cvShowImage("histogram", histogram);
+
+            Debug.WriteLine("scaler: " + scaler + " gemiddeld: " + gem.ToString());
+
+            if (scaler > 4)
+                scaler = 4;
+            if (scaler > 1)
+            {
+                splitimg[2]._Mul(scaler);
+
+                count = 0;
+                ijk = 10;
+                point2 = new Point(0, 0);
+                histogram = new Image<Gray, Byte>(700, 600);
+                for (int n = 0; n <= 250; n += 5)
+                {
+                    Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n), new Gray(255));
+                    MCvScalar sum = CvInvoke.cvSum(ttemp);
+                    som = sum.v0 / 255 - count;
+                    Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                    count += som;
+
+
+                    // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
+
+                    //Contour<Point> points;// = new Point[10];
+                    //Point[] points = new Point[128];
+                    // points[ijk] = new Point(ijk * 2, 1000 - (int)som / 10);
+                    //pointts[ijk] = dotprot;
+                    //trainData[T, ijk] = (float)dotprot;
+                    //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
+                    int intValue = 1;
+                    bool result = intValue == 1;
+                    //histogram.DrawPolyline(points, result, new Gray(1), 1);
+                    if (n != 0)
+                        histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+                    point2 = new Point(ijk * 10, 500 - (int)som / 20);
+                    ijk++;
+                }
+                som = 300 * 300 - count;
+                Debug.WriteLine("som: " + som.ToString() + "count: " + count);
+                histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+                CvInvoke.cvShowImage("histogram2", histogram);
+            }
+            
+            //splitimg[1] = splitimg[1].ThresholdToZeroInv(new Gray(150));
+            // splitimg[2]._Not();
+
+            //splitimg[2] = splitimg[2].ThresholdBinary(new Gray(150), new Gray(255));
+            CvInvoke.cvShowImage("Test light2", splitimg[2]);
+            CvInvoke.cvShowImage("Test sha2", splitimg[1]);
+            CvInvoke.cvMerge(splitimg[0], splitimg[1], splitimg[2], IntPtr.Zero, hlk);
+            CvInvoke.cvShowImage("Test Window3", hlk.Convert<Bgr, Byte>());
+            //hlk._MorphologyEx();
+            //StructuringElementEx element = new StructuringElementEx(5, 5, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+            StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+            //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 2);
+            //hlk._Erode(1);
+            element = new StructuringElementEx(2, 2, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+            //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 1);
+            hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
+            splitimg[2]._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
+
+           
+           //  hlk._Dilate(1);
+            //TODO: FILL small holes
+            // ._close
+            //TODO: Remove tidy dots (better than holrs)
+            //TODO:GEEL
+            // TODO:crop
+            //TODO: adaptive white threshold
+
+            //CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(20, 10));
+            CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(500, 300));
+
+            CvInvoke.cvShowImage("Test Window4", hlk.Convert<Bgr, Byte>());
+
+            Image<Gray, byte> grayImage = hlk.Convert<Gray, byte>();
+            grayImage = splitimg[2];
+            CvInvoke.cvShowImage("Test Window5", grayImage);
+
+            Image<Gray, byte> paddedIamge= new Image<Gray, byte>(350,350);
+
+            /*paddedIamge.ROI = new Rectangle(0, 0,300 , 300);
+            //paddedIamge = paddedIamge.Add(grayImage);
+            CvInvoke.cvCopy(grayImage,paddedIamge, IntPtr.Zero);
+            paddedIamge.ROI = Rectangle.Empty;*/
+            CvInvoke.cvCopyMakeBorder(grayImage, paddedIamge, new Point(25, 25), BORDER_TYPE.CONSTANT,new MCvScalar(0));
+            grayImage = paddedIamge.Copy();
+
+            //grayImage.CopyTo(
+            paddedIamge._ThresholdBinary(new Gray(120), new Gray(255));
+            //CvInvoke.cvShowImage("To B&W", paddedIamge);
+
+            Image<Gray, byte> maskImage = new Image<Gray, byte>(350, 350);
+             for (var contour = paddedIamge.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+            {
+                Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                Point[] points = pointsSeq.ToArray();
+//                filledImage.FillConvexPoly(points, new Gray(255));
+                MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points,item => (PointF)item));
+                
+                
+                //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString() + box.center.X.ToString());
+                Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                if (box.size.Height < 5 || box.size.Width < 5)
+                    maskImage.FillConvexPoly(points, new Gray(255));
+
+                    //grayImage.Draw(box, new Gray(0), -1);
+                //if (box.size.Width < 5)
+                //    grayImage.Draw(box, new Gray(0), -1);
+                //grayImage.Draw(box, new Gray(255), 1);
+            }
+
+            maskImage._Not();
+            paddedIamge._And(maskImage);
+            grayImage._And(maskImage);
+            maskImage._Not();
+            paddedIamge._ThresholdBinaryInv(new Gray(128), new Gray(255));
+                        for (var contour = paddedIamge.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+             {
+                 Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                 Point[] points = pointsSeq.ToArray();
+                 //                filledImage.FillConvexPoly(points, new Gray(255));
+                 MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
+
+                 Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                 if (box.size.Height < 5 || box.size.Width < 5)
+                 {
+                     paddedIamge.FillConvexPoly(points, new Gray(0));
+                     maskImage.FillConvexPoly(points, new Gray(255));//TODO: ander mask maak
+                 }
+
+              ///   else filledImage.Draw(box, new Gray(0), 1);
+             }
+                        paddedIamge._ThresholdBinaryInv(new Gray(128), new Gray(255));
+            //  BGRImage rgbiamge2 = hlk.Convert<Bgr, Byte>();
+
+        CvInvoke.cvShowImage("After hull2", grayImage);
+        CvInvoke.cvShowImage("After hull2 paddd", paddedIamge);
+        CvInvoke.cvShowImage("After hull2 mask", maskImage);
+        CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
+        CvInvoke.cvShowImage("After bw canny", paddedIamge.Canny(400, 300));
+/*
+        rgbiamge[0] = rgbiamge[0].And(grayImage);
+        rgbiamge[1] = rgbiamge[1].And(grayImage);
+        rgbiamge[2] = rgbiamge[2].And(grayImage);
+            CvInvoke.cvShowImage("Final", rgbiamge);
+            CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));*/
+
+            return rgbiamge.Canny(500, 300);
+            //         hlk[0]._And(;
+
+            /*
+                Contour<Point> contoura = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_EXTERNAL);
+                {
+                    Rectangle rect1 = contoura.BoundingRectangle;
+                    //MessageBox.Show(rect1.ToString());
+                    grayImage = grayImage.GetSubRect(rect1);
+                    //grayImage.Draw(rect1, new Gray(128), -1);
+                   // MessageBox.Show(contoura.First().ToString());
+
+                }
+                CvInvoke.cvShowImage("Test Windo6", grayImage);
+                CvInvoke.cvShowImage("Test Window5", grayImage.Canny(500, 300));*/
+            //     grayImage.Laplace(3);
+            //    CvInvoke.cvShowImage("Test Windo7", grayImage);
+            //CvInvoke.cvCvtColor(rgbiamge,hlk,
+
             
             /*
             switch (caseSwitch)
@@ -131,96 +399,10 @@ namespace Signrider
 
         }
 
-        public void trainImage(FeatureExample ttimage)
+        public void trainImage(FeatureExample image)
         {
-            BGRImage rgbiamge = ttimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            GrayImage grayiamge = ttimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-
-            GrayImage image = grayiamge;
-            CvInvoke.cvShowImage("Original", rgbiamge);
-            CvInvoke.cvShowImage("Original gray", grayiamge);
-            CvInvoke.cvShowImage("BEFORE", rgbiamge.Canny(500, 300));
-            CvInvoke.cvShowImage("Before hull", image);
-            GrayImage filledImage = image;
-            for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-            {
-                Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                Point[] points = pointsSeq.ToArray();
-                filledImage.FillConvexPoly(points, new Gray(255));
-            }
-            image = filledImage;
-            CvInvoke.cvShowImage("After hull", image);
-            //if (debugPreprocessor)
-            //    showImage(image, "After hull");
-
-            rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
-            int i = (int)(300 * 0.10);
-            Rectangle rect = new Rectangle(i/2, i/2, 300 - i, 300 - i);
-            rgbiamge = rgbiamge.GetSubRect(rect);
-            CvInvoke.cvShowImage("Test Window1", rgbiamge);
-                CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
-
-                //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
-               // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
-                //Image<Hls, Byte> hlk = new Image<Hls, Byte>(new Size(300, 300));
-                Image<Hsv, Byte> hlk = rgbiamge.Convert<Hsv, Byte>();
-                //hlk = hlk.ThresholdToZero(new Hls(0, 150, 0));
-                Image<Gray, Byte>[] splitimg = hlk.Split();
-                CvInvoke.cvShowImage("Test light", splitimg[2]);
-                    CvInvoke.cvShowImage("Test sha",splitimg[1]);
-            //TODO: avarage color insert
-                    splitimg[2]._EqualizeHist();
-                    CvInvoke.cvShowImage("Test light after hosto", splitimg[2]);
-                splitimg[2] = splitimg[2].ThresholdBinary(new Gray(100), new Gray(255));
-                    //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(100));
-                splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(150), new Gray(255));
-                    //splitimg[1] = splitimg[1].ThresholdToZeroInv(new Gray(150));
-               // splitimg[2]._Not();
-                 splitimg[2] = splitimg[2].And(splitimg[1]);
-                CvInvoke.cvShowImage("Test light2", splitimg[2]);
-                CvInvoke.cvShowImage("Test sha2", splitimg[1]);
-                CvInvoke.cvMerge(splitimg[0], IntPtr.Zero, splitimg[2], IntPtr.Zero, hlk);
-                 CvInvoke.cvShowImage("Test Window3", hlk.Convert<Bgr, Byte>());
-                 hlk._Erode(1);
-                //TODO: FILL small holes
-                 //TODO: Remove tidy dots (better than holrs)
-
-                 CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(500, 300));
-
-                 CvInvoke.cvShowImage("Test Window4", hlk.Convert<Bgr, Byte>());
-                 Image<Gray, byte> grayImage = hlk.Convert<Gray, byte>();
-                 filledImage = grayImage;
-                 for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                 {
-                     Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                     Point[] points = pointsSeq.ToArray();
-                     filledImage.FillConvexPoly(points, new Gray(255));
-                 }
-               //  BGRImage rgbiamge2 = hlk.Convert<Bgr, Byte>();
-                 
-                 CvInvoke.cvShowImage("After hull2", filledImage);
-                 rgbiamge[0] = rgbiamge[0].And(filledImage);
-                 rgbiamge[1] = rgbiamge[1].And(filledImage);
-                 rgbiamge[2] = rgbiamge[2].And(filledImage);
-                 CvInvoke.cvShowImage("Final", rgbiamge);
-                 CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));
-                       //         hlk[0]._And(;
-
-            /*
-                Contour<Point> contoura = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_EXTERNAL);
-                {
-                    Rectangle rect1 = contoura.BoundingRectangle;
-                    //MessageBox.Show(rect1.ToString());
-                    grayImage = grayImage.GetSubRect(rect1);
-                    //grayImage.Draw(rect1, new Gray(128), -1);
-                   // MessageBox.Show(contoura.First().ToString());
-
-                }
-                CvInvoke.cvShowImage("Test Windo6", grayImage);
-                CvInvoke.cvShowImage("Test Window5", grayImage.Canny(500, 300));*/
-           //     grayImage.Laplace(3);
-            //    CvInvoke.cvShowImage("Test Windo7", grayImage);
-            //CvInvoke.cvCvtColor(rgbiamge,hlk,
+            GrayImage preprosessedImage = preprocess(image);
+            CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
             
         }
 
