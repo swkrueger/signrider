@@ -53,11 +53,6 @@ namespace Signrider
             SVMParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
             SVMModel = new SVM();
         }
-        Image<Bgr, Byte> img2;
-        public Image<Bgr, Byte> getImg()
-        {
-            return img2;
-        }
 
         public void helloTest()
         {
@@ -407,12 +402,12 @@ filledImage.FillConvexPoly(points, new Gray(255));
 
             int ijk = 0;
             //The name of the window
-            string win1 = "Test Window";
+            // string win1 = "Test Window";
             // CvInvoke.cvNamedWindow(win1);
             Image<Gray, double> GW = new Image<Gray, double>(1, 1);
             int R = 10;
             int C = 10;
-            double u = 2;
+            // double u = 2;
             double v = 2;
             for (int i = 0; i < 8; i++)
             {
