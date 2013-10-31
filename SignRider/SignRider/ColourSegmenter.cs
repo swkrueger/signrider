@@ -26,43 +26,76 @@ namespace Signrider
         private int minimumContourArea = 1000;
         private int minimumSegmentWidth = 30;
         private int minimumSegmentHeight = 30;
-        private int minimumAspectRatio = 3; //1:??
+        private int minimumAspectRatio = 2; //1:??
+        private enum SignNotFound {HSV, tryGammaCorrect, tryCMYK };
+        SignNotFound signNotFound = SignNotFound.HSV;
+        private Boolean isSignFound = false;
 
 
         public List<ColourSegment> determineColourSegments(Image<Bgr, byte> image)
         {
-            image._GammaCorrect(2.2);
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
-                Image<Gray, byte> fullBinaryImage = GetPixelMask("HSV", colour, image);
-                Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
-                Image<Gray, byte> binaryCrop = null;
-                Image<Bgr, byte> rgbCrop = null;
-
-                // TODO: Check FindContour parameters
-                for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                do
                 {
-                    if (contour.Area > minimumContourArea)
+                    Image<Gray, byte> fullBinaryImage = null;
+                    if (signNotFound == SignNotFound.HSV)
                     {
-                        Rectangle rect1 = contour.BoundingRectangle;
-                        Rectangle rect = rect1;
+                        fullBinaryImage = GetPixelMask("HSV", colour, image);
+                    }
+                    else if (signNotFound == SignNotFound.tryGammaCorrect)
+                    {
+                        image._GammaCorrect(2.2);
+                        fullBinaryImage = GetPixelMask("HSV", colour, image);
+                    }
+                    else if (signNotFound == SignNotFound.tryCMYK)
+                    {
+                        fullBinaryImage = GetPixelMask("CMYK", colour, image);
+                    }
 
-                        if ((rect1.X - 1) > 0 && ((rect1.X + (rect1.Width + 1)) < image.Width) && (rect1.Y - 2) > 0 && ((rect1.Y + (rect1.Height + 2)) < image.Height))
-                            rect = new Rectangle(rect1.X - 1, rect1.Y - 1, rect1.Width + 2, rect1.Height + 2);
+                    Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
+                    Image<Gray, byte> binaryCrop = null;
+                    Image<Bgr, byte> rgbCrop = null;
 
-                        int rWidth = rect.Width;
-                        int rHeight = rect.Height;
-                        double aspectRatio = (double)rWidth / (double)rHeight;
-
-                        if (rWidth > minimumSegmentWidth && rHeight > minimumSegmentHeight && aspectRatio > 1 / (double)minimumAspectRatio && aspectRatio < minimumAspectRatio)//
+                    // TODO: Check FindContour parameters
+                    for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                    {
+                        if (contour.Area > minimumContourArea)
                         {
-                            mask.Draw(contour, new Gray(255), -1);
-                            binaryCrop = mask.Copy(rect);
-                            rgbCrop = image.Copy(rect);
-                            colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
+                            isSignFound = true;
+                            Rectangle rect1 = contour.BoundingRectangle;
+                            Rectangle rect = rect1;
+
+                            if ((rect1.X - 1) > 0 && ((rect1.X + (rect1.Width + 1)) < image.Width) && (rect1.Y - 2) > 0 && ((rect1.Y + (rect1.Height + 2)) < image.Height))
+                                rect = new Rectangle(rect1.X - 1, rect1.Y - 1, rect1.Width + 2, rect1.Height + 2);
+
+                            int rWidth = rect.Width;
+                            int rHeight = rect.Height;
+                            double aspectRatio = (double)rWidth / (double)rHeight;
+
+                            if (rWidth > minimumSegmentWidth && rHeight > minimumSegmentHeight && aspectRatio > 1 / (double)minimumAspectRatio && aspectRatio < minimumAspectRatio)//
+                            {
+                                mask.Draw(contour, new Gray(255), -1);
+                                binaryCrop = mask.Copy(rect);
+                                rgbCrop = image.Copy(rect);
+                                colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
+                            }
                         }
                     }
-                }
+
+                    if (signNotFound == SignNotFound.HSV)
+                    {
+                        signNotFound = SignNotFound.tryGammaCorrect;
+                    }
+                    else if (signNotFound == SignNotFound.tryGammaCorrect)
+                    {
+                        signNotFound = SignNotFound.tryCMYK;
+                    }
+                    else if (signNotFound == SignNotFound.tryCMYK)
+                    {
+                        isSignFound = true;
+                    }
+                } while (!isSignFound);
             }
             return colourSegmentList;
         }
@@ -70,89 +103,116 @@ namespace Signrider
         //-> function returning the binary image with white the segment and black not
         private Image<Gray, Byte> GetPixelMask(String ColourSpace, SignColour Colour, Image<Bgr, byte> image)
         {
-            //Image<Lab, Byte> lab = image.Convert<Lab, Byte>();
-            //Image<Ycc, Byte> ycc = image.Convert<Ycc, Byte>();
-            if (ColourSpace == "RGB")
+            if (ColourSpace == "HSV")
             {
-                Image<Gray, Byte>[] channels = image.Split();
-                Image<Gray, Byte> filterB = null;
-                Image<Gray, Byte> filterG = null;
-                Image<Gray, Byte> filterR = null;
-                int StartRangeB = 0;
-                int EndRangeB = 0;
-                int StartRangeG = 0;
-                int EndRangeG = 0;
-                int StartRangeR = 0;
-                int EndRangeR = 0;
-
+                int StartRangeH = 0;
+                int EndRangeH = 0;
                 if (Colour == SignColour.BLUE)
                 {
-                    StartRangeB = 107;
-                    EndRangeB = 200;
-                    StartRangeG = 0;
-                    EndRangeG = 148;
-                    StartRangeR = 0;
-                    EndRangeR = 85;
+                    StartRangeH = 100;
+                    EndRangeH = 135;
                 }
-
-                // if (Colour == SignColour.GREEN)
-                // {
-                //     StartRangeB = 0;
-                //     EndRangeB = 178;
-                //     StartRangeG = 123;
-                //     EndRangeG = 255;
-                //     StartRangeR = 0;
-                //     EndRangeR = 101;
-                // }
 
                 if (Colour == SignColour.RED)
                 {
-                    StartRangeB = 0;
-                    EndRangeB = 96;
-                    StartRangeG = 0;
-                    EndRangeG = 98;
-                    StartRangeR = 100;
-                    EndRangeR = 255;
-                }
-                filterB = channels[0].InRange(new Gray(StartRangeB), new Gray(EndRangeB));
-                filterG = channels[1].InRange(new Gray(StartRangeG), new Gray(EndRangeG));
-                filterR = channels[2].InRange(new Gray(StartRangeR), new Gray(EndRangeR));
-                Image<Gray, byte> mask = channels[0].CopyBlank();
-                CvInvoke.cvAnd(filterB, filterG, mask, IntPtr.Zero);
-                CvInvoke.cvAnd(mask, filterR, mask, IntPtr.Zero);
-                return mask;
-            }
-            else
-            {
-                int StartRange = 0;
-                int EndRange = 0;
-                if (Colour == SignColour.BLUE)
-                {
-                    StartRange = 100;
-                    EndRange = 135;
-                }
-
-                // if (Colour == SignColour.GREEN)
-                // {
-                //     StartRange = 40;
-                //     EndRange = 99;
-                // }
-
-                if (Colour == SignColour.RED)
-                {
-                    StartRange = 10;
-                    EndRange = 175;
+                    StartRangeH = 10;
+                    EndRangeH = 170;
                 }
                 Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>();
                 Image<Gray, Byte>[] channels = hsv.Split();
-                CvInvoke.cvInRangeS(channels[0], new MCvScalar(StartRange), new MCvScalar(EndRange), channels[0]);
+                CvInvoke.cvInRangeS(channels[0], new MCvScalar(StartRangeH), new MCvScalar(EndRangeH), channels[0]);
                 if (Colour == SignColour.RED)
                 {
                     channels[0]._Not();
                 }
-                channels[1]._ThresholdBinary(new Gray(100), new Gray(255.0));
+                channels[1]._ThresholdBinary(new Gray(50), new Gray(255.0));
+                channels[2]._ThresholdBinary(new Gray(70), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
+                CvInvoke.cvAnd(channels[0], channels[2], channels[0], IntPtr.Zero);
                 return channels[0];
+            }
+            else
+            {
+                int StartRangeC = 0;
+                int EndRangeC = 20;
+                int StartRangeM = 0;
+                int EndRangeM = 20;
+                int StartRangeY = 0;
+                int EndRangeY = 20;
+                int StartRangeK = 0;
+                int EndRangeK = 0;
+
+                if (Colour == SignColour.RED)
+                {
+                    StartRangeC = 10;
+                    EndRangeC = 255;
+                    StartRangeY = 0;
+                    EndRangeY = 20;
+                }
+
+                if (Colour == SignColour.BLUE)
+                {
+                    StartRangeC = 0;
+                    EndRangeC = 20;
+                    StartRangeY = 10;
+                    EndRangeY = 255;
+                    StartRangeK = 0;
+                    EndRangeK = 0;
+                    //StartRangeC = 0;
+                    //EndRangeC = 0;
+                    //StartRangeM = 0;
+                    //EndRangeM = 0;
+                    //StartRangeY = 0;
+                    //EndRangeY = 0;
+                    //StartRangeK = 0;
+                    //EndRangeK = 0;
+                }
+
+                Image<Bgr, Byte> bgr = image;
+                Image<Gray, Byte>[] bgrChannels = bgr.Split();
+
+                Image<Gray, Byte> filterK = bgrChannels[0].CopyBlank();
+                Image<Gray, Byte> filterC = bgrChannels[0].CopyBlank();
+                Image<Gray, Byte> filterM = bgrChannels[0].CopyBlank();
+                Image<Gray, Byte> filterY = bgrChannels[0].CopyBlank();
+
+                Image<Gray, Byte> oneMinBlue = bgrChannels[0];
+                oneMinBlue._Not();
+                Image<Gray, Byte> oneMinGreen = bgrChannels[1];
+                oneMinGreen._Not();
+                Image<Gray, Byte> oneMinRed = bgrChannels[2];
+                oneMinRed._Not();
+
+                CvInvoke.cvMin(oneMinBlue, oneMinGreen, filterK);
+                CvInvoke.cvMin(filterK, oneMinRed, filterK);
+
+                Image<Gray, Byte> oneMinRedMinBlack = bgrChannels[0].CopyBlank();
+                CvInvoke.cvSub(oneMinRed, filterK, oneMinRedMinBlack, IntPtr.Zero);
+                Image<Gray, Byte> oneMinGreenMinBlack = bgrChannels[0].CopyBlank();
+                CvInvoke.cvSub(oneMinGreen, filterK, oneMinGreenMinBlack, IntPtr.Zero);
+                Image<Gray, Byte> oneMinBlueMinBlack = bgrChannels[0].CopyBlank();
+                CvInvoke.cvSub(oneMinBlue, filterK, oneMinBlueMinBlack, IntPtr.Zero);
+                Image<Gray, Byte> oneMinBlack = filterK;
+                oneMinBlack._Not();
+
+                CvInvoke.cvDiv(oneMinRedMinBlack, oneMinBlack, filterC, 255);
+                CvInvoke.cvDiv(oneMinGreenMinBlack, oneMinBlack, filterM, 255);
+                CvInvoke.cvDiv(oneMinBlueMinBlack, oneMinBlack, filterY, 255);
+
+                filterC = filterC.InRange(new Gray(StartRangeC), new Gray(EndRangeC));
+                filterC._Not();
+                filterM = filterM.InRange(new Gray(StartRangeM), new Gray(EndRangeM));
+                filterM._Not();
+                filterY = filterY.InRange(new Gray(StartRangeY), new Gray(EndRangeY));
+                filterY._Not();
+                filterK = filterK.InRange(new Gray(StartRangeK), new Gray(EndRangeK));
+                filterK._Not();
+
+                Image<Gray, byte> mask = filterC.CopyBlank();
+                CvInvoke.cvAnd(filterC, filterM, mask, IntPtr.Zero);
+                CvInvoke.cvAnd(mask, filterY, mask, IntPtr.Zero);
+                CvInvoke.cvAnd(mask, filterK, mask, IntPtr.Zero);
+                return mask;
             }
         }
     }

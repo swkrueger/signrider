@@ -82,59 +82,59 @@ namespace Signrider
             if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 inputDir = folderBrowserDialog1.SelectedPath + "/";
-            }
-            outputDir = inputDir + "Colour Segmentation Results/";
-            
-            string tempdir = inputDir;
-            string path = @tempdir;
-            string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG", ".ppm" };
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            FileInfo[] fileInfo = directoryInfo.GetFiles();
-            foreach (FileInfo fi in fileInfo)
-                foreach (string s in filter)
-                    if (s == fi.Extension)
-                        arrayList.Add(fi.FullName);
+                outputDir = inputDir + "Colour Segmentation Results/";
 
-            for (int k = 0; k < arrayList.Count; k++)
-            {
-                string pictureName = (string)arrayList[k];
-                tempdir = tempdir.Replace("/", "\\");
-                pictureName = pictureName.Replace(tempdir, "");
-                foreach (string imageType in filter)
-                {
-                    pictureName = pictureName.Replace(imageType, "");
-                }
+                string tempdir = inputDir;
+                string path = @tempdir;
+                string[] filter = { ".bmp", ".jpg", ".jpeg", ".png", ".JPG", ".ppm" };
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                FileInfo[] fileInfo = directoryInfo.GetFiles();
+                foreach (FileInfo fi in fileInfo)
+                    foreach (string s in filter)
+                        if (s == fi.Extension)
+                            arrayList.Add(fi.FullName);
 
-                if (!Directory.Exists(outputDir + pictureName))
+                for (int k = 0; k < arrayList.Count; k++)
                 {
-                    Directory.CreateDirectory(outputDir + pictureName);
-                }
-                else
-                {
-                    System.IO.DirectoryInfo myDirInfo = new DirectoryInfo(outputDir + pictureName);
-                    foreach (FileInfo file in myDirInfo.GetFiles())
+                    string pictureName = (string)arrayList[k];
+                    tempdir = tempdir.Replace("/", "\\");
+                    pictureName = pictureName.Replace(tempdir, "");
+                    foreach (string imageType in filter)
                     {
-                        file.Delete();
+                        pictureName = pictureName.Replace(imageType, "");
                     }
-                }
 
-                try 
-                {
-                    using (Image<Bgr, Byte> image = new Image<Bgr, Byte>(arrayList[k].ToString()))
+                    if (!Directory.Exists(outputDir + pictureName))
                     {
-                        ColourSegmenter segmenter = new ColourSegmenter();
-                        List<ColourSegment> segments = segmenter.determineColourSegments(image);
-
-                        for (int i = 0; i < segments.Count; i++)
+                        Directory.CreateDirectory(outputDir + pictureName);
+                    }
+                    else
+                    {
+                        System.IO.DirectoryInfo myDirInfo = new DirectoryInfo(outputDir + pictureName);
+                        foreach (FileInfo file in myDirInfo.GetFiles())
                         {
-                            segments[i].rgbCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_RGB"  + ".png");
-                            segments[i].binaryCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_BW" + ".png");
+                            file.Delete();
                         }
                     }
-                } 
-                catch (OutOfMemoryException oome)
-                {
-                  GC.Collect();
+
+                    try
+                    {
+                        using (Image<Bgr, Byte> image = new Image<Bgr, Byte>(arrayList[k].ToString()))
+                        {
+                            ColourSegmenter segmenter = new ColourSegmenter();
+                            List<ColourSegment> segments = segmenter.determineColourSegments(image);
+
+                            for (int i = 0; i < segments.Count; i++)
+                            {
+                                segments[i].rgbCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_RGB" + ".png");
+                                segments[i].binaryCrop.Save(outputDir + pictureName + "/" + pictureName + i.ToString() + "_" + segments[i].colour + "_BW" + ".png");
+                            }
+                        }
+                    }
+                    catch (OutOfMemoryException oome)
+                    {
+                        GC.Collect();
+                    }
                 }
             }
         }
