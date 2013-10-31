@@ -115,12 +115,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AlbumViewModel.cs" />
+    <Compile Include="HomeMenuView.xaml.cs">
+      <DependentUpon>HomeMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Photo.cs" />
     <Compile Include="PhotoViewModel.cs" />
     <Compile Include="ShapeClassifier.cs" />
     <Compile Include="TrafficSignRecognizer.cs" />
     <Compile Include="Utilities.cs" />
     <Page Include="GlobalResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HomeMenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
