@@ -33,7 +33,7 @@ namespace Signrider
                 _photo = value;
 
                 // Create thumbnail
-                thumbnail = _photo.generateThumbnail(64, 64);
+                thumbnail = _photo.generateThumbnail(128, 128);
             }
         }
         public Image<Bgr, Byte> thumbnail { get; private set; }

@@ -26,11 +26,8 @@ namespace Signrider
         /// <summary>
         /// The photo, which may consist of zero or more traffic signs
         /// </summary>
-        public Image<Bgr, Byte> image {
-            get
-            {
-                return new Image<Bgr, byte>(path);
-            }
+        public Image<Bgr, Byte> getImage() {
+            return new Image<Bgr, byte>(path);
         }
 
         public string title { get; private set; }
@@ -39,7 +36,10 @@ namespace Signrider
 
         public Image<Bgr, Byte> generateThumbnail(int width, int height)
         {
-            return image.Resize(width, height, INTER.CV_INTER_LINEAR, true);
+            using (Image<Bgr, Byte> image = getImage())
+            {
+                return image.Resize(width, height, INTER.CV_INTER_LINEAR, true);
+            }
         }
     }
 }

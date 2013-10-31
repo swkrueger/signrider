@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
+using System.Windows.Forms;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -17,37 +18,41 @@ using Emgu.CV.UI;
 
 using Emgu.CV.ML;
 using Emgu.CV.ML.Structure;
+using System.IO;
 
-using System.Diagnostics;
-
-using System.Windows.Forms;
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
-
 
 namespace Signrider
 {
     //TODO:
     public enum SignType { SpeedLimit30, Stop };
 
-    class FeatureRecognizer
+    public struct FeatureExample
     {
+        public string name;
+        public GrayImage grayImage;
+        public BGRImage rgbImage;
+        public SignShape shape;
+        public SignType type;
+        public SignColour color;
+    }
+
+    public class FeatureRecognizer
+    {
+        SVMParams SVMParameters;
+        SVM SVMModel;
         public FeatureRecognizer()
         {
-            p = new SVMParams();
-            p.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
+            SVMParameters = new SVMParams();
+            SVMParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
             //p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
-            p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
+            SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
             //p.Gamma = 3;
-            p.C = 1;
-            p.TermCrit = new MCvTermCriteria(100, 0.00001);
+            SVMParameters.C = 1;
+            SVMParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
+            SVMModel = new SVM();
         }
-        Image<Bgr, Byte> img2;
-        public Image<Bgr, Byte> getImg()
-        {
-            return img2;
-        }
-        SVMParams p;
 
         public void helloTest()
         {
@@ -100,7 +105,7 @@ namespace Signrider
 
         }
 
-        private GrayImage preprocess(TestImage aimage)
+        private GrayImage preprocess(FeatureExample aimage)
         {
             BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
             GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
@@ -113,13 +118,7 @@ namespace Signrider
             CvInvoke.cvShowImage("BEFORE", rgbiamge.Canny(500, 300));
             CvInvoke.cvShowImage("Before hull", image);
             GrayImage filledImage = image;
-            /*
-            for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-            {
-                Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                Point[] points = pointsSeq.ToArray();
-                filledImage.FillConvexPoly(points, new Gray(255));
-            }*/
+
             image = filledImage;
             CvInvoke.cvShowImage("After hull", image);
             //if (debugPreprocessor)
@@ -153,11 +152,8 @@ namespace Signrider
             splitimg[2] = splitimg[2].And(splitimg[1]);
             splitimg[1] = splitimg[1].ThresholdBinary(new Gray(255), new Gray(255));
 
-           // DenseHistogram histo = new DenseHistogram(255, new RangeF(0, 255));
-           // histo.Calculate(new Image<Gray, Byte>[] { splitimg[2] }, true, null);
-            //Console.WriteLine("histo dim: " + histo.BinDimension.Count().ToString);
-            //Console.WriteLine("Average: "CvInvoke.cvAvg(splitimg[2]));
 
+            //Console.WriteLine("Average: "CvInvoke.cvAvg(splitimg[2]));
             //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(150));
 
             int ijk = 10;
@@ -180,7 +176,7 @@ namespace Signrider
                 count += som;
 
                 if (n > 100 && count < gem)
-                    scaler = (double)n / (double)70;
+                    scaler = (double)n / (double)100;
                 
                // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
 
@@ -344,6 +340,17 @@ namespace Signrider
         CvInvoke.cvShowImage("After hull2 mask", maskImage);
         CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
         CvInvoke.cvShowImage("After bw canny", paddedIamge.Canny(400, 300));
+
+        //GrayImage edgeImage
+            //GrayImage cropimageImage = grayImage.Canny(400, 300)
+            //GrayImage returnImage
+        /*
+for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+{
+Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+Point[] points = pointsSeq.ToArray();
+filledImage.FillConvexPoly(points, new Gray(255));
+}*/
 /*
         rgbiamge[0] = rgbiamge[0].And(grayImage);
         rgbiamge[1] = rgbiamge[1].And(grayImage);
@@ -351,7 +358,8 @@ namespace Signrider
             CvInvoke.cvShowImage("Final", rgbiamge);
             CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));*/
 
-            return rgbiamge.Canny(500, 300);
+            //return rgbiamge.Canny(500, 300);
+        return paddedIamge.Canny(400, 300);
             //         hlk[0]._And(;
 
             /*
@@ -386,213 +394,227 @@ namespace Signrider
             }*/
         }
 
-        private void calculateParameters()
+        private Matrix<float> calculateParameters(GrayImage image)
         {
+            double[] pointts = new double[128];
+
+            Matrix<float> returnMatrix = new Matrix<float>(1, 128);
+
+            int ijk = 0;
+            //The name of the window
+            // string win1 = "Test Window";
+            // CvInvoke.cvNamedWindow(win1);
+            Image<Gray, double> GW = new Image<Gray, double>(1, 1);
+            int R = 10;
+            int C = 10;
+            // double u = 2;
+            double v = 2;
+            for (int i = 0; i < 8; i++)
+            {
+                GW = GW.ConcateHorizontal(GaborWavelet(R, C, i, v));
+            }
+
+            //img.SmoothGaussian(5, 5, 1.5, 1.5);
+            //Image<Bgr, Byte> img2 = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
+            Image<Gray, double> GWOutput = GW.Resize(10, INTER.CV_INTER_LINEAR);
+
+            //Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
+            // Image<Gray, Byte> img = new Image<Gray, Byte>("C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\20_3_bw_f.png");
+            Image<Gray, Byte> img = image.Copy(new Rectangle(25,25,300,300));
+            img = img.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            //Create the font
+            MCvFont ftest = new MCvFont(Emgu.CV.CvEnum.FONT.CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0);
+            //MCvFont f = new MCvFont();
+            //Draw "Hello, world." on the image using the specific font
+            // img.Draw("Hello, world", ref ftest, new Point(10, 80), new Bgr(0, 255, 0));
+            /* img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Bgr(0, 255, 0), 1);
+             img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Bgr(0, 255, 0), 1);
+             img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Bgr(0, 255, 0), 1);
+             img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300,300 / 4)), new Bgr(0, 255, 0), 1);
+             img.Draw(new LineSegment2D(new Point(0,300 / 4 * 2), new Point(300,300 / 4 * 2)), new Bgr(0, 255, 0), 1);
+             img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300,300 / 4 * 3)), new Bgr(0, 255, 0), 1);*/
+
+            // CvInvoke.cvShowImage("Test Window", img);
+            CvInvoke.cvShowImage("Test Window12", GW);
+            CvInvoke.cvShowImage("Test Window2", GWOutput);
+
+            Image<Gray, byte> edge;
+            edge = img.Canny(125, 80);
+
+
+            //Size size = img.Size;
+            Size size = edge.Size;
+            int N = 300 / 4;
+            Image<Gray, byte> divImg = new Image<Gray, byte>(300, 300);
+            Image<Gray, float> divImg2 = new Image<Gray, float>(3000, 300);
+
+            Image<Gray, float> histogram = new Image<Gray, float>(640, 200);
+            Point ppoint = new Point(0, 0);
+
+
+
+            for (int r = 0; r < size.Height; r += N)
+            {
+                for (int c = 0; c < size.Width; c += N)
+                {
+                    Rectangle rect = new Rectangle(c, r, N, N);
+                    Image<Gray, byte> testCrop = new Image<Gray, byte>(rect.Size);
+                    //testCrop = img.Copy(rect).Convert<Gray, byte>();
+                    testCrop = edge.Copy(rect);
+                    //divImg = divImg.Copy(new Image<Gray, byte>(20, 300/4, new Gray(125)));
+                    divImg.ROI = rect;
+                    // divImg.Add(testCrop);
+                    CvInvoke.cvCopy(testCrop, divImg, IntPtr.Zero);
+                    divImg.ROI = Rectangle.Empty;
+                    //CvInvoke.cvShowImage(r.ToString(), testCrop);
+
+                    Image<Gray, float> testCrop2 = testCrop.Convert<Gray, float>();
+                    for (int n = 0; n < 8; n++)
+                    {
+                        //MessageBox.Show(testCrop2.Data.GetType().ToString());
+                        ConvolutionKernelF ckernel = new ConvolutionKernelF(10, 10);
+                        for (int l = 0; l < 10; l++)
+                            for (int k = 0; k < 10; k++)
+                                ckernel[l, k] = (float)GW[l, k + n * 10].Intensity / 10000;
+                        ckernel.Center = new Point(5, 5);
+                        // MessageBox.Show(((float)GW[10, 30].Intensity).ToString());
+                        //for (int l = 0; l < 10; l++)
+                        //   for (int k = 0; k < 10; k++)
+                        //      testCrop2[l, k].Intensity = (Gray)GW[l, k + 30].Intensity;
+
+                        //testCrop = new Image<Gray, byte>(200, 200);
+                        //Image<Gray, float> testCrop21 = new Image<Gray, float>(10, 10);
+                        //Image<Gray, float> testCrop3 = new  Image<Gray, float>(75, 75);
+                        Image<Gray, float> testCrop3 = testCrop.Convolution(ckernel);
+
+                        testCrop3 = testCrop3.ThresholdBinary(new Gray(0.1), new Gray(1));
+                        //CvInvoke.cvShowImage("Testcrop", testCrop);
+                        //CvInvoke.cvShowImage("Testcrop2", testCrop2);
+                        //CvInvoke.cvShowImage("Testcrop3", testCrop3);
+                        rect = new Rectangle(c + n * 300, r, N, N);
+                        divImg2.ROI = rect;
+                        CvInvoke.cvCopy(testCrop3, divImg2, IntPtr.Zero);
+                        divImg2.ROI = Rectangle.Empty;
+
+                        Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
+                        double dotprot = testCrop3.DotProduct(one);
+                        // Debug.WriteLine(dotprot);
+
+
+                        //Contour<Point> points;// = new Point[10];
+                        Point[] points = new Point[128];
+                        points[ijk] = new Point(ijk * 2, 1000 - (int)dotprot);
+                        pointts[ijk] = dotprot;
+                        returnMatrix[0, ijk] = (float)pointts[ijk];
+ ///                       trainData[T, ijk] = (float)dotprot;
+                        //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
+                        int intValue = 1;
+                        bool result = intValue == 1;
+                        //histogram.DrawPolyline(points, result, new Gray(1), 1);
+                        histogram.Draw(new LineSegment2D(ppoint, new Point(ijk * 5, 200 - (int)dotprot / 2)), new Gray(1), 1);
+                        ppoint = new Point(ijk * 5, 200 - (int)dotprot / 2);
+                        ijk++;
+
+                    }
+                }
+            }
+
+
+            img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
+            img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
+            img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
+            img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
+            img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
+            img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
+            CvInvoke.cvShowImage("Test Window3", img);
+            //CvInvoke.cvShowImage("Test Window3", divImg);
+            divImg2 = divImg2.Resize(0.5, INTER.CV_INTER_LINEAR);
+
+            CvInvoke.cvShowImage("Test Window4", divImg2);
+            CvInvoke.cvShowImage("histogram e", histogram);
+
+            edge.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
+            edge.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
+            edge.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
+            edge.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
+            edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
+            edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
+            CvInvoke.cvShowImage("edge", edge);
+
+            /*
+            Rectangle rect = new Rectangle(0, 0, 50, 50);
+            Image<Gray, byte> testCrop = new Image<Gray, byte>(rect.Size);
+            testCrop = img.Copy(rect).Convert<Gray, byte>();
+            CvInvoke.cvShowImage("Test crop", testCrop);*/
+
+
+
+
+
+
+
+
+            return returnMatrix;
 
         }
 
-        public void trainImage(TestImage image)
+        //TODO: LIST??
+        public void trainImages(List<FeatureExample> images)
         {
-            GrayImage preprosessedImage = preprocess(image);
-            CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
-            
+            int imagesCount = images.Count();
+            if (imagesCount < 1)
+                return;
+            Console.WriteLine("Start to train " + imagesCount + " images");
+            Matrix<float> trainData = new Matrix<float>(imagesCount, 128);
+            Matrix<float> trainClasses = new Matrix<float>(imagesCount, 1);
+            for (int i = 0; i < imagesCount; i++)
+            {
+                FeatureExample image = images[i];
+                GrayImage preprosessedImage = preprocess(image);
+                CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
+                Matrix<float> parameter = calculateParameters(preprosessedImage);
+
+                //TODO: Beter fuksie kry
+                for (int j = 0; j < 128; j++)
+                    parameter[i, j] = parameter[0, j];
+                trainClasses[i, 0] = (float)image.type;
+            }
+            Console.WriteLine("Start SVM training");
+            trainSVM(trainData, trainClasses);
+            Console.WriteLine("DONE");
+        }
+        
+        public void testImages(List<FeatureExample> images)
+        {
+            Console.WriteLine("TESTING... ");
+            int imagesCount = images.Count();
+            for (int i = 0; i < imagesCount; i++)
+            {
+                FeatureExample image = images[i];
+                GrayImage preprosessedImage = preprocess(image);
+                Matrix<float> parameter = calculateParameters(preprosessedImage);
+                //SVMModel.Predict(parameter.GetRow(0));
+               // MessageBox.Show("Image " + i.ToString() + ": " + SVMModel.Predict(parameter.GetRow(0)).ToString());
+                Console.WriteLine("DONE");
+            }
+        }
+
+
+        private void trainSVM(Matrix<float> para, Matrix<float> signType)
+        {
+            SVMModel.Train(para, signType, null, null, SVMParameters);
         }
 
         //showCalulated parameters
         public void doTest()
         {
 
-            return;
-
-            string[] filenames = new string[20];
-            filenames[0] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_1_bw.png";
-            filenames[1] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_2_bw.png";
-            filenames[2] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_3_bw.png";
-            filenames[3] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_4_bw.png";
-            filenames[4] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk40_1_bw.png";
-            filenames[5] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk40_2_bw.png";
-            filenames[6] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk40_3_bw.png";
-
-            //TEST IMAGES!!
-            filenames[7] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk30_5_bw.png";
-            filenames[8] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\20_3_bw_f.png";
-            //filenames[8] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\20_3_bw.png";
-            //filenames[8] = "C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\uk40_4_bw.png";
-
-            int Tmax = 9;
-
             //int trainSampleCount = 128;
-            double[] pointts = new double[128];
-            Matrix<float> trainData = new Matrix<float>(Tmax, 128);
-            for (int T = 0; T < Tmax; T++)
-            {
-                int ijk = 0;
-                //The name of the window
-                string win1 = "Test Window";
-                // CvInvoke.cvNamedWindow(win1);
-                Image<Gray, double> GW = new Image<Gray, double>(1, 1);
-                int R = 10;
-                int C = 10;
-                double u = 2;
-                double v = 2;
-                for (int i = 0; i < 8; i++)
-                {
-                    GW = GW.ConcateHorizontal(GaborWavelet(R, C, i, v));
-                }
 
-
-                //img.SmoothGaussian(5, 5, 1.5, 1.5);
-                //Image<Bgr, Byte> img2 = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
-                Image<Gray, double> GWOutput = GW.Resize(10, INTER.CV_INTER_LINEAR);
-
-                //Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
-                // Image<Gray, Byte> img = new Image<Gray, Byte>("C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\20_3_bw_f.png");
-                Image<Gray, Byte> img = new Image<Gray, Byte>(filenames[T]);
-                img = img.Resize(300, 300, INTER.CV_INTER_LINEAR);
-                //Create the font
-                MCvFont ftest = new MCvFont(Emgu.CV.CvEnum.FONT.CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0);
-                //MCvFont f = new MCvFont();
-                //Draw "Hello, world." on the image using the specific font
-                // img.Draw("Hello, world", ref ftest, new Point(10, 80), new Bgr(0, 255, 0));
-                /* img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Bgr(0, 255, 0), 1);
-                 img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Bgr(0, 255, 0), 1);
-                 img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Bgr(0, 255, 0), 1);
-                 img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300,300 / 4)), new Bgr(0, 255, 0), 1);
-                 img.Draw(new LineSegment2D(new Point(0,300 / 4 * 2), new Point(300,300 / 4 * 2)), new Bgr(0, 255, 0), 1);
-                 img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300,300 / 4 * 3)), new Bgr(0, 255, 0), 1);*/
-
-                // CvInvoke.cvShowImage("Test Window", img);
-                CvInvoke.cvShowImage("Test Window12", GW);
-                CvInvoke.cvShowImage("Test Window2", GWOutput);
-
-                Image<Gray, byte> edge;
-                edge = img.Canny(125, 80);
-
-
-                //Size size = img.Size;
-                Size size = edge.Size;
-                int N = 300 / 4;
-                Image<Gray, byte> divImg = new Image<Gray, byte>(300, 300);
-                Image<Gray, float> divImg2 = new Image<Gray, float>(3000, 300);
-
-                Image<Gray, float> histogram = new Image<Gray, float>(640, 200);
-                Point ppoint = new Point(0, 0);
-
-
-
-                for (int r = 0; r < size.Height; r += N)
-                {
-                    for (int c = 0; c < size.Width; c += N)
-                    {
-                        Rectangle rect = new Rectangle(c, r, N, N);
-                        Image<Gray, byte> testCrop = new Image<Gray, byte>(rect.Size);
-                        //testCrop = img.Copy(rect).Convert<Gray, byte>();
-                        testCrop = edge.Copy(rect);
-                        //divImg = divImg.Copy(new Image<Gray, byte>(20, 300/4, new Gray(125)));
-                        divImg.ROI = rect;
-                        // divImg.Add(testCrop);
-                        CvInvoke.cvCopy(testCrop, divImg, IntPtr.Zero);
-                        divImg.ROI = Rectangle.Empty;
-                        //CvInvoke.cvShowImage(r.ToString(), testCrop);
-
-                        Image<Gray, float> testCrop2 = testCrop.Convert<Gray, float>();
-                        for (int n = 0; n < 8; n++)
-                        {
-                            //MessageBox.Show(testCrop2.Data.GetType().ToString());
-                            ConvolutionKernelF ckernel = new ConvolutionKernelF(10, 10);
-                            for (int l = 0; l < 10; l++)
-                                for (int k = 0; k < 10; k++)
-                                    ckernel[l, k] = (float)GW[l, k + n * 10].Intensity / 10000;
-                            ckernel.Center = new Point(5, 5);
-                            // MessageBox.Show(((float)GW[10, 30].Intensity).ToString());
-                            //for (int l = 0; l < 10; l++)
-                            //   for (int k = 0; k < 10; k++)
-                            //      testCrop2[l, k].Intensity = (Gray)GW[l, k + 30].Intensity;
-
-                            //testCrop = new Image<Gray, byte>(200, 200);
-                            //Image<Gray, float> testCrop21 = new Image<Gray, float>(10, 10);
-                            //Image<Gray, float> testCrop3 = new  Image<Gray, float>(75, 75);
-                            Image<Gray, float> testCrop3 = testCrop.Convolution(ckernel);
-                            
-                            testCrop3 = testCrop3.ThresholdBinary(new Gray(0.1), new Gray(1));
-                            //CvInvoke.cvShowImage("Testcrop", testCrop);
-                            //CvInvoke.cvShowImage("Testcrop2", testCrop2);
-                            //CvInvoke.cvShowImage("Testcrop3", testCrop3);
-                            rect = new Rectangle(c + n * 300, r, N, N);
-                            divImg2.ROI = rect;
-                            CvInvoke.cvCopy(testCrop3, divImg2, IntPtr.Zero);
-                            divImg2.ROI = Rectangle.Empty;
-
-                            Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
-                            double dotprot = testCrop3.DotProduct(one);
-                            // Debug.WriteLine(dotprot);
-
-
-                            //Contour<Point> points;// = new Point[10];
-                            Point[] points = new Point[128];
-                            points[ijk] = new Point(ijk * 2, 1000 - (int)dotprot);
-                            pointts[ijk] = dotprot;
-                            trainData[T, ijk] = (float)dotprot;
-                            //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
-                            int intValue = 1;
-                            bool result = intValue == 1;
-                            //histogram.DrawPolyline(points, result, new Gray(1), 1);
-                            histogram.Draw(new LineSegment2D(ppoint, new Point(ijk * 5, 200 - (int)dotprot / 2)), new Gray(1), 1);
-                            ppoint = new Point(ijk * 5, 200 - (int)dotprot / 2);
-                            ijk++;
-
-                        }
-                    }
-                }
-
-
-                img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
-                img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
-                img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
-                img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
-                img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
-                img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
-                CvInvoke.cvShowImage("Test Window3", img);
-                //CvInvoke.cvShowImage("Test Window3", divImg);
-                divImg2 = divImg2.Resize(0.5, INTER.CV_INTER_LINEAR);
-
-                CvInvoke.cvShowImage("Test Window4", divImg2);
-                CvInvoke.cvShowImage("histogram", histogram);
-
-                edge.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
-                edge.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
-                edge.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
-                edge.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
-                edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
-                edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
-                CvInvoke.cvShowImage("edge", edge);
-
-                /*
-                Rectangle rect = new Rectangle(0, 0, 50, 50);
-                Image<Gray, byte> testCrop = new Image<Gray, byte>(rect.Size);
-                testCrop = img.Copy(rect).Convert<Gray, byte>();
-                CvInvoke.cvShowImage("Test crop", testCrop);*/
-            }
-
-            Matrix<float> trainClasses = new Matrix<float>(Tmax - 2, 1);
-            trainClasses[0, 0] = 30;
-            trainClasses[1, 0] = 30;
-            trainClasses[2, 0] = 30;
-            trainClasses[3, 0] = 30;
-            trainClasses[4, 0] = 40;
-            trainClasses[5, 0] = 40;
-            trainClasses[6, 0] = 40;
-
-            Matrix<float> trainData2 = trainData.RemoveRows(7, 9);
-            //MessageBox.Show(trainData2.Rows.ToString());
-
-
-            SVM model = new SVM();
-            bool trained = model.Train(trainData2, trainClasses, null, null, p);
+/*            bool trained = model.Train(trainData2, trainClasses, null, null, p);
 
             // MessageBox.Show(trained.ToString());
-            MessageBox.Show(model.Predict(trainData.GetRow(7)).ToString());
-            MessageBox.Show(model.Predict(trainData.GetRow(8)).ToString());
+            MessageBox.Show(model.Predict(trainData.GetRow(7)).ToString());*/
         }
 
         public void getSign()
@@ -600,9 +622,78 @@ namespace Signrider
 
         }
 
-        public void trainFeutureReconizer()
+        public void trainFeatureReconizer()
         {
 
+        }
+
+        public static List<FeatureExample> extractExamplesFromDirectory(string dir)
+        {
+            Debug.WriteLine("Loading test Directory example " + dir);
+
+            List<FeatureExample> examples = new List<FeatureExample>();
+
+            if (System.IO.Directory.Exists(dir))
+            {
+                string[] files = Utilities.GetFiles(dir, "*BW.jpg|*BW.png", SearchOption.AllDirectories);
+
+                foreach (string bwFile in files)
+                {
+                    string rgbFile = bwFile.Replace("_BW", "_RGB");
+
+                    if (!System.IO.File.Exists(rgbFile))
+                        continue;
+
+                    Debug.WriteLine("Loaded image: " + bwFile);
+                    Debug.Flush();
+
+                    string[] pathDirectories = bwFile.Split(Path.DirectorySeparatorChar);
+                    int numPathDirectories = pathDirectories.Count();
+
+                    if (numPathDirectories < 3)
+                        continue;
+
+                    string signTypeString = pathDirectories[numPathDirectories - 2];
+                    string signShapeString = pathDirectories[numPathDirectories - 3];
+
+                    SignShape shape;
+                    if (Enum.IsDefined(typeof(SignShape), signShapeString))
+                        shape = (SignShape)Enum.Parse(typeof(SignShape), signShapeString);
+                    else
+                        continue;
+
+                    SignType type;
+                    if (Enum.IsDefined(typeof(SignType), signTypeString))
+                        type = (SignType)Enum.Parse(typeof(SignType), signTypeString);
+                    else
+                        continue;
+
+                    string[] nameTokens = Path.GetFileNameWithoutExtension(bwFile).Split('_');
+                    if (nameTokens.Count() < 3)
+                        continue;
+
+                    string signColorString = nameTokens[nameTokens.Count() - 2];
+                    SignColour color;
+
+                    if (Enum.IsDefined(typeof(SignColour), signColorString))
+                        color = (SignColour)Enum.Parse(typeof(SignColour), signColorString);
+                    else
+                        continue;
+
+                    FeatureExample example = new FeatureExample();
+                    example.name = bwFile;
+                    example.grayImage = new GrayImage(bwFile);
+                    example.rgbImage = new BGRImage(rgbFile);
+                    example.color = color;
+                    example.shape = shape;
+                    example.type = type;
+
+                    examples.Add(example);
+
+                    //Debug.WriteLine(shapeString + " " + typeString + " " + colorString);
+                }
+            }
+            return examples;
         }
     }
 }

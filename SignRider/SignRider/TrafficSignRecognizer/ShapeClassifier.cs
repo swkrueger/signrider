@@ -13,6 +13,7 @@ using Emgu.CV.ML;
 using Emgu.CV.ML.Structure;
 
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+using System.IO;
 
 namespace Signrider
 {
@@ -26,13 +27,15 @@ namespace Signrider
         Garbage
     };
 
-    public struct TrainingExample
+    public struct ShapeExample
     {
+        public string name;
         public GrayImage image;
+        public SignColour colour;
         public SignShape shape;
     }
 
-    class ShapeClassifier
+    public class ShapeClassifier
     {
         // Feature vector settings
         private const int featureVectorDimension = 128;
@@ -84,7 +87,7 @@ namespace Signrider
             return (SignShape)SvmModel.Predict(data);
         }
 
-        public void train(List<TrainingExample> examples)
+        public void train(List<ShapeExample> examples)
         {
             Matrix<float> trainData = new Matrix<float>(examples.Count, featureVectorDimension);
             Matrix<float> trainClasses = new Matrix<float>(examples.Count, 1);
@@ -92,7 +95,7 @@ namespace Signrider
             // Calculate training data features
             for (int i = 0; i < examples.Count; i++)
             {
-                TrainingExample example = examples[i];
+                ShapeExample example = examples[i];
 
                 int[] featureVector = extractDtbFeatures(example.image);
                 for (int j = 0; j < featureVectorDimension; j++)
@@ -300,6 +303,54 @@ namespace Signrider
                 plotFeatureVector(signature);
 
             return signature;
+        }
+
+        public static List<ShapeExample> extractExamplesFromDirectory(string directory)
+        {
+            List<ShapeExample> examples = new List<ShapeExample>();
+
+            if (System.IO.Directory.Exists(directory) == false)
+                return examples;
+
+            foreach (SignShape shape in Enum.GetValues(typeof(SignShape)))
+            {
+                string shapeDir = Path.Combine(directory, shape.ToString());
+
+                if (System.IO.Directory.Exists(shapeDir))
+                {
+                    string[] files = Utilities.GetFiles(shapeDir, ".jpg|*.png", SearchOption.AllDirectories);
+
+                    foreach (string file in files)
+                    {
+                        string[] nameTokens = Path.GetFileNameWithoutExtension(file).Split('_');
+                        if (nameTokens.Count() < 3)
+                            continue;
+
+                        string signColourString = nameTokens[nameTokens.Count() - 2];
+                        SignColour colour;
+
+                        if (Enum.IsDefined(typeof(SignColour), signColourString))
+                            colour = (SignColour)Enum.Parse(typeof(SignColour), signColourString);
+                        else
+                            continue;
+
+                        ShapeExample example = new ShapeExample();
+
+                        // TODO: Catch exception
+                        example.image = new Image<Gray, Byte>(file);
+                        example.shape = shape;
+                        example.colour = colour;
+                        example.name = file;
+
+                        Debug.WriteLine("Loaded training example " + file);
+                        Debug.Flush();
+
+                        examples.Add(example);
+                    }
+                }
+            }
+
+            return examples;
         }
 
     }
