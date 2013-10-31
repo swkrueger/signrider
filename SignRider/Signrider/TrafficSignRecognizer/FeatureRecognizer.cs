@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
+using System.Windows.Forms;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -17,20 +18,27 @@ using Emgu.CV.UI;
 
 using Emgu.CV.ML;
 using Emgu.CV.ML.Structure;
+using System.IO;
 
-using System.Diagnostics;
-
-using System.Windows.Forms;
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
-
 
 namespace Signrider
 {
     //TODO:
     public enum SignType { SpeedLimit30, Stop };
 
-    class FeatureRecognizer
+    public struct FeatureExample
+    {
+        public string name;
+        public GrayImage grayImage;
+        public BGRImage rgbImage;
+        public SignShape shape;
+        public SignType type;
+        public SignColour color;
+    }
+
+    public class FeatureRecognizer
     {
         SVMParams SVMParameters;
         SVM SVMModel;
@@ -102,7 +110,7 @@ namespace Signrider
 
         }
 
-        private GrayImage preprocess(TestImage aimage)
+        private GrayImage preprocess(FeatureExample aimage)
         {
             BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
             GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
@@ -411,7 +419,6 @@ filledImage.FillConvexPoly(points, new Gray(255));
                 GW = GW.ConcateHorizontal(GaborWavelet(R, C, i, v));
             }
 
-
             //img.SmoothGaussian(5, 5, 1.5, 1.5);
             //Image<Bgr, Byte> img2 = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
             Image<Gray, double> GWOutput = GW.Resize(10, INTER.CV_INTER_LINEAR);
@@ -557,7 +564,7 @@ filledImage.FillConvexPoly(points, new Gray(255));
         }
 
         //TODO: LIST??
-        public void trainImages(List<TestImage> images)
+        public void trainImages(List<FeatureExample> images)
         {
             int imagesCount = images.Count();
             if (imagesCount < 1)
@@ -567,7 +574,7 @@ filledImage.FillConvexPoly(points, new Gray(255));
             Matrix<float> trainClasses = new Matrix<float>(imagesCount, 1);
             for (int i = 0; i < imagesCount; i++)
             {
-                TestImage image = images[i];
+                FeatureExample image = images[i];
                 GrayImage preprosessedImage = preprocess(image);
                 CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
@@ -582,13 +589,13 @@ filledImage.FillConvexPoly(points, new Gray(255));
             Console.WriteLine("DONE");
         }
         
-        public void testImages(List<TestImage> images)
+        public void testImages(List<FeatureExample> images)
         {
             Console.WriteLine("TESTING... ");
             int imagesCount = images.Count();
             for (int i = 0; i < imagesCount; i++)
             {
-                TestImage image = images[i];
+                FeatureExample image = images[i];
                 GrayImage preprosessedImage = preprocess(image);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
                 //SVMModel.Predict(parameter.GetRow(0));
@@ -620,9 +627,78 @@ filledImage.FillConvexPoly(points, new Gray(255));
 
         }
 
-        public void trainFeutureReconizer()
+        public void trainFeatureReconizer()
         {
 
+        }
+
+        public static List<FeatureExample> extractExamplesFromDirectory(string dir)
+        {
+            Debug.WriteLine("Loading test Directory example " + dir);
+
+            List<FeatureExample> examples = new List<FeatureExample>();
+
+            if (System.IO.Directory.Exists(dir))
+            {
+                string[] files = Utilities.GetFiles(dir, "*BW.jpg|*BW.png", SearchOption.AllDirectories);
+
+                foreach (string bwFile in files)
+                {
+                    string rgbFile = bwFile.Replace("_BW", "_RGB");
+
+                    if (!System.IO.File.Exists(rgbFile))
+                        continue;
+
+                    Debug.WriteLine("Loaded image: " + bwFile);
+                    Debug.Flush();
+
+                    string[] pathDirectories = bwFile.Split(Path.DirectorySeparatorChar);
+                    int numPathDirectories = pathDirectories.Count();
+
+                    if (numPathDirectories < 3)
+                        continue;
+
+                    string signTypeString = pathDirectories[numPathDirectories - 2];
+                    string signShapeString = pathDirectories[numPathDirectories - 3];
+
+                    SignShape shape;
+                    if (Enum.IsDefined(typeof(SignShape), signShapeString))
+                        shape = (SignShape)Enum.Parse(typeof(SignShape), signShapeString);
+                    else
+                        continue;
+
+                    SignType type;
+                    if (Enum.IsDefined(typeof(SignType), signTypeString))
+                        type = (SignType)Enum.Parse(typeof(SignType), signTypeString);
+                    else
+                        continue;
+
+                    string[] nameTokens = Path.GetFileNameWithoutExtension(bwFile).Split('_');
+                    if (nameTokens.Count() < 3)
+                        continue;
+
+                    string signColorString = nameTokens[nameTokens.Count() - 2];
+                    SignColour color;
+
+                    if (Enum.IsDefined(typeof(SignColour), signColorString))
+                        color = (SignColour)Enum.Parse(typeof(SignColour), signColorString);
+                    else
+                        continue;
+
+                    FeatureExample example = new FeatureExample();
+                    example.name = bwFile;
+                    example.grayImage = new GrayImage(bwFile);
+                    example.rgbImage = new BGRImage(rgbFile);
+                    example.color = color;
+                    example.shape = shape;
+                    example.type = type;
+
+                    examples.Add(example);
+
+                    //Debug.WriteLine(shapeString + " " + typeString + " " + colorString);
+                }
+            }
+            return examples;
         }
     }
 }
