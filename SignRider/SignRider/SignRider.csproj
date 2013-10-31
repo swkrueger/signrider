@@ -71,9 +71,6 @@
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.10.1.1\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="MicroMvvm">
-      <HintPath>..\MicroMvvm\bin\Debug\MicroMvvm.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="PropertyChanged">
       <HintPath>..\packages\PropertyChanged.Fody.1.41.0.0\Lib\NET35\PropertyChanged.dll</HintPath>
@@ -110,6 +107,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MicroMvvm\ObservableObject.cs" />
+    <Compile Include="MicroMvvm\PropertySupport.cs" />
+    <Compile Include="MicroMvvm\RelayCommand.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="Views\HomeMenuView.xaml.cs">
       <DependentUpon>HomeMenuView.xaml</DependentUpon>
