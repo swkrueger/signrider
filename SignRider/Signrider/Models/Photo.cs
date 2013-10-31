@@ -11,7 +11,7 @@ using Emgu.CV.Structure;
 
 namespace Signrider
 {
-    class Photo
+    public class Photo
     {
         #region Construction
         public Photo(string path)

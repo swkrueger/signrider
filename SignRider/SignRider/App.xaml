@@ -1,12 +1,16 @@
 ﻿<Application x:Class="Signrider.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Signrider"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/GlobalResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <local:EmguToWpfImageConverter x:Key="imageConverter" />
+            <local:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            <local:InvertBooleanToVisibilityConverter x:Key="inverseBooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

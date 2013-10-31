@@ -14,7 +14,7 @@ using PropertyChanged;
 namespace Signrider
 {
     [ImplementPropertyChanged]
-    class AlbumViewModel
+    public class AlbumViewModel
     {
         #region Construction
         public AlbumViewModel()

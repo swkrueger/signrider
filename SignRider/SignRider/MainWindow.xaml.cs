@@ -64,6 +64,17 @@ namespace Signrider
         // }
 
         public TrafficSignRecognizer SignRecognizer { get; private set; }
+
+        private void photosListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int numSelected = photosListBox.SelectedItems.Count;
+            if (numSelected == 1)
+            {
+                PhotoViewModel selected = (PhotoViewModel)photosListBox.SelectedItem;
+                MainView.Content = new Views.PhotoView(selected);
+                // Yay!
+            }
+        }
     }
 
 }

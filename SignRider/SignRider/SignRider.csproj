@@ -119,6 +119,9 @@
     <Compile Include="TrafficSignRecognizer\ShapeClassifier.cs" />
     <Compile Include="TrafficSignRecognizer\TrafficSignRecognizer.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="Views\PhotoView.xaml.cs">
+      <DependentUpon>PhotoView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Resources\GlobalResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -144,6 +147,10 @@
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PhotoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

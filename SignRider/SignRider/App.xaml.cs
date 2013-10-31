@@ -43,6 +43,26 @@ namespace Signrider
         }
     }
 
+    public class InvertBooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null)
+                return Visibility.Collapsed;
+
+            var isVisible = !(bool)value;
+
+            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var visiblity = (Visibility)value;
+
+            return visiblity != Visibility.Visible;
+        }
+    }
+
     public class EmguToWpfImageConverter : IValueConverter
     {
         /// <summary>

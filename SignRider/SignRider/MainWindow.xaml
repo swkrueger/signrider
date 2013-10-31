@@ -8,10 +8,6 @@
         Title="Signrider" Height="518" Width="785"
         SaveWindowPosition="True" ShowIconOnTitleBar="True">
     <Controls:MetroWindow.Resources>
-        <ResourceDictionary>
-            <local:EmguToWpfImageConverter x:Key="imageConverter" />
-            <local:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
-        </ResourceDictionary>
     </Controls:MetroWindow.Resources>
     <Controls:MetroWindow.DataContext>
         <local:AlbumViewModel />
@@ -22,7 +18,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ListBox x:Name="photosListBox" ItemsSource="{Binding photos}" Grid.Row="0" Style="{DynamicResource MetroListBox}">
+            <ListBox x:Name="photosListBox" ItemsSource="{Binding photos}" Grid.Row="0" Style="{DynamicResource MetroListBox}" SelectionChanged="photosListBox_SelectionChanged">
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="LayoutTransform">
