@@ -14,6 +14,9 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
+using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
+using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+
 namespace Signrider
 {
     //-> enum containing the road sign colours
@@ -22,7 +25,6 @@ namespace Signrider
     //-> class executing colour segmentation
     public class ColourSegmenter
     {
-        private List<ColourSegment> colourSegmentList = new List<ColourSegment>();
         private int minimumContourArea = 1000;
         private int minimumSegmentWidth = 30;
         private int minimumSegmentHeight = 30;
@@ -54,38 +56,38 @@ namespace Signrider
                         fullBinaryImage = GetPixelMask("CMYK", colour, image);
                     }
 
-                Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
-                Image<Gray, byte> binaryCrop = null;
-                Image<Bgr, byte> rgbCrop = null;
+                    Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
+                    Image<Gray, byte> binaryCrop = null;
+                    Image<Bgr, byte> rgbCrop = null;
 
-                // TODO: Check FindContour parameters
+                    // TODO: Check FindContour parameters
                     using (MemStorage storage = new MemStorage())
                     {
                         for (var contour = fullBinaryImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                {
-                    if (contour.Area > minimumContourArea)
-                    {
-                                isSignFound = true;
-                        Rectangle rect1 = contour.BoundingRectangle;
-                        Rectangle rect = rect1;
-
-                        if ((rect1.X - 1) > 0 && ((rect1.X + (rect1.Width + 1)) < image.Width) && (rect1.Y - 2) > 0 && ((rect1.Y + (rect1.Height + 2)) < image.Height))
-                            rect = new Rectangle(rect1.X - 1, rect1.Y - 1, rect1.Width + 2, rect1.Height + 2);
-
-                        int rWidth = rect.Width;
-                        int rHeight = rect.Height;
-                        double aspectRatio = (double)rWidth / (double)rHeight;
-
-                        if (rWidth > minimumSegmentWidth && rHeight > minimumSegmentHeight && aspectRatio > 1 / (double)minimumAspectRatio && aspectRatio < minimumAspectRatio)//
                         {
-                            mask.Draw(contour, new Gray(255), -1);
-                            binaryCrop = mask.Copy(rect);
-                            rgbCrop = image.Copy(rect);
-                            colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
+                            if (contour.Area > minimumContourArea)
+                            {
+                                isSignFound = true;
+                                Rectangle rect1 = contour.BoundingRectangle;
+                                Rectangle rect = rect1;
+
+                                if ((rect1.X - 1) > 0 && ((rect1.X + (rect1.Width + 1)) < image.Width) && (rect1.Y - 2) > 0 && ((rect1.Y + (rect1.Height + 2)) < image.Height))
+                                    rect = new Rectangle(rect1.X - 1, rect1.Y - 1, rect1.Width + 2, rect1.Height + 2);
+
+                                int rWidth = rect.Width;
+                                int rHeight = rect.Height;
+                                double aspectRatio = (double)rWidth / (double)rHeight;
+
+                                if (rWidth > minimumSegmentWidth && rHeight > minimumSegmentHeight && aspectRatio > 1 / (double)minimumAspectRatio && aspectRatio < minimumAspectRatio)//
+                                {
+                                    mask.Draw(contour, new Gray(255), -1);
+                                    binaryCrop = mask.Copy(rect);
+                                    rgbCrop = image.Copy(rect);
+                                    colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
+                                }
+                            }
                         }
                     }
-                }
-            }
 
 
                     if (signNotFound == SignNotFound.HSV)
@@ -139,7 +141,7 @@ namespace Signrider
                 if (Colour == SignColour.RED)
                 {
                     channels[0]._Not();
-            }
+                }
                 channels[1]._ThresholdBinary(new Gray(50), new Gray(255.0));
                 channels[2]._ThresholdBinary(new Gray(StartRangeV), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
@@ -251,7 +253,7 @@ namespace Signrider
 
                 return mask;
             }
-                }
+        }
 
         public void explodePhotoToSegmentFiles(string filePath, string outputDir)
         {
@@ -286,13 +288,13 @@ namespace Signrider
                 }
             }
             catch (OutOfMemoryException)
-                {
+            {
                 GC.Collect();
             }
 
             // FIXME: This is not good practice
             GC.Collect();
-                }
+        }
 
         public void explodePhotosToSegmentFiles(string[] files, string outputDir)
         {
@@ -318,12 +320,14 @@ namespace Signrider
     {
         public Image<Bgr, byte> rgbCrop { get; set; }
         public Image<Gray, byte> binaryCrop { get; set; }
+        public Contour<Point> contour { get; set; }
         public SignColour colour { get; set; }
 
-        public ColourSegment(Image<Bgr, byte> rgbCrop, Image<Gray, byte> binaryCrop, SignColour colour)
+        public ColourSegment(Image<Bgr, byte> rgbCrop, Image<Gray, byte> binaryCrop, Contour<Point> contour, SignColour colour)
         {
             this.rgbCrop = rgbCrop;
             this.binaryCrop = binaryCrop;
+            this.contour = contour;
             this.colour = colour;
         }
 
