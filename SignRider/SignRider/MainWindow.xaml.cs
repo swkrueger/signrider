@@ -46,20 +46,16 @@ namespace Signrider
 
         public void goHome()
         {
-            MainView.Content = homeMenu;
+            // TODO: Set button visibility
+            setMainView(homeMenu);
+
+            photosListBox.SelectedIndex = -1;
         }
 
-        // public UserControl _mainView;
-        // public UserControl MainView {
-        //     get { return _mainView; }
-        //     private set
-        //     {
-        //         if (value != _mainView)
-        //         {
-        //             _mainView = value;
-        //         }
-        //     }
-        // }
+        public void setMainView(UserControl newView)
+        {
+            MainView.Content = newView;
+        }
 
         private void photosListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -67,9 +63,13 @@ namespace Signrider
             if (numSelected == 1)
             {
                 PhotoViewModel selected = (PhotoViewModel)photosListBox.SelectedItem;
-                MainView.Content = new Views.PhotoView(selected);
-                // Yay!
+                setMainView(new Views.PhotoView(selected));
             }
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            goHome();
         }
     }
 

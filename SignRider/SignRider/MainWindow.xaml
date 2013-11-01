@@ -8,10 +8,37 @@
         Title="Signrider" Height="518" Width="785"
         SaveWindowPosition="True" ShowIconOnTitleBar="True">
     <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="/Resources/Icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Controls:MetroWindow.Resources>
     <Controls:MetroWindow.DataContext>
         <local:AlbumViewModel />
     </Controls:MetroWindow.DataContext>
+    <Controls:MetroWindow.WindowCommands>
+        <Controls:WindowCommands>
+            <Button x:Name="homeButton" Click="HomeButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20">
+                        <Rectangle.Resources>
+                            <SolidColorBrush x:Key="BlackBrush" Color="White" />
+                        </Rectangle.Resources>
+                        <Rectangle.Fill>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_home}" />
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="Home" Margin="5,0,0,0" Foreground="White" />
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.WindowCommands>
     <DockPanel LastChildFill="True">
         <Grid DockPanel.Dock="Left" Width="160" Background="{DynamicResource AccentColorBrush4}">
             <Grid.RowDefinitions>

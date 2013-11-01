@@ -23,10 +23,17 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding photo.title}" Foreground="{DynamicResource AccentColorBrush}" FontSize="{DynamicResource HeaderFontSize}" FontFamily="{DynamicResource HeaderFontFamily}" Margin="5" />
         <Image Grid.Row="1" Grid.Column="0" Source="{Binding Canvas}" Stretch="Uniform" Visibility="{Binding IsBusyLoadingCanvas, Converter={StaticResource inverseBooleanToVisibilityConverter}}" />
         <Controls:ProgressRing Grid.Row="1" Grid.Column="0" IsActive="True"  Visibility="{Binding IsBusyLoadingCanvas, Converter={StaticResource booleanToVisibilityConverter}}" />
-        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="150" Background="{DynamicResource AccentColorBrush3}" Margin="10,0,0,0" >
-            <TextBlock Text="Signs" Margin="5" TextAlignment="Center" FontSize="18" FontFamily="{DynamicResource HeaderFontFamily}"/>
-            <Separator />
-            <ListBox x:Name="segmentsListBox" Style="{DynamicResource MetroListBox}" Margin="5">
+        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="150" Background="{DynamicResource AccentColorBrush3}" Margin="10,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Signs" Margin="5" TextAlignment="Center" FontSize="18" FontFamily="{DynamicResource HeaderFontFamily}"/>
+            <Separator Grid.Row="1" />
+            <Controls:ProgressRing Grid.Row="2" IsActive="True" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource booleanToVisibilityConverter}}" />
+            <ListBox Grid.Row="2" x:Name="segmentsListBox" ItemsSource="{Binding SegmentViews}" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource inverseBooleanToVisibilityConverter}}" Style="{DynamicResource MetroListBox}" Margin="5">
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="LayoutTransform">
@@ -49,13 +56,13 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical" Margin="5">
-                            <Image Source="{Binding SignImage, Converter={StaticResource imageConverter}}" Width="96" />
+                            <Image Source="{Binding Thumbnail}" Width="96" Height="96" Stretch="Uniform" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
-        </StackPanel>
+            <TextBlock Grid.Row="3" Text="{Binding SegmentLoadingStatusString}" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource booleanToVisibilityConverter}}" TextAlignment="Center" Margin="5" />
+        </Grid>
 
     </Grid>
 </UserControl>

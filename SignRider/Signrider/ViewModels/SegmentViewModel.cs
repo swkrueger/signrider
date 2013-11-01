@@ -7,15 +7,28 @@ using MicroMvvm;
 using PropertyChanged;
 using System.Windows.Media.Imaging;
 
+using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
+using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+
 namespace Signrider.ViewModels
 {
     [ImplementPropertyChanged]
     public class SegmentViewModel
     {
+        #region Constants
+        private int thumbnailWidth = 128;
+        private int thumbnailHeight = 128;
+        #endregion
+
         #region Construction
         public SegmentViewModel(Models.Segment segment)
         {
             this.Segment = segment;
+            
+            this.Thumbnail = EmguToWpfImageConverter.ToBitmapSource(
+                segment.bgrImage.Resize(thumbnailWidth, thumbnailHeight, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, true)
+            );
+            this.Thumbnail.Freeze();
         }
         #endregion
 
@@ -25,6 +38,7 @@ namespace Signrider.ViewModels
         #region Properties
         public Models.Segment Segment { get; private set; }
         public BitmapSource SignImage { get; private set; }
+        public BitmapSource Thumbnail { get; private set; }
         public bool IsGarbage
         {
             get

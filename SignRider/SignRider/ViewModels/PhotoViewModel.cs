@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Signrider
 {
@@ -34,6 +35,7 @@ namespace Signrider
             this.photo = photo;
             IsBusyLoadingImage = false;
             IsBusyLoadingCanvas = false;
+            IsBusyLoadingSegments = false;
         }
         #endregion
 
@@ -91,6 +93,8 @@ namespace Signrider
 
         public bool IsBusyLoadingImage { get; private set; }
         public bool IsBusyLoadingCanvas { get; private set; }
+        public bool IsBusyLoadingSegments { get; private set; }
+        public string SegmentLoadingStatusString { get; private set; }
         #endregion
 
         private void load()
@@ -121,7 +125,11 @@ namespace Signrider
                 IsBusyLoadingImage = false;
 
                 if (!isActive) unload();
-                else loadCanvas();
+                else
+                {
+                    loadCanvas();
+                    loadSegments();
+                }
             });
 
             bw.RunWorkerAsync();
@@ -134,8 +142,76 @@ namespace Signrider
             IsBusyLoadingCanvas = false;
         }
 
+        private void loadSegments()
+        {
+            SegmentLoadingStatusString = "";
+            IsBusyLoadingSegments = true;
+
+            BackgroundWorker bw = new BackgroundWorker();
+
+            // this allows our worker to report progress during work
+            bw.WorkerReportsProgress = true;
+
+            // what to do in the background thread
+            bw.DoWork += new DoWorkEventHandler(
+            delegate(object o, DoWorkEventArgs args)
+            {
+                BackgroundWorker b = o as BackgroundWorker;
+
+                List<ViewModels.SegmentViewModel> newSegmentViews = new List<ViewModels.SegmentViewModel>();
+
+                b.ReportProgress(0, "Segmentizing...");
+                List<ColourSegment> colourSegments = TrafficSignRecognizer.Segmenter.determineColourSegments(image);
+
+                b.ReportProgress(50, "Recognizing...");
+                foreach (ColourSegment colourSegment in colourSegments)
+                {
+                    ViewModels.SegmentViewModel newSegmentViewModel =
+                        new ViewModels.SegmentViewModel(
+                            new Models.Segment(colourSegment)
+                        );
+
+                    newSegmentViews.Add(newSegmentViewModel);
+                }
+
+                args.Result = newSegmentViews;
+            });
+
+            // what to do when progress changed (update the progress bar for example)
+            bw.ProgressChanged += new ProgressChangedEventHandler(
+            delegate(object o, ProgressChangedEventArgs args)
+            {
+                SegmentLoadingStatusString = (string)args.UserState;
+            });
+
+            // what to do when worker completes its task (notify the user)
+            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
+            delegate(object o, RunWorkerCompletedEventArgs args)
+            {
+                if (isActive)
+                {
+                    List<ViewModels.SegmentViewModel> newSegmentViews =
+                        (List<ViewModels.SegmentViewModel>)args.Result;
+                    IsBusyLoadingSegments = false;
+
+                    foreach (ViewModels.SegmentViewModel view in newSegmentViews)
+                        segmentViews.Add(view);
+                }
+                else
+                {
+                    unload();
+                }
+            });
+
+            bw.RunWorkerAsync();
+        }
+
         private void unload()
         {
+            if (IsBusyLoadingImage || IsBusyLoadingCanvas || IsBusyLoadingSegments)
+                return;
+            // TODO: Call unload after backgroundWorker finishes
+
             if (image != null)
             {
                 image.Dispose();
@@ -149,6 +225,8 @@ namespace Signrider
             }
 
             Canvas = null;
+
+            segmentViews.Clear();
         }
     }
 }
