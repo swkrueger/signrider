@@ -21,7 +21,7 @@ namespace Signrider
     {
         Circle,
         Octagon,
-        Square,
+        Rectangle,
         TriangleUp,
         TriangleDown,
         Garbage

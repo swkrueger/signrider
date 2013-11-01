@@ -34,7 +34,10 @@ namespace Signrider
         KeepLeft,
         Stop,
         NoStop,
-        WarningStop
+        WarningStop,
+        Countdown1,
+        Yield,
+        Crossroad
     };
 
     public struct FeatureExample
@@ -418,7 +421,10 @@ namespace Signrider
                         ppoint = new Point(ijk * 5, 200 - (int)dotprot / 2);
                         ijk++;
 
+                        testCrop3.Dispose();
                     }
+
+                    testCrop.Dispose();
                 }
             }
 
@@ -433,12 +439,20 @@ namespace Signrider
             //CvInvoke.cvShowImage("edge", edge);
             saveDebugImage(edge, "edge");
 
+            divImg2.Dispose();
+            histogram.Dispose();
+            img.Dispose();
+            edge.Dispose();
+
+            // GC.Collect();
+
             return returnMatrix;
 
         }
 
         private void saveDebugImage(BGRImage image, string name)
         {
+            return;
             if (!Directory.Exists(debugFolder))
             {
                 Directory.CreateDirectory(debugFolder);
@@ -552,8 +566,8 @@ namespace Signrider
                     Matrix<float> parameters = featureExampleElement.parameter;
                     //TODO: Beter fuksie kry
                     for (int k = 0; k < featureVectorDimension; k++)
-                        trainData[i, j] = parameters[0, j];
-                    trainClasses[i, 0] = (float)featureExampleElement.type;
+                        trainData[j, k] = parameters[0, k];
+                    trainClasses[j, 0] = (float)featureExampleElement.type;
                 }
                 bool trained = SVMModels[i].Train(trainData, trainClasses, null, null, SVMParameters);
                 isTrained = isTrained & trained;
