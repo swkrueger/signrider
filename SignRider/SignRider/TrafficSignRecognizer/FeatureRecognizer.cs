@@ -48,6 +48,12 @@ namespace Signrider
         public string directory;
     }
 
+    public struct FeatureExampleElement
+    {
+        public Matrix<float> parameter;
+        public SignType type;
+    }
+
     //TODO: templateting
     public struct DebugImage
     {
@@ -57,6 +63,34 @@ namespace Signrider
 
     public class FeatureRecognizer
     {
+        // Constants
+        private const int featureVectorDimension = 128;
+
+        // Preprocessor settings
+/*        private bool preprocessorResize = true;
+        private bool preprocessorAddBorder = true;
+        private bool preprocessorOpenFilter = false;
+        private bool preprocessorPyr = true;
+        private bool preprocessorBlur = true;
+        private bool preprocessorStripBorder = true;
+        private bool preprocessorConvexHullFill = false;
+
+        // Debugging output settings
+        private bool debugPlotFeatureVector = false;
+        private bool debugPauseOnImageShow = true;
+        private bool debugPreprocessor = false;*/
+
+        // Private class variables
+        //private SVM SvmModel = new SVM();
+        //private SVMParams SvmParameters;
+        List<SVM> SVMModels = new List<SVM>();
+        MCvSVMParams paramsm;// = new MCvSVMParams();
+        SVMParams SVMParameters;
+        List<DebugImage> debugImages;
+        string debugFolder;
+
+        private int signShapeCount = Enum.GetValues(typeof(SignShape)).Length - 1;
+
         public bool isTrained { get; private set; }
 
         public FeatureRecognizer()
@@ -73,17 +107,20 @@ namespace Signrider
             SVMParameters.Degree = 3;
             SVMParameters.C = 1;
             SVMParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
-            SVMModel = new SVM();
             paramsm = new MCvSVMParams();
             paramsm.kernel_type = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
             //debugImages = new List<DebugImage>();
             debugImages = null;
-        }
 
-        SVMParams SVMParameters;
-        SVM SVMModel;
-        List<DebugImage> debugImages;
-        string debugFolder;
+            //SVMModel = new SVM();
+           // foreach(SignShape shape in Enum.GetValues(typeof(SignShape)))
+            for (int i = 0;i < signShapeCount;i++)
+            {
+                SVM model = new SVM();
+                SVMModels.Add(model);
+//                MessageBox.Show(shape.ToString() + " " + ((int)shape).ToString());
+            }
+        }
 
         private void drawGrid(GrayImage image)
         {
@@ -210,29 +247,20 @@ namespace Signrider
             }
             
             saveDebugImage(splitimg[2],"Corrected lightness");
-            //CvInvoke.cvShowImage("Test sha2", splitimg[1]);
             CvInvoke.cvMerge(splitimg[0], splitimg[1], splitimg[2], IntPtr.Zero, hlk);
             saveDebugImage( hlk.Convert<Bgr, Byte>(),"RGB image after color correction");
 
             StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
             element = new StructuringElementEx(2, 2, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
-            //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 1);
             splitimg[2]._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
             saveDebugImage(splitimg[2], "after Morph");
             saveDebugImage(splitimg[2].Canny(500, 300), "Edge after morph");
-            //TODO:GEEL
-            // TODO:crop
-            //TODO: adaptive white threshold
 
             Image<Gray, byte> grayImage = splitimg[2];
  
             Image<Gray, byte> paddedIamge= new Image<Gray, byte>(350,350);
             
 
-            /*paddedIamge.ROI = new Rectangle(0, 0,300 , 300);
-            //paddedIamge = paddedIamge.Add(grayImage);
-            CvInvoke.cvCopy(grayImage,paddedIamge, IntPtr.Zero);
-            paddedIamge.ROI = Rectangle.Empty;*/
             CvInvoke.cvCopyMakeBorder(grayImage, paddedIamge, new Point(25, 25), BORDER_TYPE.CONSTANT,new MCvScalar(0));
             paddedIamge._ThresholdBinary(new Gray(120), new Gray(255));
             saveDebugImage(paddedIamge, "Binary image (larger)");
@@ -248,7 +276,7 @@ namespace Signrider
                 
                 
                 //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString() + box.center.X.ToString());
-                Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
                 if (box.size.Height < 5 || box.size.Width < 5)
                     maskImage.FillConvexPoly(points, new Gray(255));
 
@@ -270,7 +298,7 @@ namespace Signrider
                  //                filledImage.FillConvexPoly(points, new Gray(255));
                  MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
 
-                 Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                 //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
                  if (box.size.Height < 5 || box.size.Width < 5)
                  {
                      paddedIamge.FillConvexPoly(points, new Gray(0));
@@ -396,7 +424,8 @@ namespace Signrider
             saveDebugImage(histogram, "LESH histogram");
 
             drawGrid(edge);
-            CvInvoke.cvShowImage("edge", edge);
+            //CvInvoke.cvShowImage("edge", edge);
+            saveDebugImage(edge, "edge");
 
             return returnMatrix;
 
@@ -429,6 +458,8 @@ namespace Signrider
         {
             saveDebugImage(image.Convert<Bgr, Byte>(), name);
         }
+
+
         
         //TODO: LIST??
         public void train(List<FeatureExample> images)
@@ -437,32 +468,45 @@ namespace Signrider
             if (imagesCount < 1)
                 return;
             Console.WriteLine("Start to train " + imagesCount + " images");
-            Matrix<float> trainData = new Matrix<float>(imagesCount, 128);
-            Matrix<float> trainClasses = new Matrix<float>(imagesCount, 1);
+
+            List<FeatureExampleElement>[] trainlist = new List<FeatureExampleElement>[signShapeCount];
+            for (int i = 0; i < trainlist.Count(); i++)
+                trainlist[i] = new List<FeatureExampleElement>();
+
             for (int i = 0; i < imagesCount; i++)
             {
                 FeatureExample image = images[i];
                 debugFolder = image.directory + image.name + "\\";
                 //GrayImage preprosessedImage = preprocess(image);
                 GrayImage preprosessedImage = preprocess(image.rgbImage, image.grayImage);
-               CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
-                Matrix<float> parameter = calculateParameters(preprosessedImage);
-               // MessageBox.Show("was ");
-                //TODO: Beter fuksie kry
-                for (int j = 0; j < 128; j++)
-                    trainData[i, j] = parameter[0, j];
-                trainClasses[i, 0] = (float)image.type;
+               //CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
+
+               FeatureExampleElement element = new FeatureExampleElement();
+               element.type = image.type;
+               element.parameter = calculateParameters(preprosessedImage);
+
+               SignShape shape = image.shape;
+               //TODO: change??
+               if (shape == SignShape.Garbage)
+               {
+                   for (int j = 0; j < trainlist.Count(); j++)
+                       trainlist[j].Add(element);
+               }
+               else
+                    trainlist[(int)shape].Add(element);
+               
             }
-            Console.WriteLine("Start SVM training");
+            trainSVM(trainlist);
+       /*     Console.WriteLine("Start SVM training");
             Console.WriteLine(trainData.Rows.ToString() + " " + trainData.Cols.ToString() + " " + trainClasses.Rows.ToString() + " " + trainClasses.Cols.ToString());
-            trainSVM(trainData, trainClasses);
+            trainSVM(trainData, trainClasses);*/
             Console.WriteLine("DONE");
         }
 
         public void test(List<FeatureExample> images)
         {
-            int imagesCount = images.Count();
-            Matrix<float> trainClasses = new Matrix<float>(1, 128);
+  /*          int imagesCount = images.Count();
+            Matrix<SignShape, float> trainClasses = new Matrix<float>(1, 128);
             for (int i = 0; i < imagesCount; i++)
             {
                 FeatureExample image = images[i];
@@ -475,16 +519,44 @@ namespace Signrider
                 //SVMModel.Predict(trainClasses);
                 MessageBox.Show("Image " + i.ToString() + ": " + classifySign(parameter, image.shape).ToString());
                 Console.WriteLine("DONE");
-            }
+            }*/
         }
 
-        MCvSVMParams paramsm;// = new MCvSVMParams();
-        private void trainSVM(Matrix<float> para, Matrix<float> signType)
+        private void trainSVM(List<FeatureExampleElement>[] trainlist)
         {
+            isTrained = true;
+            //foreach (List<FeatureExampleElement> featureExampleElementList in trainlist)
+            for (int i = 0; i < trainlist.Count(); i++)
+            {
+                List<FeatureExampleElement> featureExampleElementList = trainlist.ElementAt(i);
+                int count = featureExampleElementList.Count();
+                Matrix<float> trainData = new Matrix<float>(count, 128);
+                Matrix<float> trainClasses = new Matrix<float>(count, 1);
+
+                if (featureExampleElementList.Count() < 1)
+                {
+                    MessageBox.Show("Please provide a complete training dataset. Dataset for " + ((SignShape)i).ToString() + " is missing");
+                    isTrained = false;
+                    return;
+                }
+                //foreach (FeatureExampleElement featureExampleElement in featureExampleElementList)
+                for (int j = 0; j < featureExampleElementList.Count(); j++)
+                {
+                    FeatureExampleElement featureExampleElement = featureExampleElementList.ElementAt(j);
+                    Matrix<float> parameters = featureExampleElement.parameter;
+                    //TODO: Beter fuksie kry
+                    for (int k = 0; k < featureVectorDimension; k++)
+                        trainData[i, j] = parameters[0, j];
+                    trainClasses[i, 0] = (float)featureExampleElement.type;
+                }
+                bool trained = SVMModels[i].Train(trainData, trainClasses, null, null, SVMParameters);
+                isTrained = isTrained & trained;
+                //trainData.Add(entry.Value.First().parameter);
+            }
+            /*
             bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
-            //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);
-            Console.WriteLine("Trained: " + trained.ToString());
-            isTrained = trained;
+            //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);*/
+            Console.WriteLine("Trained: " + isTrained.ToString());
         }
 
         public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
@@ -498,7 +570,8 @@ namespace Signrider
 
         private SignType classifySign(Matrix<float> parameters, SignShape shape)
         {
-            return (SignType)(int)SVMModel.Predict(parameters);
+            return (SignType)(int)SVMModels[(int)shape].Predict(parameters);
+            //return SignType.Garbage;
         }
 
         public static List<FeatureExample> extractExamplesFromDirectory(string dir)
