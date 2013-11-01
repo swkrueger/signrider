@@ -131,10 +131,12 @@ namespace Signrider
                 int StartRangeH = 0;
                 int EndRangeH = 0;
                 int StartRangeV = 0;
+                int StartRangeS = 0;
                 if (Colour == SignColour.BLUE)
                 {
                     StartRangeH = 100;
                     EndRangeH = 135;
+                    StartRangeS = 110;
                     StartRangeV = 30;
                 }
 
@@ -142,6 +144,7 @@ namespace Signrider
                 {
                     StartRangeH = 10;
                     EndRangeH = 170;
+                    StartRangeS = 50;
                     StartRangeV = 70;
                 }
                 Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>();
@@ -151,7 +154,7 @@ namespace Signrider
                 {
                     channels[0]._Not();
                 }
-                channels[1]._ThresholdBinary(new Gray(50), new Gray(255.0));
+                channels[1]._ThresholdBinary(new Gray(StartRangeS), new Gray(255.0));
                 channels[2]._ThresholdBinary(new Gray(StartRangeV), new Gray(255.0));
                 CvInvoke.cvAnd(channels[0], channels[1], channels[0], IntPtr.Zero);
                 CvInvoke.cvAnd(channels[0], channels[2], channels[0], IntPtr.Zero);
@@ -246,19 +249,19 @@ namespace Signrider
                 CvInvoke.cvAnd(mask, filterK, mask, IntPtr.Zero);
 
                 // Free memory
-                //bgr.Dispose();
-                //for (int i = 0; i < 3; i++) bgrChannels[i].Dispose();
-                //oneMinBlue.Dispose();
-                //oneMinGreen.Dispose();
-                //oneMinRed.Dispose();
-                //oneMinRedMinBlack.Dispose();
-                //oneMinGreenMinBlack.Dispose();
-                //oneMinBlueMinBlack.Dispose();
-                //oneMinBlack.Dispose();
-                //filterC.Dispose();
-                //filterY.Dispose();
-                //filterM.Dispose();
-                //filterK.Dispose();
+                bgr.Dispose();
+                for (int i = 0; i < 3; i++) bgrChannels[i].Dispose();
+                oneMinBlue.Dispose();
+                oneMinGreen.Dispose();
+                oneMinRed.Dispose();
+                oneMinRedMinBlack.Dispose();
+                oneMinGreenMinBlack.Dispose();
+                oneMinBlueMinBlack.Dispose();
+                oneMinBlack.Dispose();
+                filterC.Dispose();
+                filterY.Dispose();
+                filterM.Dispose();
+                filterK.Dispose();
 
                 return mask;
             }
