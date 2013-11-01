@@ -10,6 +10,7 @@ using Emgu.CV.Structure;
 
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+using System.Drawing;
 
 namespace Signrider.Models
 {
@@ -41,12 +42,14 @@ namespace Signrider.Models
         public SignColour colour { get; private set; }
         public SignShape shape { get; private set; }
         public SignType type { get; private set; }
+        public Point[] contour { get; private set; }
 
         public Segment(ColourSegment colourSegment)
         {
             this.bgrImage = colourSegment.rgbCrop;
             this.binaryImage = colourSegment.binaryCrop;
             this.colour = colourSegment.colour;
+            this.contour = colourSegment.contour;
 
             this.type = SignType.Garbage;
 

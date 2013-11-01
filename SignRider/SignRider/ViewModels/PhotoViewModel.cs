@@ -16,6 +16,7 @@ using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Signrider
 {
@@ -36,6 +37,7 @@ namespace Signrider
             IsBusyLoadingImage = false;
             IsBusyLoadingCanvas = false;
             IsBusyLoadingSegments = false;
+            selectedIndex = -1;
         }
         #endregion
 
@@ -44,6 +46,8 @@ namespace Signrider
         bool isActive;
         private Image<Bgr, Byte> image;
         private Image<Bgr, Byte> resizedImage;
+        private Image<Bgr, Byte> canvasBackground;
+        private int selectedIndex;
         ObservableCollection<ViewModels.SegmentViewModel> segmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
         #endregion
 
@@ -91,6 +95,21 @@ namespace Signrider
             }
         }
 
+        public int SelectedIndex {
+            get
+            {
+                return selectedIndex;
+            }
+            set
+            {
+                if (selectedIndex != value)
+                {
+                    selectedIndex = value;
+                    if (IsActive)
+                        redrawCanvas();
+                }
+            }
+        }
         public bool IsBusyLoadingImage { get; private set; }
         public bool IsBusyLoadingCanvas { get; private set; }
         public bool IsBusyLoadingSegments { get; private set; }
@@ -135,10 +154,43 @@ namespace Signrider
             bw.RunWorkerAsync();
         }
 
+        private Bgr contourColor = new Bgr(51, 255, 153);
+        private Bgr selectedContourColor = new Bgr(153, 51, 255);
+        private int contourThickness = 2;
+        private int selectedContourThickness = 4;
+
+        private BGRImage drawContoursOnImage(BGRImage background)
+        {
+            BGRImage imageWithContour = background.Copy();
+            for (int i = 0; i < SegmentViews.Count(); i++)
+            {
+                Point[] contour = SegmentViews[i].Segment.contour;
+                Point[] scaledContour = new Point[contour.Length];
+                for (int j = 0; j < contour.Length; ++j)
+                {
+                    scaledContour[j].X = (int)(contour[j].X / ((double)this.image.Width / background.Width));
+                    scaledContour[j].Y = (int)(contour[j].Y / ((double)this.image.Height / background.Height));
+                }
+
+                if (SelectedIndex == i)
+                    imageWithContour.DrawPolyline(scaledContour, true, selectedContourColor, selectedContourThickness);
+                else
+                    imageWithContour.DrawPolyline(scaledContour, true, contourColor, contourThickness);
+            }
+            return imageWithContour;
+        }
+
+        private void redrawCanvas()
+        {
+            BGRImage canvasImage = drawContoursOnImage(canvasBackground);
+            Canvas = EmguToWpfImageConverter.ToBitmapSource(canvasImage);
+        }
+
         private void loadCanvas()
         {
             IsBusyLoadingCanvas = true;
-            Canvas = EmguToWpfImageConverter.ToBitmapSource(resizedImage);
+            canvasBackground = resizedImage;
+            redrawCanvas();
             IsBusyLoadingCanvas = false;
         }
 
@@ -196,6 +248,8 @@ namespace Signrider
 
                     foreach (ViewModels.SegmentViewModel view in newSegmentViews)
                         segmentViews.Add(view);
+
+                    redrawCanvas();
                 }
                 else
                 {

@@ -33,7 +33,7 @@
             <TextBlock Grid.Row="0" Text="Signs" Margin="5" TextAlignment="Center" FontSize="18" FontFamily="{DynamicResource HeaderFontFamily}"/>
             <Separator Grid.Row="1" />
             <Controls:ProgressRing Grid.Row="2" IsActive="True" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource booleanToVisibilityConverter}}" />
-            <ListBox Grid.Row="2" x:Name="segmentsListBox" ItemsSource="{Binding SegmentViews}" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource inverseBooleanToVisibilityConverter}}" Style="{DynamicResource MetroListBox}" Margin="5">
+            <ListBox Grid.Row="2" x:Name="segmentsListBox" ItemsSource="{Binding SegmentViews}" SelectedIndex="{Binding SelectedIndex}" Visibility="{Binding IsBusyLoadingSegments, Converter={StaticResource inverseBooleanToVisibilityConverter}}" Style="{DynamicResource MetroListBox}" Margin="5">
                 <ListBox.ItemContainerStyle>
                     <Style BasedOn="{StaticResource MetroListBoxItem}" TargetType="{x:Type ListBoxItem}">
                         <Setter Property="LayoutTransform">

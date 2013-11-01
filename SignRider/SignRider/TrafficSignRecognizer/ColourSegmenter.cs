@@ -90,8 +90,8 @@ namespace Signrider
                                     mask.Draw(contour, new Gray(255), -1);
                                     binaryCrop = mask.Copy(rect);
                                     rgbCrop = image.Copy(rect);
-                                    
-                                    colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
+
+                                    colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour.ToArray(), colour));
                                 }
                             }
                         }
@@ -332,10 +332,10 @@ namespace Signrider
     {
         public Image<Bgr, byte> rgbCrop { get; set; }
         public Image<Gray, byte> binaryCrop { get; set; }
-        public Contour<Point> contour { get; set; }
+        public Point[] contour { get; set; }
         public SignColour colour { get; set; }
 
-        public ColourSegment(Image<Bgr, byte> rgbCrop, Image<Gray, byte> binaryCrop, Contour<Point> contour, SignColour colour)
+        public ColourSegment(Image<Bgr, byte> rgbCrop, Image<Gray, byte> binaryCrop, Point[] contour, SignColour colour)
         {
             this.rgbCrop = rgbCrop;
             this.binaryCrop = binaryCrop;
