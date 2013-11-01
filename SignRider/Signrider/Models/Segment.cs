@@ -55,7 +55,7 @@ namespace Signrider.Models
             else
                 this.shape = SignShape.Garbage;
 
-            if (TrafficSignRecognizer.FeatureRecognizer.isTrained) {
+            if (this.shape != SignShape.Garbage && TrafficSignRecognizer.FeatureRecognizer.isTrained) {
                 this.type = TrafficSignRecognizer.FeatureRecognizer.recognizeSign(bgrImage, binaryImage, shape);
             }
         }

@@ -7,6 +7,9 @@ using MicroMvvm;
 using PropertyChanged;
 using System.Windows.Media.Imaging;
 
+using Emgu.CV;
+using Emgu.CV.Structure;
+
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
 using System.Text.RegularExpressions;
@@ -25,9 +28,11 @@ namespace Signrider.ViewModels
         public SegmentViewModel(Models.Segment segment)
         {
             this.Segment = segment;
-            
+
+            Image<Bgra, Byte> rgbaImage = Utilities.addAlphaToBgrImage(segment.bgrImage, segment.binaryImage);
+
             this.Thumbnail = EmguToWpfImageConverter.ToBitmapSource(
-                segment.bgrImage.Resize(thumbnailWidth, thumbnailHeight, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, true)
+                rgbaImage.Resize(thumbnailWidth, thumbnailHeight, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR, true)
             );
             this.Thumbnail.Freeze();
         }
@@ -59,22 +64,22 @@ namespace Signrider.ViewModels
         public string ShapeString {
             get {
                 if (TrafficSignRecognizer.ShapeClassifier.isTrained == false)
-                    return "Untrained";
+                    return "Not trained";
 
                 string shapeStringCamel = Segment.shape.ToString();
 
-                return Regex.Replace(shapeStringCamel, "(\\B[A-Z])", " $1"); 
+                return Regex.Replace(shapeStringCamel, "(\\B[A-Z0-9])", " $1");
             }
         }
 
         public string TypeString {
             get {
                 if (TrafficSignRecognizer.FeatureRecognizer.isTrained == false)
-                    return "Untrained";
+                    return "Not trained";
 
                 string typeStringCamel = Segment.type.ToString();
 
-                return Regex.Replace(typeStringCamel, "(\\B[A-Z])", " $1"); 
+                return Regex.Replace(typeStringCamel, @"(?<a>(?<!^)((?:[A-Z][a-z])|(?:(?<!^[A-Z]+)[A-Z0-9]+(?:(?=[A-Z][a-z])|$))|(?:[0-9]+)))", @" ${a}");
             }
         }
         #endregion

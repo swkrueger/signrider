@@ -6,7 +6,6 @@
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-        <ResourceDictionary Source="Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <SolidColorBrush x:Key="AccentColorBrush2" Color="{DynamicResource AccentColor2}"/>
     <SolidColorBrush x:Key="AccentColorBrush3" Color="{DynamicResource AccentColor3}"/>
