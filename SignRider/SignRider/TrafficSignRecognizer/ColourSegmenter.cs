@@ -48,11 +48,16 @@ namespace Signrider
                     }
                     else if (signNotFound == SignNotFound.tryGammaCorrect)
                     {
+                        //Image<Bgr, byte> imageGamma = new Image<Bgr, byte>(image.Width, image.Height);
+                        //image.CopyTo(imageGamma);
                         image._GammaCorrect(2.2);
                         fullBinaryImage = GetPixelMask("HSV", colour, image);
                     }
                     else if (signNotFound == SignNotFound.tryCMYK)
                     {
+                        //Image<Bgr, byte> imageGamma = new Image<Bgr, byte>(image.Width, image.Height);
+                        //image.CopyTo(imageGamma);
+                        //imageGamma._GammaCorrect(2.2);
                         fullBinaryImage = GetPixelMask("CMYK", colour, image);
                     }
 
@@ -67,7 +72,7 @@ namespace Signrider
                         {
                             if (contour.Area > minimumContourArea)
                             {
-                                isSignFound = true;
+                                
                                 Rectangle rect1 = contour.BoundingRectangle;
                                 Rectangle rect = rect1;
 
@@ -83,6 +88,7 @@ namespace Signrider
                                     mask.Draw(contour, new Gray(255), -1);
                                     binaryCrop = mask.Copy(rect);
                                     rgbCrop = image.Copy(rect);
+                                    isSignFound = true;
                                     colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
                                 }
                             }
@@ -90,22 +96,22 @@ namespace Signrider
                     }
 
 
-                    if (signNotFound == SignNotFound.HSV)
+                    if (!isSignFound && signNotFound == SignNotFound.HSV)
                     {
                         signNotFound = SignNotFound.tryGammaCorrect;
                     }
-                    else if (signNotFound == SignNotFound.tryGammaCorrect)
+                    else if (!isSignFound && signNotFound == SignNotFound.tryGammaCorrect)
                     {
                         signNotFound = SignNotFound.tryCMYK;
                     }
-                    else if (signNotFound == SignNotFound.tryCMYK)
+                    else if (!isSignFound && signNotFound == SignNotFound.tryCMYK)
                     {
                         isSignFound = true;
                     }
 
                     // Free memory
-                    fullBinaryImage.Dispose();
-                    mask.Dispose();
+                    //fullBinaryImage.Dispose();
+                    //mask.Dispose();
                     //binaryCrop.Dispose();
                     //rgbCrop.Dispose();
 
@@ -239,17 +245,17 @@ namespace Signrider
                 // Free memory
                 //bgr.Dispose();
                 //for (int i = 0; i < 3; i++) bgrChannels[i].Dispose();
-                oneMinBlue.Dispose();
-                oneMinGreen.Dispose();
-                oneMinRed.Dispose();
-                oneMinRedMinBlack.Dispose();
-                oneMinGreenMinBlack.Dispose();
-                oneMinBlueMinBlack.Dispose();
-                oneMinBlack.Dispose();
-                filterC.Dispose();
-                filterY.Dispose();
-                filterM.Dispose();
-                filterK.Dispose();
+                //oneMinBlue.Dispose();
+                //oneMinGreen.Dispose();
+                //oneMinRed.Dispose();
+                //oneMinRedMinBlack.Dispose();
+                //oneMinGreenMinBlack.Dispose();
+                //oneMinBlueMinBlack.Dispose();
+                //oneMinBlack.Dispose();
+                //filterC.Dispose();
+                //filterY.Dispose();
+                //filterM.Dispose();
+                //filterK.Dispose();
 
                 return mask;
             }
