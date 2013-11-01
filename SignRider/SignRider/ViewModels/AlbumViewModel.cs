@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using MicroMvvm;
 using PropertyChanged;
+using System.IO;
 
 namespace Signrider
 {
@@ -20,6 +21,8 @@ namespace Signrider
         public AlbumViewModel()
         {
             isBusyLoading = false;
+            isBusyTraining = false;
+            isTrained = false;
         }
         #endregion
 
@@ -38,6 +41,8 @@ namespace Signrider
 
         public int loadingProgress { get; private set; }
         public bool isBusyLoading { get; private set; }
+        public bool isBusyTraining { get; private set; }
+        public bool isTrained { get; private set; }
         #endregion
 
         #region Private Functions
@@ -92,6 +97,49 @@ namespace Signrider
         #endregion
 
         #region Commands
+        public void trainFromDirectory()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            string trainDir = folderBrowserDialog.SelectedPath;
+            string shapeTrainDir = System.IO.Path.Combine(trainDir, "Shapes");
+            string featureTrainDir = System.IO.Path.Combine(trainDir, "Features");
+
+            if (!Directory.Exists(shapeTrainDir))
+            {
+                System.Windows.MessageBox.Show("Shape training directory not found! Please put shape training images in " + shapeTrainDir);
+                return;
+            }
+
+            if (!Directory.Exists(featureTrainDir))
+            {
+                System.Windows.MessageBox.Show("Feature training directory not found! Please put shape training images in " + featureTrainDir);
+                return;
+            }
+
+            isBusyTraining = true;
+
+            bool success = TrafficSignRecognizer.train(shapeTrainDir, featureTrainDir);
+            if (!success)
+            {
+                // TODO: Descriptive error message
+                System.Windows.MessageBox.Show("Training failed");
+            }
+
+            isBusyTraining = false;
+
+            isTrained = TrafficSignRecognizer.isTrained();
+        }
+
+        public bool canTrainFromDirectory() { return !isBusyLoading; }
+
+        public ICommand trainFromDirectoryCommand
+        {
+            get { return new RelayCommand(trainFromDirectory, canTrainFromDirectory); }
+        }
+
         void loadImageFromFile()
         {
             // Create an instance of the open file dialog box.

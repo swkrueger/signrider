@@ -59,8 +59,12 @@ namespace Signrider
         private SVM SvmModel = new SVM();
         private SVMParams SvmParameters;
 
+        public bool isTrained { get; private set; }
+
         public ShapeClassifier()
         {
+            isTrained = false;
+
             // SVM settings
             // TODO: Play with SVM parameters
             SvmParameters = new SVMParams();
@@ -105,7 +109,7 @@ namespace Signrider
             }
 
             // Train SVM model
-            bool trained = SvmModel.TrainAuto(
+            isTrained = SvmModel.TrainAuto(
                 trainData,
                 trainClasses,
                 null,

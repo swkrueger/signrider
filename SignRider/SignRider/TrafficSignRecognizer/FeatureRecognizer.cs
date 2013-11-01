@@ -57,8 +57,12 @@ namespace Signrider
 
     public class FeatureRecognizer
     {
+        public bool isTrained { get; private set; }
+
         public FeatureRecognizer()
         {
+            isTrained = false;
+
             SVMParameters = new SVMParams();
             SVMParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
             //SVMParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.NU_SVC;
@@ -480,9 +484,10 @@ namespace Signrider
             bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
             //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);
             Console.WriteLine("Trained: " + trained.ToString());
+            isTrained = trained;
         }
 
-        public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage)
+        public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
         {
             debugImages = aDebugImage;
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
