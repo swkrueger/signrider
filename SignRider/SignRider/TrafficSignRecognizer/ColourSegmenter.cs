@@ -145,7 +145,7 @@ namespace Signrider
                     StartRangeH = 10;
                     EndRangeH = 170;
                     StartRangeS = 50;
-                    StartRangeV = 70;
+                    StartRangeV = 30;
                 }
                 Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>();
                 Image<Gray, Byte>[] channels = hsv.Split();
@@ -249,19 +249,19 @@ namespace Signrider
                 CvInvoke.cvAnd(mask, filterK, mask, IntPtr.Zero);
 
                 // Free memory
-                bgr.Dispose();
-                for (int i = 0; i < 3; i++) bgrChannels[i].Dispose();
-                oneMinBlue.Dispose();
-                oneMinGreen.Dispose();
-                oneMinRed.Dispose();
-                oneMinRedMinBlack.Dispose();
-                oneMinGreenMinBlack.Dispose();
-                oneMinBlueMinBlack.Dispose();
-                oneMinBlack.Dispose();
-                filterC.Dispose();
-                filterY.Dispose();
-                filterM.Dispose();
-                filterK.Dispose();
+                //bgr.Dispose();
+                //for (int i = 0; i < 3; i++) bgrChannels[i].Dispose();
+                //oneMinBlue.Dispose();
+                //oneMinGreen.Dispose();
+                //oneMinRed.Dispose();
+                //oneMinRedMinBlack.Dispose();
+                //oneMinGreenMinBlack.Dispose();
+                //oneMinBlueMinBlack.Dispose();
+                //oneMinBlack.Dispose();
+                //filterC.Dispose();
+                //filterY.Dispose();
+                //filterM.Dispose();
+                //filterK.Dispose();
 
                 return mask;
             }
