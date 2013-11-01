@@ -111,7 +111,11 @@
     <Compile Include="MicroMvvm\PropertySupport.cs" />
     <Compile Include="MicroMvvm\RelayCommand.cs" />
     <Compile Include="Models\Segment.cs" />
+    <Compile Include="SegmentDetailsWindow.xaml.cs">
+      <DependentUpon>SegmentDetailsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\AlbumViewModel.cs" />
+    <Compile Include="ViewModels\SegmentDetailsViewModel.cs" />
     <Compile Include="ViewModels\SegmentViewModel.cs" />
     <Compile Include="Views\HomeMenuView.xaml.cs">
       <DependentUpon>HomeMenuView.xaml</DependentUpon>
@@ -124,7 +128,14 @@
     <Compile Include="Views\PhotoView.xaml.cs">
       <DependentUpon>PhotoView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SegmentDetailsView.xaml.cs">
+      <DependentUpon>SegmentDetailsView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Resources\GlobalResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SegmentDetailsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -151,6 +162,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PhotoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SegmentDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

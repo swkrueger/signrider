@@ -349,25 +349,4 @@ namespace Signrider
             binaryCrop.Dispose();
         }
     }
-
-    ////-> class managing a found segment --without contour
-    //public class ColourSegment : IDisposable
-    //{
-    //    public Image<Bgr, byte> rgbCrop { get; set; }
-    //    public Image<Gray, byte> binaryCrop { get; set; }
-    //    public SignColour colour { get; set; }
-
-    //    public ColourSegment(Image<Bgr, byte> rgbCrop, Image<Gray, byte> binaryCrop, SignColour colour)
-    //    {
-    //        this.rgbCrop = rgbCrop;
-    //        this.binaryCrop = binaryCrop;
-    //        this.colour = colour;
-    //    }
-
-    //    public void Dispose()
-    //    {
-    //        rgbCrop.Dispose();
-    //        binaryCrop.Dispose();
-    //    }
-    //}
 }

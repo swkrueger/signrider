@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using Signrider.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,6 +41,20 @@ namespace Signrider.Views
         {
             Debug.WriteLine("Unloaded");
             photoViewModel.IsActive = false;
+        }
+
+        protected void HandleSegmentDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectedSegment = ((ListBoxItem)sender).Content as SegmentViewModel;
+            SegmentDetailsViewModel segmentViewModel = new SegmentDetailsViewModel(selectedSegment.Segment);
+            segmentViewModel.Name = string.Format(
+                "{0}-{1}",
+                this.photoViewModel.photo.title,
+                this.photoViewModel.SegmentViews.IndexOf(selectedSegment)
+                );
+            SegmentDetailsView view = new SegmentDetailsView(segmentViewModel);
+            SegmentDetailsWindow window = new SegmentDetailsWindow(view, segmentViewModel);
+            window.Show();
         }
     }
 }

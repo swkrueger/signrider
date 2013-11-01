@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
+
 using MicroMvvm;
 using PropertyChanged;
-using System.Windows.Media.Imaging;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
 
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
-using System.Text.RegularExpressions;
 
 namespace Signrider.ViewModels
 {

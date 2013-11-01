@@ -68,7 +68,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical" Margin="5">
-                            <Image Source="{Binding thumbnail, Converter={StaticResource imageConverter}}" Width="128" />
+                            <Image Source="{Binding thumbnail, Mode=OneTime, Converter={StaticResource imageConverter}}" Width="128" />
                             <TextBlock Text="{Binding photo.title}" Style="{StaticResource PhotoTextBlock}" Margin="5" />
                         </StackPanel>
                     </DataTemplate>

@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="Signrider.Views.SegmentDetailsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="640">
+    <ScrollViewer>
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5">
+                <TextBlock Text="{Binding Name}" FontSize="{StaticResource HeaderFontSize}" FontFamily="{StaticResource HeaderFontFamily}" Margin="10 0 0 0" />
+                <Separator />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
+                <TextBlock Text="Colour Segmenter" FontSize="{StaticResource SubHeaderFontSize}" FontFamily="{StaticResource HeaderFontFamily}" />
+                <StackPanel Orientation="Horizontal" Margin="15 5 5 5">
+                    <TextBlock Text="Colour: " />
+                    <TextBlock Text="{Binding ColourString}" />
+                </StackPanel>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                    <ItemsControl
+                        Grid.Row="2"
+                        x:Name="segmentationImages"
+                        ItemsSource="{Binding ColourSegmentationImages}"
+                        Height="120"
+                        Background="{StaticResource AccentColorBrush}"
+                        Padding="4"
+                        Margin="15 5 5 5">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" />
+                                    <TextBlock Grid.Row="1" Text="{Binding Name, Mode=OneTime}" Foreground="White" TextAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Vertical" Margin="5">
+                <TextBlock Text="Shape Classifier" FontSize="{StaticResource SubHeaderFontSize}" FontFamily="{StaticResource HeaderFontFamily}" />
+                <StackPanel Orientation="Horizontal" Margin="15 5 5 5">
+                    <TextBlock Text="Shape: " />
+                    <TextBlock Text="{Binding ShapeString}" />
+                </StackPanel>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                    <ItemsControl
+                        Grid.Row="2"
+                        x:Name="shapeImages"
+                        ItemsSource="{Binding ShapeClassifierImages}"
+                        Height="120"
+                        Background="{StaticResource AccentColorBrush}"
+                        Padding="4"
+                        Margin="15 5 5 5">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" />
+                                    <TextBlock Grid.Row="1" Text="{Binding Name, Mode=OneTime}" Foreground="White" TextAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Orientation="Vertical" Margin="5">
+                <TextBlock Text="Feature Recognizer" FontSize="{StaticResource SubHeaderFontSize}" FontFamily="{StaticResource HeaderFontFamily}" />
+                <StackPanel Orientation="Horizontal" Margin="15 5 5 5">
+                    <TextBlock Text="Sign Type: " />
+                    <TextBlock Text="{Binding TypeString}" />
+                </StackPanel>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                    <ItemsControl
+                        Grid.Row="2"
+                        x:Name="featureImages"
+                        ItemsSource="{Binding FeatureRecognitionImages}"
+                        Height="200"
+                        Background="{StaticResource AccentColorBrush}"
+                        Padding="4"
+                        Margin="15 5 5 5">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" MouseUp="Image_MouseUp" />
+                                    <TextBlock Grid.Row="1" Text="{Binding Name, Mode=OneTime}" Foreground="White" TextAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

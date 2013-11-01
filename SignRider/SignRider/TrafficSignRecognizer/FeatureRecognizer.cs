@@ -55,10 +55,16 @@ namespace Signrider
     }
 
     //TODO: templateting
-    public struct DebugImage
+    public class DebugImage
     {
-        public BGRImage image;
-        public string name;
+        public IImage Image { get; set; }
+        public string Name { get; set; }
+        public DebugImage() { }
+        public DebugImage(IImage image, string name)
+        {
+            this.Image = image;
+            this.Name = name;
+        }
     }
 
     public class FeatureRecognizer
@@ -443,8 +449,8 @@ namespace Signrider
                 return;
             }
             DebugImage debugImage = new DebugImage();
-            debugImage.image = image;
-            debugImage.name = name;
+            debugImage.Image = image;
+            debugImage.Name = name;
             debugImages.Add(debugImage);
         }
 
