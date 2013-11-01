@@ -52,7 +52,7 @@ namespace Signrider
                     {
                         Image<Bgr, byte> imageGamma = new Image<Bgr, byte>(image.Width, image.Height);
                         image.CopyTo(imageGamma);
-                        image._GammaCorrect(2.2);
+                        imageGamma._GammaCorrect(2.2);
                         fullBinaryImage = GetPixelMask("HSV", colour, imageGamma);
                     }
                     else if (signNotFound == SignNotFound.tryCMYK)
@@ -105,11 +105,12 @@ namespace Signrider
                     else if (!isSignFound && signNotFound == SignNotFound.tryGammaCorrect)
                     {
                         signNotFound = SignNotFound.tryCMYK;
-                    }
-                    else if (!isSignFound && signNotFound == SignNotFound.tryCMYK)
-                    {
                         isSignFound = true;
                     }
+                    //else if (!isSignFound && signNotFound == SignNotFound.tryCMYK)
+                    //{
+                    //    isSignFound = true;
+                    //}
 
                     // Free memory
                     //fullBinaryImage.Dispose();
