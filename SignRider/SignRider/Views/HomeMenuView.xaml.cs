@@ -170,14 +170,14 @@ namespace Signrider
         {
             List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train\\");
             featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.trainImages(examples);
+            featureRecognizer.train(examples);
         }
 
         private void featureRecognizerTestButton_Click(object sender, RoutedEventArgs e)
         {
             List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\test\\");
             //FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.testImages(examples);
+            featureRecognizer.test(examples);
         }
     }
 }

@@ -56,9 +56,6 @@ namespace Signrider
 
     public class FeatureRecognizer
     {
-        SVMParams SVMParameters;
-        //SVM SVMModel;
-        Emgu.CV.ML.SVM SVMModel;
         public FeatureRecognizer()
         {
             SVMParameters = new SVMParams();
@@ -74,27 +71,25 @@ namespace Signrider
             SVMModel = new SVM();
             paramsm = new MCvSVMParams();
             paramsm.kernel_type = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
-            debugImages = new List<DebugImage>();
+            //debugImages = new List<DebugImage>();
+            debugImages = null;
         }
 
+        SVMParams SVMParameters;
+        SVM SVMModel;
         List<DebugImage> debugImages;
         string debugFolder;
 
-         private void saveDebugImage(BGRImage image, string name)
-         {
-             if (!Directory.Exists(debugFolder))
-             {
-                 Directory.CreateDirectory(debugFolder);
-             }
-
-             image.Save(debugFolder + name + ".png");
-         }
-
-         private void saveDebugImage(GrayImage image, string name)
-         {
-             //BGRImage bgrimage = image.Convert<Bgr, Byte>();
-             saveDebugImage(image.Convert<Bgr, Byte>(), name);
-         }
+        private void drawGrid(GrayImage image)
+        {
+            //TODO: remove constants (dynamic)
+            image.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
+            image.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
+            image.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
+            image.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
+            image.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
+            image.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
+        }
 
         private Image<Gray, double> GaborWavelet(int R, int C, double u, double v)
         {
@@ -123,26 +118,17 @@ namespace Signrider
             return GW;
         }
 
-        private GrayImage preprocess(FeatureExample aimage)
+        //private GrayImage preprocess(FeatureExample aimage)
+        private GrayImage preprocess(BGRImage aBGRImage, GrayImage aGrayImage)
         {
-            BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            //BGRImage rgbiamge = aimage.rgbImage.Resize(300, 300, INTER.CV_INTER_CUBIC);
-            //GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_CUBIC);
-
-            GrayImage image = grayiamge;
+            BGRImage rgbiamge = aBGRImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            GrayImage grayiamge = aGrayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
             saveDebugImage(rgbiamge, "Original RGB Image");
             saveDebugImage(grayiamge, "Original Gray Image");
             saveDebugImage(rgbiamge.Canny(500, 300),"Original Edge");
 
             rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
-            //int i = (int)(300 * 0.10);
-            //Rectangle rect = new Rectangle(i / 2, i / 2, 300 - i, 300 - i);
-            //rgbiamge = rgbiamge.GetSubRect(rect);
             saveDebugImage(rgbiamge,"After And");
-            //rgbiamge._EqualizeHist();
-            //CvInvoke.cvShowImage("Test Window1 EQL", rgbiamge);
-            //CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
 
             //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
             // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
@@ -340,57 +326,6 @@ namespace Signrider
         saveDebugImage(paddedIamge.Canny(400, 300), "Edge After bw Grading removed BW");
         saveDebugImage(grayImage.Canny(400, 300), "Edge After bw Grading removed Gray");
         return paddedIamge.Canny(400, 300);
-
-        //GrayImage edgeImage
-            //GrayImage cropimageImage = grayImage.Canny(400, 300)
-            //GrayImage returnImage
-        /*
-for (var contour = image.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-{
-Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-Point[] points = pointsSeq.ToArray();
-filledImage.FillConvexPoly(points, new Gray(255));
-}*/
-/*
-        rgbiamge[0] = rgbiamge[0].And(grayImage);
-        rgbiamge[1] = rgbiamge[1].And(grayImage);
-        rgbiamge[2] = rgbiamge[2].And(grayImage);
-            CvInvoke.cvShowImage("Final", rgbiamge);
-            CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));*/
-
-               
-            //         hlk[0]._And(;
-
-            /*
-                Contour<Point> contoura = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_EXTERNAL);
-                {
-                    Rectangle rect1 = contoura.BoundingRectangle;
-                    //MessageBox.Show(rect1.ToString());
-                    grayImage = grayImage.GetSubRect(rect1);
-                    //grayImage.Draw(rect1, new Gray(128), -1);
-                   // MessageBox.Show(contoura.First().ToString());
-
-                }
-                CvInvoke.cvShowImage("Test Windo6", grayImage);
-                CvInvoke.cvShowImage("Test Window5", grayImage.Canny(500, 300));*/
-            //     grayImage.Laplace(3);
-            //    CvInvoke.cvShowImage("Test Windo7", grayImage);
-            //CvInvoke.cvCvtColor(rgbiamge,hlk,
-
-            
-            /*
-            switch (caseSwitch)
-            {
-                case 1:
-                    Console.WriteLine("Case 1");
-                    break;
-                case 2:
-                    Console.WriteLine("Case 2");
-                    break;
-                default:
-                    Console.WriteLine("Default case");
-                    break;
-            }*/
         }
 
         private Matrix<float> calculateParameters(GrayImage image)
@@ -502,13 +437,8 @@ filledImage.FillConvexPoly(points, new Gray(255));
                 }
             }
 
-
-            img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
-            img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
-            img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
-            img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
-            img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
-            img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
+            drawGrid(img);
+            
             CvInvoke.cvShowImage("Test Window3", img);
             //CvInvoke.cvShowImage("Test Window3", divImg);
             divImg2 = divImg2.Resize(0.5, INTER.CV_INTER_LINEAR);
@@ -516,12 +446,7 @@ filledImage.FillConvexPoly(points, new Gray(255));
             CvInvoke.cvShowImage("Test Window4", divImg2);
             CvInvoke.cvShowImage("histogram e", histogram);
 
-            edge.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Gray(125), 1);
-            edge.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Gray(125), 1);
-            edge.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Gray(125), 1);
-            edge.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300, 300 / 4)), new Gray(125), 1);
-            edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 2), new Point(300, 300 / 4 * 2)), new Gray(125), 1);
-            edge.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300, 300 / 4 * 3)), new Gray(125), 1);
+            drawGrid(edge);
             CvInvoke.cvShowImage("edge", edge);
 
             /*
@@ -534,8 +459,31 @@ filledImage.FillConvexPoly(points, new Gray(255));
 
         }
 
+        private void saveDebugImage(BGRImage image, string name)
+        {
+            if (!Directory.Exists(debugFolder))
+            {
+                Directory.CreateDirectory(debugFolder);
+            }
+            if (debugImages == null)
+            {
+                image.Save(debugFolder + name + ".png");
+                return;
+            }
+            DebugImage debugImage = new DebugImage();
+            debugImage.image = image;
+            debugImage.name = name;
+            debugImages.Add(debugImage);
+        }
+
+        private void saveDebugImage(GrayImage image, string name)
+        {
+            //BGRImage bgrimage = image.Convert<Bgr, Byte>();
+            saveDebugImage(image.Convert<Bgr, Byte>(), name);
+        }
+        
         //TODO: LIST??
-        public void trainImages(List<FeatureExample> images)
+        public void train(List<FeatureExample> images)
         {
             int imagesCount = images.Count();
             if (imagesCount < 1)
@@ -547,7 +495,8 @@ filledImage.FillConvexPoly(points, new Gray(255));
             {
                 FeatureExample image = images[i];
                 debugFolder = image.directory + image.name + "\\";
-                GrayImage preprosessedImage = preprocess(image);
+                //GrayImage preprosessedImage = preprocess(image);
+                GrayImage preprosessedImage = preprocess(image.rgbImage, image.grayImage);
                CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
                // MessageBox.Show("was ");
@@ -561,15 +510,16 @@ filledImage.FillConvexPoly(points, new Gray(255));
             trainSVM(trainData, trainClasses);
             Console.WriteLine("DONE");
         }
-        
-        public void testImages(List<FeatureExample> images)
+
+        public void test(List<FeatureExample> images)
         {
             int imagesCount = images.Count();
             Matrix<float> trainClasses = new Matrix<float>(1, 128);
             for (int i = 0; i < imagesCount; i++)
             {
                 FeatureExample image = images[i];
-                GrayImage preprosessedImage = preprocess(image);
+                //GrayImage preprosessedImage = preprocess(image);
+                GrayImage preprosessedImage = preprocess(image.rgbImage, image.grayImage);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
                 //for (int j = 0; j < 128; j++)
                 //    trainClasses[0,j] = parameter[0, j];
@@ -583,20 +533,6 @@ filledImage.FillConvexPoly(points, new Gray(255));
         MCvSVMParams paramsm;// = new MCvSVMParams();
         private void trainSVM(Matrix<float> para, Matrix<float> signType)
         {
-            /*
-            for (int j = 0; j < 128; j++)
-                para[0, j] = 1.0f;
-            for (int j = 0; j < 128; j++)
-                para[1, j] = 1.0f;
-            for (int j = 0; j < 128; j++)
-                para[2, j] = 2.0f;
-            for (int j = 0; j < 128; j++)
-                para[3, j] = 2.0f;
-
-            signType[0, 0] = 1;
-            signType[1, 0] = 1;
-            signType[2, 0] = 2;
-            signType[3, 0] = 2;*/
             bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
            
             //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);
@@ -604,26 +540,11 @@ filledImage.FillConvexPoly(points, new Gray(255));
             MessageBox.Show("Trained: " + trained.ToString());
         }
 
-        //showCalulated parameters
-        public void doTest()
+        public SignType RecognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage)
         {
-
-            //int trainSampleCount = 128;
-
-/*            bool trained = model.Train(trainData2, trainClasses, null, null, p);
-
-            // MessageBox.Show(trained.ToString());
-            MessageBox.Show(model.Predict(trainData.GetRow(7)).ToString());*/
-        }
-
-        public void getSign()
-        {
-
-        }
-
-        public void trainFeatureReconizer()
-        {
-
+            debugImages = aDebugImage;
+            GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
+            return SignType.Garbage;
         }
 
         public static List<FeatureExample> extractExamplesFromDirectory(string dir)
