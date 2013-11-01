@@ -188,12 +188,19 @@ namespace Signrider
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(
             delegate(object o, RunWorkerCompletedEventArgs args)
             {
-                List<ViewModels.SegmentViewModel> newSegmentViews =
-                    (List<ViewModels.SegmentViewModel>)args.Result;
-                IsBusyLoadingSegments = false;
+                if (isActive)
+                {
+                    List<ViewModels.SegmentViewModel> newSegmentViews =
+                        (List<ViewModels.SegmentViewModel>)args.Result;
+                    IsBusyLoadingSegments = false;
 
-                foreach (ViewModels.SegmentViewModel view in newSegmentViews)
-                    segmentViews.Add(view);
+                    foreach (ViewModels.SegmentViewModel view in newSegmentViews)
+                        segmentViews.Add(view);
+                }
+                else
+                {
+                    unload();
+                }
             });
 
             bw.RunWorkerAsync();
@@ -201,6 +208,10 @@ namespace Signrider
 
         private void unload()
         {
+            if (IsBusyLoadingImage || IsBusyLoadingCanvas || IsBusyLoadingSegments)
+                return;
+            // TODO: Call unload after backgroundWorker finishes
+
             if (image != null)
             {
                 image.Dispose();

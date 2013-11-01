@@ -48,6 +48,8 @@ namespace Signrider
         {
             // TODO: Set button visibility
             setMainView(homeMenu);
+
+            photosListBox.SelectedIndex = -1;
         }
 
         public void setMainView(UserControl newView)
