@@ -33,6 +33,7 @@ namespace Signrider
         SpeedLimit120,
         KeepLeft,
         Stop,
+        NoStop,
         WarningStop
     };
 
@@ -118,7 +119,6 @@ namespace Signrider
             return GW;
         }
 
-        //private GrayImage preprocess(FeatureExample aimage)
         private GrayImage preprocess(BGRImage aBGRImage, GrayImage aGrayImage)
         {
             BGRImage rgbiamge = aBGRImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
@@ -130,28 +130,16 @@ namespace Signrider
             rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
             saveDebugImage(rgbiamge,"After And");
 
-            //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
-            // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
-            //Image<Hls, Byte> hlk = new Image<Hls, Byte>(new Size(300, 300));
             Image<Hsv, Byte> hlk = rgbiamge.Convert<Hsv, Byte>();
-            //hlk = hlk.ThresholdToZero(new Hls(0, 150, 0));
             Image<Gray, Byte>[] splitimg = hlk.Split();
             saveDebugImage(splitimg[2],"Lightness");
-            saveDebugImage(splitimg[1],"Satoration");
-            //TODO: avarage color insert
-            //splitimg[2]._EqualizeHist();
-            //splitimg[2]._GammaCorrect(0.5d);
-            //Console.WriteLine("max ligtess: "  +splitimg[2].ma);
-            //CvInvoke.cvShowImage("Test light after hosto", splitimg[2]);
-            //splitimg[2] = splitimg[2].ThresholdAdaptive(new Gray(255), Emgu.CV.CvEnum.ADAPTIVE_THRESHOLD_TYPE.CV_ADAPTIVE_THRESH_MEAN_C,Emgu.CV.CvEnum.THRESH.CV_THRESH_BINARY,31, new Gray(180));
+            saveDebugImage(splitimg[1], "Saturation");
 
             splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(100), new Gray(255));
             splitimg[2] = splitimg[2].And(splitimg[1]);
             splitimg[1] = splitimg[1].ThresholdBinary(new Gray(255), new Gray(255));
             splitimg[2]._GammaCorrect(1.5);
 
-            //Console.WriteLine("Average: "CvInvoke.cvAvg(splitimg[2]));
-            //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(150));
 
             int ijk = 10;
             Point point2 = new Point(0, 0);
@@ -169,23 +157,12 @@ namespace Signrider
                 Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n),new Gray(255));
                 MCvScalar sum = CvInvoke.cvSum(ttemp);
                 som = sum.v0 / 255 - count;
-                Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
                 count += som;
 
-                if (n > 120 && count < gem)
+                if (n > 100 && count < gem)
                     scaler = (double)n / (double)75;
                 
-               // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
-
-                //Contour<Point> points;// = new Point[10];
-                //Point[] points = new Point[128];
-               // points[ijk] = new Point(ijk * 2, 1000 - (int)som / 10);
-                //pointts[ijk] = dotprot;
-                //trainData[T, ijk] = (float)dotprot;
-                //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
-                int intValue = 1;
-                bool result = intValue == 1;
-                //histogram.DrawPolyline(points, result, new Gray(1), 1);
                 if (n != 0)
                     histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
                 point2 = new Point(ijk * 10, 500 - (int)som / 20);
@@ -198,11 +175,13 @@ namespace Signrider
 
             Debug.WriteLine("scaler: " + scaler + " gemiddeld: " + gem.ToString());
 
+            splitimg[2]._Mul(scaler);
+            
             if (scaler > 4)
                 scaler = 4;
             if (scaler > 1)
             {
-                splitimg[2]._Mul(scaler);
+                //splitimg[2]._Mul(scaler);
 
                 count = 0;
                 ijk = 10;
@@ -210,24 +189,11 @@ namespace Signrider
                 histogram = new Image<Gray, Byte>(700, 600);
                 for (int n = 0; n <= 250; n += 5)
                 {
-                    Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n), new Gray(255));
+                    Image<Gray, Byte> ttemp = splitimg[2].ThresholdBinary(new Gray(250 - n), new Gray(255));
                     MCvScalar sum = CvInvoke.cvSum(ttemp);
                     som = sum.v0 / 255 - count;
-                    Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                    //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
                     count += som;
-
-
-                    // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
-
-                    //Contour<Point> points;// = new Point[10];
-                    //Point[] points = new Point[128];
-                    // points[ijk] = new Point(ijk * 2, 1000 - (int)som / 10);
-                    //pointts[ijk] = dotprot;
-                    //trainData[T, ijk] = (float)dotprot;
-                    //points[ijk * 2 + 1] = new Point(points[ijk * 2 + 1]);
-                    int intValue = 1;
-                    bool result = intValue == 1;
-                    //histogram.DrawPolyline(points, result, new Gray(1), 1);
                     if (n != 0)
                         histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
                     point2 = new Point(ijk * 10, 500 - (int)som / 20);
@@ -239,22 +205,14 @@ namespace Signrider
                 saveDebugImage(histogram,"Corrected ligntess histogram");
             }
             
-            //splitimg[1] = splitimg[1].ThresholdToZeroInv(new Gray(150));
-            // splitimg[2]._Not();
-
-            //splitimg[2] = splitimg[2].ThresholdBinary(new Gray(150), new Gray(255));
             saveDebugImage(splitimg[2],"Corrected lightness");
             //CvInvoke.cvShowImage("Test sha2", splitimg[1]);
             CvInvoke.cvMerge(splitimg[0], splitimg[1], splitimg[2], IntPtr.Zero, hlk);
             saveDebugImage( hlk.Convert<Bgr, Byte>(),"RGB image after color correction");
-            //hlk._MorphologyEx();
-            //StructuringElementEx element = new StructuringElementEx(5, 5, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+
             StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
-            //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 2);
-            //hlk._Erode(1);
             element = new StructuringElementEx(2, 2, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
             //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 1);
-            hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
             splitimg[2]._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
             saveDebugImage(splitimg[2], "after Morph");
             saveDebugImage(splitimg[2].Canny(500, 300), "Edge after morph");
@@ -335,9 +293,6 @@ namespace Signrider
             Matrix<float> returnMatrix = new Matrix<float>(1, 128);
 
             int ijk = 0;
-            //The name of the window
-            // string win1 = "Test Window";
-            // CvInvoke.cvNamedWindow(win1);
             Image<Gray, double> GW = new Image<Gray, double>(1, 1);
             int R = 10;
             int C = 10;
@@ -347,18 +302,12 @@ namespace Signrider
             {
                 GW = GW.ConcateHorizontal(GaborWavelet(R, C, i, v));
             }
+            saveDebugImage(GW.Convert<Gray, Byte>(), "Gabor wavelet");
 
             //img.SmoothGaussian(5, 5, 1.5, 1.5);
-            Image<Gray, double> GWOutput = GW.Resize(10, INTER.CV_INTER_LINEAR);
             Image<Gray, Byte> img = image.Copy(new Rectangle(25,25,300,300));
             img = img.Resize(300, 300, INTER.CV_INTER_LINEAR);
-
-            saveDebugImage(GW.Convert<Gray, Byte>(), "gabor wavelet");
-            CvInvoke.cvShowImage("Test Window12", GW);
-            CvInvoke.cvShowImage("Test Window2", GWOutput);
-
-            Image<Gray, byte> edge;
-            edge = img.Canny(125, 80);
+            Image<Gray, byte> edge = image.Resize(300,300, INTER.CV_INTER_LINEAR);
 
             //Size size = img.Size;
             Size size = edge.Size;
@@ -368,8 +317,6 @@ namespace Signrider
 
             Image<Gray, float> histogram = new Image<Gray, float>(640, 200);
             Point ppoint = new Point(0, 0);
-
-
 
             for (int r = 0; r < size.Height; r += N)
             {
@@ -438,22 +385,14 @@ namespace Signrider
             }
 
             drawGrid(img);
-            
-            CvInvoke.cvShowImage("Test Window3", img);
-            //CvInvoke.cvShowImage("Test Window3", divImg);
-            divImg2 = divImg2.Resize(0.5, INTER.CV_INTER_LINEAR);
 
-            CvInvoke.cvShowImage("Test Window4", divImg2);
-            CvInvoke.cvShowImage("histogram e", histogram);
+            saveDebugImage(img, "Test Window3");
+            saveDebugImage(divImg2, "Test Window4");
+            //divImg2 = divImg2.Resize(0.5, INTER.CV_INTER_LINEAR);
+            saveDebugImage(histogram, "LESH histogram");
 
             drawGrid(edge);
             CvInvoke.cvShowImage("edge", edge);
-
-            /*
-            Rectangle rect = new Rectangle(0, 0, 50, 50);
-            Image<Gray, byte> testCrop = new Image<Gray, byte>(rect.Size);
-            testCrop = img.Copy(rect).Convert<Gray, byte>();
-            CvInvoke.cvShowImage("Test crop", testCrop);*/
 
             return returnMatrix;
 
@@ -479,6 +418,11 @@ namespace Signrider
         private void saveDebugImage(GrayImage image, string name)
         {
             //BGRImage bgrimage = image.Convert<Bgr, Byte>();
+            saveDebugImage(image.Convert<Bgr, Byte>(), name);
+        }
+
+        private void saveDebugImage(Image<Gray, float> image, string name)
+        {
             saveDebugImage(image.Convert<Bgr, Byte>(), name);
         }
         
@@ -525,7 +469,7 @@ namespace Signrider
                 //    trainClasses[0,j] = parameter[0, j];
 
                 //SVMModel.Predict(trainClasses);
-                MessageBox.Show("Image " + i.ToString() + ": " + SVMModel.Predict(parameter.GetRow(0)).ToString());
+                MessageBox.Show("Image " + i.ToString() + ": " + classifySign(parameter, image.shape).ToString());
                 Console.WriteLine("DONE");
             }
         }
@@ -534,17 +478,22 @@ namespace Signrider
         private void trainSVM(Matrix<float> para, Matrix<float> signType)
         {
             bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
-           
             //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);
             Console.WriteLine("Trained: " + trained.ToString());
-            MessageBox.Show("Trained: " + trained.ToString());
         }
 
-        public SignType RecognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage)
+        public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage)
         {
             debugImages = aDebugImage;
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
-            return SignType.Garbage;
+            Matrix<float> parameter = calculateParameters(preprosessedImage);
+
+            return classifySign(parameter, shape);
+        }
+
+        private SignType classifySign(Matrix<float> parameters, SignShape shape)
+        {
+            return (SignType)(int)SVMModel.Predict(parameters);
         }
 
         public static List<FeatureExample> extractExamplesFromDirectory(string dir)
