@@ -48,8 +48,16 @@ namespace Signrider.Models
             this.binaryImage = colourSegment.binaryCrop;
             this.colour = colourSegment.colour;
 
-            this.shape = SignShape.Garbage;
             this.type = SignType.Garbage;
+
+            if (TrafficSignRecognizer.ShapeClassifier.isTrained)
+                this.shape = TrafficSignRecognizer.ShapeClassifier.classify(this.binaryImage);
+            else
+                this.shape = SignShape.Garbage;
+
+            if (TrafficSignRecognizer.FeatureRecognizer.isTrained) {
+                this.type = TrafficSignRecognizer.FeatureRecognizer.recognizeSign(bgrImage, binaryImage, shape);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@
     <StackPanel Orientation="Vertical" Width="250" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Button Margin="5" Content="Load photos" Command="{Binding loadImageFromFileCommand}" />
         <Button Margin="5" Content="Load directory photos" />
-        <Button Margin="5" Content="Train" />
+        <Button Margin="5" Content="Train" Command="{Binding trainFromDirectoryCommand}" />
         <Button Margin="5" Content="Classify" />
         <Button Margin="5" Content="Test from data set" />
         <TextBlock Margin="0 20 0 0" Text="Temp commands:" HorizontalAlignment="Center" FontFamily="{StaticResource ResourceKey=HeaderFontFamily}" FontSize="20" />

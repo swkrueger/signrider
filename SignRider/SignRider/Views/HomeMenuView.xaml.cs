@@ -165,19 +165,19 @@ namespace Signrider
                 inputDir = folderBrowserDialog1.SelectedPath + "/";
             }
         }
-
+        FeatureRecognizer featureRecognizer;
         private void featureRecognizerTrainButton_Click(object sender, RoutedEventArgs e)
         {
-            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train4\\");
-            FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.trainImages(examples);
+            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train\\");
+            featureRecognizer = new FeatureRecognizer();
+            featureRecognizer.train(examples);
         }
 
         private void featureRecognizerTestButton_Click(object sender, RoutedEventArgs e)
         {
-            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train4\\");
-            FeatureRecognizer featureRecognizer = new FeatureRecognizer();
-            featureRecognizer.trainImages(examples);
+            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\test\\");
+            //FeatureRecognizer featureRecognizer = new FeatureRecognizer();
+            featureRecognizer.test(examples);
         }
     }
 }

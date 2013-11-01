@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 
 using BGRImage = Emgu.CV.Image<Emgu.CV.Structure.Bgr, System.Byte>;
 using GrayImage = Emgu.CV.Image<Emgu.CV.Structure.Gray, System.Byte>;
+using System.Text.RegularExpressions;
 
 namespace Signrider.ViewModels
 {
@@ -44,6 +45,36 @@ namespace Signrider.ViewModels
             get
             {
                 return Segment.shape == SignShape.Garbage || Segment.type == SignType.Garbage;
+            }
+        }
+
+        public string ColourString
+        {
+            get
+            {
+                return Segment.colour.ToString();
+            }
+        }
+
+        public string ShapeString {
+            get {
+                if (TrafficSignRecognizer.ShapeClassifier.isTrained == false)
+                    return "Untrained";
+
+                string shapeStringCamel = Segment.shape.ToString();
+
+                return Regex.Replace(shapeStringCamel, "(\\B[A-Z])", " $1"); 
+            }
+        }
+
+        public string TypeString {
+            get {
+                if (TrafficSignRecognizer.FeatureRecognizer.isTrained == false)
+                    return "Untrained";
+
+                string typeStringCamel = Segment.type.ToString();
+
+                return Regex.Replace(typeStringCamel, "(\\B[A-Z])", " $1"); 
             }
         }
         #endregion
