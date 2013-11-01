@@ -39,6 +39,8 @@ namespace Signrider
             List<ColourSegment> colourSegmentList = new List<ColourSegment>();
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
+                isSignFound = false;
+                signNotFound = SignNotFound.HSV;
                 do
                 {
                     Image<Gray, byte> fullBinaryImage = null;
@@ -48,10 +50,10 @@ namespace Signrider
                     }
                     else if (signNotFound == SignNotFound.tryGammaCorrect)
                     {
-                        //Image<Bgr, byte> imageGamma = new Image<Bgr, byte>(image.Width, image.Height);
-                        //image.CopyTo(imageGamma);
+                        Image<Bgr, byte> imageGamma = new Image<Bgr, byte>(image.Width, image.Height);
+                        image.CopyTo(imageGamma);
                         image._GammaCorrect(2.2);
-                        fullBinaryImage = GetPixelMask("HSV", colour, image);
+                        fullBinaryImage = GetPixelMask("HSV", colour, imageGamma);
                     }
                     else if (signNotFound == SignNotFound.tryCMYK)
                     {
@@ -72,7 +74,7 @@ namespace Signrider
                         {
                             if (contour.Area > minimumContourArea)
                             {
-                                
+                                isSignFound = true;
                                 Rectangle rect1 = contour.BoundingRectangle;
                                 Rectangle rect = rect1;
 
@@ -88,7 +90,7 @@ namespace Signrider
                                     mask.Draw(contour, new Gray(255), -1);
                                     binaryCrop = mask.Copy(rect);
                                     rgbCrop = image.Copy(rect);
-                                    isSignFound = true;
+                                    
                                     colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour, colour));
                                 }
                             }
