@@ -29,7 +29,11 @@ namespace Signrider
     public enum SignType {
         Garbage,
         SpeedLimit30,
-        Stop
+        SpeedLimit100,
+        SpeedLimit120,
+        KeepLeft,
+        Stop,
+        WarningStop
     };
 
     public struct FeatureExample
@@ -40,39 +44,57 @@ namespace Signrider
         public SignShape shape;
         public SignType type;
         public SignColour color;
+        public string directory;
+    }
+
+    //TODO: templateting
+    public struct DebugImage
+    {
+        public BGRImage image;
+        public string name;
     }
 
     public class FeatureRecognizer
     {
         SVMParams SVMParameters;
-        SVM SVMModel;
+        //SVM SVMModel;
+        Emgu.CV.ML.SVM SVMModel;
         public FeatureRecognizer()
         {
             SVMParameters = new SVMParams();
             SVMParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
+            //SVMParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.NU_SVC;
             //p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
-            SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
-            //p.Gamma = 3;
+            //SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
+            SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            SVMParameters.Gamma = 3;
+            SVMParameters.Degree = 3;
             SVMParameters.C = 1;
             SVMParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
             SVMModel = new SVM();
+            paramsm = new MCvSVMParams();
+            paramsm.kernel_type = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            debugImages = new List<DebugImage>();
         }
 
-        public void helloTest()
-        {
-            using (Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 255)))
-            {
-                //Create the font
-                MCvFont f = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
+        List<DebugImage> debugImages;
+        string debugFolder;
 
-                //Draw "Hello, world." on the image using the specific font
-                img.Draw("Hendri se: \"Hello, world\"", ref f, new Point(10, 80), new Bgr(255, 255, 0));
+         private void saveDebugImage(BGRImage image, string name)
+         {
+             if (!Directory.Exists(debugFolder))
+             {
+                 Directory.CreateDirectory(debugFolder);
+             }
 
-                //Show the image using ImageViewer from Emgu.CV.UI
-                // CvInvoke.cvShowImage(img, "Test Window2");
-                CvInvoke.cvShowImage("Hello World Test Window", img.Ptr);
-            }
-        }
+             image.Save(debugFolder + name + ".png");
+         }
+
+         private void saveDebugImage(GrayImage image, string name)
+         {
+             //BGRImage bgrimage = image.Convert<Bgr, Byte>();
+             saveDebugImage(image.Convert<Bgr, Byte>(), name);
+         }
 
         private Image<Gray, double> GaborWavelet(int R, int C, double u, double v)
         {
@@ -95,18 +117,10 @@ namespace Signrider
                     Gray color = GW[y, x];
                     double mag = a.Real;
                     color.Intensity = mag * 40;
-                    //Debug.WriteLine(a.ToString());
                     GW[y, x] = color;
                 }
             }
-
-            //Debug.WriteLine(k.ToString());
             return GW;
-        }
-
-        private void preFilter()
-        {
-
         }
 
         private GrayImage preprocess(FeatureExample aimage)
@@ -117,25 +131,18 @@ namespace Signrider
             //GrayImage grayiamge = aimage.grayImage.Resize(300, 300, INTER.CV_INTER_CUBIC);
 
             GrayImage image = grayiamge;
-            CvInvoke.cvShowImage("Original", rgbiamge);
-            CvInvoke.cvShowImage("Original gray", grayiamge);
-            CvInvoke.cvShowImage("BEFORE", rgbiamge.Canny(500, 300));
-            CvInvoke.cvShowImage("Before hull", image);
-            GrayImage filledImage = image;
-
-            image = filledImage;
-            CvInvoke.cvShowImage("After hull", image);
-            //if (debugPreprocessor)
-            //    showImage(image, "After hull");
+            saveDebugImage(rgbiamge, "Original RGB Image");
+            saveDebugImage(grayiamge, "Original Gray Image");
+            saveDebugImage(rgbiamge.Canny(500, 300),"Original Edge");
 
             rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
-            int i = (int)(300 * 0.10);
-            Rectangle rect = new Rectangle(i / 2, i / 2, 300 - i, 300 - i);
-            rgbiamge = rgbiamge.GetSubRect(rect);
-            CvInvoke.cvShowImage("Test Window1", rgbiamge);
+            //int i = (int)(300 * 0.10);
+            //Rectangle rect = new Rectangle(i / 2, i / 2, 300 - i, 300 - i);
+            //rgbiamge = rgbiamge.GetSubRect(rect);
+            saveDebugImage(rgbiamge,"After And");
             //rgbiamge._EqualizeHist();
-            CvInvoke.cvShowImage("Test Window1 EQL", rgbiamge);
-            CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
+            //CvInvoke.cvShowImage("Test Window1 EQL", rgbiamge);
+            //CvInvoke.cvShowImage("Test Window2", rgbiamge.Canny(500, 300));
 
             //CvInvoke.cvShowImage("Test Window1", rgbiamge.Convert(.ThresholdAdaptive((new Rgb(250, 250, 250), new Rgb(200, 0, 0)));
             // CvInvoke.cvShowImage("Test Window3", rgbiamge.ThresholdToZero(new Bgr(220, 220, 220)));
@@ -143,8 +150,8 @@ namespace Signrider
             Image<Hsv, Byte> hlk = rgbiamge.Convert<Hsv, Byte>();
             //hlk = hlk.ThresholdToZero(new Hls(0, 150, 0));
             Image<Gray, Byte>[] splitimg = hlk.Split();
-            CvInvoke.cvShowImage("Test light", splitimg[2]);
-            CvInvoke.cvShowImage("Test sha", splitimg[1]);
+            saveDebugImage(splitimg[2],"Lightness");
+            saveDebugImage(splitimg[1],"Satoration");
             //TODO: avarage color insert
             //splitimg[2]._EqualizeHist();
             //splitimg[2]._GammaCorrect(0.5d);
@@ -152,10 +159,10 @@ namespace Signrider
             //CvInvoke.cvShowImage("Test light after hosto", splitimg[2]);
             //splitimg[2] = splitimg[2].ThresholdAdaptive(new Gray(255), Emgu.CV.CvEnum.ADAPTIVE_THRESHOLD_TYPE.CV_ADAPTIVE_THRESH_MEAN_C,Emgu.CV.CvEnum.THRESH.CV_THRESH_BINARY,31, new Gray(180));
 
-            splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(150), new Gray(255));
+            splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(100), new Gray(255));
             splitimg[2] = splitimg[2].And(splitimg[1]);
             splitimg[1] = splitimg[1].ThresholdBinary(new Gray(255), new Gray(255));
-
+            splitimg[2]._GammaCorrect(1.5);
 
             //Console.WriteLine("Average: "CvInvoke.cvAvg(splitimg[2]));
             //splitimg[2] = splitimg[2].ThresholdToZero(new Gray(150));
@@ -165,7 +172,7 @@ namespace Signrider
             Image<Gray, Byte> histogram = new Image<Gray, Byte>(700,600);
             double som;
             double scaler = 1;
-
+ 
             Image<Gray, Byte> temp = splitimg[2];
             double count = 0;
             MCvScalar gemiddeld = CvInvoke.cvSum(temp);
@@ -179,8 +186,8 @@ namespace Signrider
                 Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
                 count += som;
 
-                if (n > 100 && count < gem)
-                    scaler = (double)n / (double)100;
+                if (n > 120 && count < gem)
+                    scaler = (double)n / (double)75;
                 
                // Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
 
@@ -199,9 +206,9 @@ namespace Signrider
                 ijk++;
             }
             som = 300 * 300 - count;
-            Debug.WriteLine("som: " + som.ToString() + "count: " + count);
+            //Debug.WriteLine("som: " + som.ToString() + "count: " + count);
             histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
-            CvInvoke.cvShowImage("histogram", histogram);
+            saveDebugImage(histogram, "Lightness histogram");
 
             Debug.WriteLine("scaler: " + scaler + " gemiddeld: " + gem.ToString());
 
@@ -243,17 +250,17 @@ namespace Signrider
                 som = 300 * 300 - count;
                 Debug.WriteLine("som: " + som.ToString() + "count: " + count);
                 histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
-                CvInvoke.cvShowImage("histogram2", histogram);
+                saveDebugImage(histogram,"Corrected ligntess histogram");
             }
             
             //splitimg[1] = splitimg[1].ThresholdToZeroInv(new Gray(150));
             // splitimg[2]._Not();
 
             //splitimg[2] = splitimg[2].ThresholdBinary(new Gray(150), new Gray(255));
-            CvInvoke.cvShowImage("Test light2", splitimg[2]);
-            CvInvoke.cvShowImage("Test sha2", splitimg[1]);
+            saveDebugImage(splitimg[2],"Corrected lightness");
+            //CvInvoke.cvShowImage("Test sha2", splitimg[1]);
             CvInvoke.cvMerge(splitimg[0], splitimg[1], splitimg[2], IntPtr.Zero, hlk);
-            CvInvoke.cvShowImage("Test Window3", hlk.Convert<Bgr, Byte>());
+            saveDebugImage( hlk.Convert<Bgr, Byte>(),"RGB image after color correction");
             //hlk._MorphologyEx();
             //StructuringElementEx element = new StructuringElementEx(5, 5, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
             StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
@@ -263,37 +270,25 @@ namespace Signrider
             //hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 1);
             hlk._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
             splitimg[2]._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
-
-           
-           //  hlk._Dilate(1);
-            //TODO: FILL small holes
-            // ._close
-            //TODO: Remove tidy dots (better than holrs)
+            saveDebugImage(splitimg[2], "after Morph");
+            saveDebugImage(splitimg[2].Canny(500, 300), "Edge after morph");
             //TODO:GEEL
             // TODO:crop
             //TODO: adaptive white threshold
 
-            //CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(20, 10));
-            CvInvoke.cvShowImage("hlk canny", hlk.Convert<Bgr, Byte>().Canny(500, 300));
-
-            CvInvoke.cvShowImage("Test Window4", hlk.Convert<Bgr, Byte>());
-
-            Image<Gray, byte> grayImage = hlk.Convert<Gray, byte>();
-            grayImage = splitimg[2];
-            CvInvoke.cvShowImage("Test Window5", grayImage);
-
+            Image<Gray, byte> grayImage = splitimg[2];
+ 
             Image<Gray, byte> paddedIamge= new Image<Gray, byte>(350,350);
+            
 
             /*paddedIamge.ROI = new Rectangle(0, 0,300 , 300);
             //paddedIamge = paddedIamge.Add(grayImage);
             CvInvoke.cvCopy(grayImage,paddedIamge, IntPtr.Zero);
             paddedIamge.ROI = Rectangle.Empty;*/
             CvInvoke.cvCopyMakeBorder(grayImage, paddedIamge, new Point(25, 25), BORDER_TYPE.CONSTANT,new MCvScalar(0));
-            grayImage = paddedIamge.Copy();
-
-            //grayImage.CopyTo(
             paddedIamge._ThresholdBinary(new Gray(120), new Gray(255));
-            //CvInvoke.cvShowImage("To B&W", paddedIamge);
+            saveDebugImage(paddedIamge, "Binary image (larger)");
+            grayImage = paddedIamge.Copy();
 
             Image<Gray, byte> maskImage = new Image<Gray, byte>(350, 350);
              for (var contour = paddedIamge.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
@@ -339,11 +334,12 @@ namespace Signrider
                         paddedIamge._ThresholdBinaryInv(new Gray(128), new Gray(255));
             //  BGRImage rgbiamge2 = hlk.Convert<Bgr, Byte>();
 
-        CvInvoke.cvShowImage("After hull2", grayImage);
-        CvInvoke.cvShowImage("After hull2 paddd", paddedIamge);
-        CvInvoke.cvShowImage("After hull2 mask", maskImage);
-        CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
-        CvInvoke.cvShowImage("After bw canny", paddedIamge.Canny(400, 300));
+        saveDebugImage(paddedIamge, "Grading removed");
+        //CvInvoke.cvShowImage("After hull2 mask", maskImage);
+        //CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
+        saveDebugImage(paddedIamge.Canny(400, 300), "Edge After bw Grading removed BW");
+        saveDebugImage(grayImage.Canny(400, 300), "Edge After bw Grading removed Gray");
+        return paddedIamge.Canny(400, 300);
 
         //GrayImage edgeImage
             //GrayImage cropimageImage = grayImage.Canny(400, 300)
@@ -362,8 +358,7 @@ filledImage.FillConvexPoly(points, new Gray(255));
             CvInvoke.cvShowImage("Final", rgbiamge);
             CvInvoke.cvShowImage("AFTER", rgbiamge.Canny(500, 300));*/
 
-            //return rgbiamge.Canny(500, 300);
-        return paddedIamge.Canny(400, 300);
+               
             //         hlk[0]._And(;
 
             /*
@@ -419,32 +414,16 @@ filledImage.FillConvexPoly(points, new Gray(255));
             }
 
             //img.SmoothGaussian(5, 5, 1.5, 1.5);
-            //Image<Bgr, Byte> img2 = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
             Image<Gray, double> GWOutput = GW.Resize(10, INTER.CV_INTER_LINEAR);
-
-            //Image<Bgr, Byte> img = new Image<Bgr, byte>(400, 200, new Bgr(255, 0, 0));
-            // Image<Gray, Byte> img = new Image<Gray, Byte>("C:\\Users\\Hendrik\\Dropbox\\VB(suck)net\\Test\\Test images\\Reconition\\20_3_bw_f.png");
             Image<Gray, Byte> img = image.Copy(new Rectangle(25,25,300,300));
             img = img.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            //Create the font
-            MCvFont ftest = new MCvFont(Emgu.CV.CvEnum.FONT.CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0);
-            //MCvFont f = new MCvFont();
-            //Draw "Hello, world." on the image using the specific font
-            // img.Draw("Hello, world", ref ftest, new Point(10, 80), new Bgr(0, 255, 0));
-            /* img.Draw(new LineSegment2D(new Point(300 / 4, 0), new Point(300 / 4, 300)), new Bgr(0, 255, 0), 1);
-             img.Draw(new LineSegment2D(new Point(300 / 4 * 2, 0), new Point(300 / 4 * 2, 300)), new Bgr(0, 255, 0), 1);
-             img.Draw(new LineSegment2D(new Point(300 / 4 * 3, 0), new Point(300 / 4 * 3, 300)), new Bgr(0, 255, 0), 1);
-             img.Draw(new LineSegment2D(new Point(0, 300 / 4), new Point(300,300 / 4)), new Bgr(0, 255, 0), 1);
-             img.Draw(new LineSegment2D(new Point(0,300 / 4 * 2), new Point(300,300 / 4 * 2)), new Bgr(0, 255, 0), 1);
-             img.Draw(new LineSegment2D(new Point(0, 300 / 4 * 3), new Point(300,300 / 4 * 3)), new Bgr(0, 255, 0), 1);*/
 
-            // CvInvoke.cvShowImage("Test Window", img);
+            saveDebugImage(GW.Convert<Gray, Byte>(), "gabor wavelet");
             CvInvoke.cvShowImage("Test Window12", GW);
             CvInvoke.cvShowImage("Test Window2", GWOutput);
 
             Image<Gray, byte> edge;
             edge = img.Canny(125, 80);
-
 
             //Size size = img.Size;
             Size size = edge.Size;
@@ -551,13 +530,6 @@ filledImage.FillConvexPoly(points, new Gray(255));
             testCrop = img.Copy(rect).Convert<Gray, byte>();
             CvInvoke.cvShowImage("Test crop", testCrop);*/
 
-
-
-
-
-
-
-
             return returnMatrix;
 
         }
@@ -574,39 +546,62 @@ filledImage.FillConvexPoly(points, new Gray(255));
             for (int i = 0; i < imagesCount; i++)
             {
                 FeatureExample image = images[i];
+                debugFolder = image.directory + image.name + "\\";
                 GrayImage preprosessedImage = preprocess(image);
-                CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
+               CvInvoke.cvShowImage("Preprossed Image", preprosessedImage);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
-
+               // MessageBox.Show("was ");
                 //TODO: Beter fuksie kry
                 for (int j = 0; j < 128; j++)
-                    parameter[i, j] = parameter[0, j];
+                    trainData[i, j] = parameter[0, j];
                 trainClasses[i, 0] = (float)image.type;
             }
             Console.WriteLine("Start SVM training");
+            Console.WriteLine(trainData.Rows.ToString() + " " + trainData.Cols.ToString() + " " + trainClasses.Rows.ToString() + " " + trainClasses.Cols.ToString());
             trainSVM(trainData, trainClasses);
             Console.WriteLine("DONE");
         }
         
         public void testImages(List<FeatureExample> images)
         {
-            Console.WriteLine("TESTING... ");
             int imagesCount = images.Count();
+            Matrix<float> trainClasses = new Matrix<float>(1, 128);
             for (int i = 0; i < imagesCount; i++)
             {
                 FeatureExample image = images[i];
                 GrayImage preprosessedImage = preprocess(image);
                 Matrix<float> parameter = calculateParameters(preprosessedImage);
-                //SVMModel.Predict(parameter.GetRow(0));
-               // MessageBox.Show("Image " + i.ToString() + ": " + SVMModel.Predict(parameter.GetRow(0)).ToString());
+                //for (int j = 0; j < 128; j++)
+                //    trainClasses[0,j] = parameter[0, j];
+
+                //SVMModel.Predict(trainClasses);
+                MessageBox.Show("Image " + i.ToString() + ": " + SVMModel.Predict(parameter.GetRow(0)).ToString());
                 Console.WriteLine("DONE");
             }
         }
 
-
+        MCvSVMParams paramsm;// = new MCvSVMParams();
         private void trainSVM(Matrix<float> para, Matrix<float> signType)
         {
-            SVMModel.Train(para, signType, null, null, SVMParameters);
+            /*
+            for (int j = 0; j < 128; j++)
+                para[0, j] = 1.0f;
+            for (int j = 0; j < 128; j++)
+                para[1, j] = 1.0f;
+            for (int j = 0; j < 128; j++)
+                para[2, j] = 2.0f;
+            for (int j = 0; j < 128; j++)
+                para[3, j] = 2.0f;
+
+            signType[0, 0] = 1;
+            signType[1, 0] = 1;
+            signType[2, 0] = 2;
+            signType[3, 0] = 2;*/
+            bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
+           
+            //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);
+            Console.WriteLine("Trained: " + trained.ToString());
+            MessageBox.Show("Trained: " + trained.ToString());
         }
 
         //showCalulated parameters
@@ -634,13 +629,13 @@ filledImage.FillConvexPoly(points, new Gray(255));
         public static List<FeatureExample> extractExamplesFromDirectory(string dir)
         {
             Debug.WriteLine("Loading test Directory example " + dir);
-
+            //debugFolder = new string(dir);
             List<FeatureExample> examples = new List<FeatureExample>();
 
             if (System.IO.Directory.Exists(dir))
             {
                 string[] files = Utilities.GetFiles(dir, "*BW.jpg|*BW.png", SearchOption.AllDirectories);
-
+                int i = 0;
                 foreach (string bwFile in files)
                 {
                     string rgbFile = bwFile.Replace("_BW", "_RGB");
@@ -685,7 +680,9 @@ filledImage.FillConvexPoly(points, new Gray(255));
                         continue;
 
                     FeatureExample example = new FeatureExample();
-                    example.name = bwFile;
+                    //TODO:
+                    example.name = (i++).ToString();
+                    example.directory = dir;
                     example.grayImage = new GrayImage(bwFile);
                     example.rgbImage = new BGRImage(rgbFile);
                     example.color = color;
