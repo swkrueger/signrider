@@ -452,7 +452,6 @@ namespace Signrider
 
         private void saveDebugImage(BGRImage image, string name)
         {
-            return;
             if (!Directory.Exists(debugFolder))
             {
                 Directory.CreateDirectory(debugFolder);

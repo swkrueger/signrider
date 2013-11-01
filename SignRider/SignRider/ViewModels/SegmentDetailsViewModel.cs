@@ -32,10 +32,13 @@ namespace Signrider.ViewModels
             ColourSegmentationImages.Add(new DebugImage(segment.bgrImage, "RGB image"));
             ColourSegmentationImages.Add(new DebugImage(segment.binaryImage, "Binary image"));
 
-            // if (TrafficSignRecognizer.ShapeClassifier.isTrained)
-            //     this.shape = TrafficSignRecognizer.ShapeClassifier.classify(this.binaryImage);
-            // else
-            //     this.shape = SignShape.Garbage;
+            if (TrafficSignRecognizer.ShapeClassifier.isTrained)
+            {
+                List<DebugImage> images = new List<DebugImage>();
+                TrafficSignRecognizer.ShapeClassifier.classify(segment.binaryImage, images);
+                foreach (DebugImage image in images)
+                    ShapeClassifierImages.Add(image);
+            }
 
             if (segment.shape != SignShape.Garbage && TrafficSignRecognizer.FeatureRecognizer.isTrained) {
                 List<DebugImage> images = new List<DebugImage>();

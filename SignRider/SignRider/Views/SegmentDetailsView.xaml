@@ -45,7 +45,7 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" />
+                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" MouseUp="Image_MouseUp"/>
                                     <TextBlock Grid.Row="1" Text="{Binding Name, Mode=OneTime}" Foreground="White" TextAlignment="Center" />
                                 </Grid>
                             </DataTemplate>
@@ -82,7 +82,7 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" />
+                                    <Image Grid.Row="0" Source="{Binding Image, Mode=OneTime, Converter={StaticResource imageConverter}}" Stretch="Uniform" MouseUp="Image_MouseUp"/>
                                     <TextBlock Grid.Row="1" Text="{Binding Name, Mode=OneTime}" Foreground="White" TextAlignment="Center" />
                                 </Grid>
                             </DataTemplate>

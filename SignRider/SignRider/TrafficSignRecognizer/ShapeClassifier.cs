@@ -51,9 +51,8 @@ namespace Signrider
         private bool preprocessorConvexHullFill = false;
 
         // Debugging output settings
-        private bool debugPlotFeatureVector = false;
+        private bool debugDisplayDebugImages = false;
         private bool debugPauseOnImageShow = true;
-        private bool debugPreprocessor = false;
 
         // Private class variables
         private SVM SvmModel = new SVM();
@@ -74,19 +73,25 @@ namespace Signrider
             SvmParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
         }
 
-        private void showImage(IntPtr image, string title = "Test Window")
+        private void addDebugImage(List<DebugImage> debugImages, IImage image, string title = "Test Window")
         {
-            CvInvoke.cvShowImage(title, image);
-            if (debugPauseOnImageShow)
+            if (debugImages != null)
+                debugImages.Add(new DebugImage(image, title));
+
+            if (debugDisplayDebugImages)
             {
-                CvInvoke.cvWaitKey(0);
-                CvInvoke.cvDestroyWindow(title);
+                CvInvoke.cvShowImage(title, image.Ptr);
+                if (debugPauseOnImageShow)
+                {
+                    CvInvoke.cvWaitKey(0);
+                    CvInvoke.cvDestroyWindow(title);
+                }
             }
         }
 
-        public SignShape classify(GrayImage binaryImage)
+        public SignShape classify(GrayImage binaryImage, List<DebugImage> debugImages = null)
         {
-            int[] featureVector = extractDtbFeatures(binaryImage);
+            int[] featureVector = extractDtbFeatures(binaryImage, debugImages);
             Matrix<float> data = new Matrix<float>(Array.ConvertAll<int,float>(featureVector, Convert.ToSingle));
             return (SignShape)SvmModel.Predict(data);
         }
@@ -119,13 +124,12 @@ namespace Signrider
                 );
         }
 
-        private GrayImage preprocessImage(GrayImage origImage)
+        private GrayImage preprocessImage(GrayImage origImage, List<DebugImage> debugImages = null)
         {
 
             GrayImage image = origImage;
 
-            if (debugPreprocessor)
-                showImage(image, "Original image");
+            addDebugImage(debugImages, image, "Original image");
 
             // Resize to intermediate size
             if (preprocessorResize)
@@ -153,8 +157,7 @@ namespace Signrider
             {
                 image = image.PyrDown().PyrUp();
 
-                if (debugPreprocessor)
-                    showImage(image, "After Pyr");
+                addDebugImage(debugImages, image, "After Pyr");
             }
 
             /// Eliminate small gaps
@@ -168,8 +171,7 @@ namespace Signrider
                 // StructuringElementEx element = new StructuringElementEx(5, 5, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
                 // image._MorphologyEx(element, CV_MORPH_OP.CV_MOP_OPEN, 2);
 
-                if (debugPreprocessor)
-                    showImage(image, "After Open");
+                addDebugImage(debugImages, image, "After Open");
             }
 
             // Blur
@@ -177,15 +179,13 @@ namespace Signrider
             {
                 image = image.SmoothGaussian(5);
 
-                if (debugPreprocessor)
-                    showImage(image, "After Blur");
+                addDebugImage(debugImages, image, "After Blur");
             }
 
             // Threshold
             image._ThresholdBinary(new Gray(100), new Gray(255));
 
-            if (debugPreprocessor)
-                showImage(image, "After thresholding");
+            addDebugImage(debugImages, image, "After thresholding");
 
             if (preprocessorConvexHullFill)
             {
@@ -200,8 +200,7 @@ namespace Signrider
                 }
                 image = filledImage;
 
-                if (debugPreprocessor)
-                    showImage(image, "After hull");
+                addDebugImage(debugImages, image, "After hull");
             }
 
             // Crop border
@@ -214,8 +213,7 @@ namespace Signrider
                     image = image.Copy(contour.BoundingRectangle);
                 }
 
-                if (debugPreprocessor)
-                    showImage(image, "After crop");
+                addDebugImage(debugImages, image, "After crop");
             }
 
             return image;
@@ -248,7 +246,7 @@ namespace Signrider
             return indices;
         }
 
-        private void plotFeatureVector(int[] signature)
+        private Image<Gray, Byte> plotFeatureVector(int[] signature)
         {
             Debug.WriteLine(String.Join(" ", signature));
             Debug.Flush();
@@ -257,9 +255,9 @@ namespace Signrider
             int resolution = featureVectorResolution;
 
             float plotXScale = 5;
-            float plotYScale = 1;
-            Image<Gray, float> plot =
-                new Image<Gray, float>(
+            float plotYScale = 3;
+            Image<Gray, Byte> plot =
+                new Image<Gray, Byte>(
                     (int)(numDimensions * plotXScale),
                     (int)(resolution * plotYScale)
                 );
@@ -271,20 +269,20 @@ namespace Signrider
                         new PointF(i * plotXScale, (resolution - signature[i]) * plotYScale),
                         new PointF((i+1) * plotXScale, (resolution - signature[i+1]) * plotYScale)
                     ),
-                    new Gray(1),
+                    new Gray(255),
                     1
                     );
             }
 
-            showImage(plot, "Feature Vector");
+            return plot;
         }
 
         // Calculate the feature vector
-        private int[] extractDtbFeatures(GrayImage image)
+        private int[] extractDtbFeatures(GrayImage image, List<DebugImage> debugImages = null)
         {
             // TODO: Rather use http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4290143
 
-            GrayImage processedImage = preprocessImage(image);
+            GrayImage processedImage = preprocessImage(image, debugImages);
 
             int numDimensions = featureVectorDimension;
             int resolution = featureVectorResolution;
@@ -303,8 +301,11 @@ namespace Signrider
             getEdgeIndices(columnsT, 127, true).CopyTo(signature, sideLength * 2);    // Bottom
             getEdgeIndices(rows, 127, false).CopyTo(signature, sideLength * 3);       // Left
 
-            if (debugPlotFeatureVector)
-                plotFeatureVector(signature);
+            if (debugImages != null)
+            {
+                Image<Gray, Byte> plot = plotFeatureVector(signature);
+                addDebugImage(debugImages, plot, "Feature Vector");
+            }
 
             return signature;
         }
