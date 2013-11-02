@@ -28,16 +28,51 @@ namespace Signrider
     //TODO:
     public enum SignType {
         Garbage,
-        SpeedLimit30,
+
+        // Circles
+        MiscCircle,
+        HawkersProhibited,
+        KeepLeft,
+        LeftTurnAheadProhibited,
+        MinibusesOnly,
+        MinimumSpeedLimit50,
+        MotorCarsOnly,
+        NoEntry,
+        SpeedLimit40,
+        SpeedLimit60,
+        SpeedLimit80,
         SpeedLimit100,
         SpeedLimit120,
-        KeepLeft,
+        StoppingProhibited,
+        UTurnProhibited,
+
+        // Octagon
         Stop,
-        NoStop,
-        WarningStop,
+
+        // Rectangle
         Countdown1,
+        Countdown2,
+        Countdown3,
+        DualCarriagewayFreewayBegins,
+        LimitedParkingReservation,
+
+        // TraingleDown
         Yield,
-        Crossroad
+        YieldAtMinicircle,
+
+        // TriangleUp
+        Crossroad,
+        GeneralWarning,
+        GentleCurveLeft,
+        GentleCurveRight,
+        PedestrianCrossing,
+        PriorityCrossing,
+        SideRoadJunctionLeft,
+        SideRoadJunctionRight,
+        SpeedHumps,
+        TemporaryRoadWorks,
+        TwowayTraffic,
+        MiscTriangleUp
     };
 
     public struct FeatureExample
@@ -185,9 +220,9 @@ namespace Signrider
             saveDebugImage(splitimg[2],"Lightness");
             saveDebugImage(splitimg[1], "Saturation");
 
-            splitimg[1] = splitimg[1].ThresholdBinaryInv(new Gray(100), new Gray(255));
-            splitimg[2] = splitimg[2].And(splitimg[1]);
-            splitimg[1] = splitimg[1].ThresholdBinary(new Gray(255), new Gray(255));
+            splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
+            splitimg[2]._And(splitimg[1]);
+            splitimg[1]._ThresholdBinary(new Gray(255), new Gray(255));
             splitimg[2]._GammaCorrect(1.5);
 
 
@@ -204,19 +239,21 @@ namespace Signrider
 
             for (int n = 0; n <= 250; n+=5)
             {
-                Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n),new Gray(255));
-                MCvScalar sum = CvInvoke.cvSum(ttemp);
-                som = sum.v0 / 255 - count;
-                //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
-                count += som;
+                using (Image<Gray, Byte> ttemp = temp.ThresholdBinary(new Gray(250 - n), new Gray(255)))
+                {
+                    MCvScalar sum = CvInvoke.cvSum(ttemp);
+                    som = sum.v0 / 255 - count;
+                    //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                    count += som;
 
-                if (n > 100 && count < gem)
-                    scaler = (double)n / (double)75;
-                
-                if (n != 0)
-                    histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
-                point2 = new Point(ijk * 10, 500 - (int)som / 20);
-                ijk++;
+                    if (n > 100 && count < gem)
+                        scaler = (double)n / (double)75;
+                    
+                    if (n != 0)
+                        histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+                    point2 = new Point(ijk * 10, 500 - (int)som / 20);
+                    ijk++;
+                }
             }
             som = 300 * 300 - count;
             //Debug.WriteLine("som: " + som.ToString() + "count: " + count);
@@ -239,15 +276,17 @@ namespace Signrider
                 histogram = new Image<Gray, Byte>(700, 600);
                 for (int n = 0; n <= 250; n += 5)
                 {
-                    Image<Gray, Byte> ttemp = splitimg[2].ThresholdBinary(new Gray(250 - n), new Gray(255));
-                    MCvScalar sum = CvInvoke.cvSum(ttemp);
-                    som = sum.v0 / 255 - count;
-                    //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
-                    count += som;
-                    if (n != 0)
-                        histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
-                    point2 = new Point(ijk * 10, 500 - (int)som / 20);
-                    ijk++;
+                    using (Image<Gray, Byte> ttemp = splitimg[2].ThresholdBinary(new Gray(250 - n), new Gray(255)))
+                    {
+                        MCvScalar sum = CvInvoke.cvSum(ttemp);
+                        som = sum.v0 / 255 - count;
+                        //Debug.WriteLine("n: " + n.ToString() + " som: " + som.ToString() + " count: " + count);
+                        count += som;
+                        if (n != 0)
+                            histogram.Draw(new LineSegment2D(point2, new Point(ijk * 10, 500 - (int)som / 20)), new Gray(128), 1);
+                        point2 = new Point(ijk * 10, 500 - (int)som / 20);
+                        ijk++;
+                    }
                 }
                 som = 300 * 300 - count;
                 Debug.WriteLine("som: " + som.ToString() + "count: " + count);
@@ -324,6 +363,13 @@ namespace Signrider
         //CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
         saveDebugImage(paddedIamge.Canny(400, 300), "Edge After bw Grading removed BW");
         saveDebugImage(grayImage.Canny(400, 300), "Edge After bw Grading removed Gray");
+
+        rgbiamge.Dispose();
+        grayiamge.Dispose();
+        hlk.Dispose();
+        maskImage.Dispose();
+        for (int i = 0; i < 3; ++i) splitimg[i].Dispose();
+
         return paddedIamge.Canny(400, 300);
         }
 
@@ -393,7 +439,7 @@ namespace Signrider
                         //Image<Gray, float> testCrop3 = new  Image<Gray, float>(75, 75);
                         Image<Gray, float> testCrop3 = testCrop.Convolution(ckernel);
 
-                        testCrop3 = testCrop3.ThresholdBinary(new Gray(0.1), new Gray(1));
+                        testCrop3._ThresholdBinary(new Gray(0.1), new Gray(1));
                         //CvInvoke.cvShowImage("Testcrop", testCrop);
                         //CvInvoke.cvShowImage("Testcrop2", testCrop2);
                         //CvInvoke.cvShowImage("Testcrop3", testCrop3);
@@ -421,6 +467,7 @@ namespace Signrider
                         ppoint = new Point(ijk * 5, 200 - (int)dotprot / 2);
                         ijk++;
 
+                        one.Dispose();
                         testCrop3.Dispose();
                     }
 
@@ -444,21 +491,22 @@ namespace Signrider
             img.Dispose();
             edge.Dispose();
 
-            // GC.Collect();
+            // FIXME: This can cause problems!!
+            GC.Collect();
 
             return returnMatrix;
 
         }
 
-        private void saveDebugImage(BGRImage image, string name)
+        private void saveDebugImage(IImage image, string name)
         {
-            if (!Directory.Exists(debugFolder))
-            {
-                Directory.CreateDirectory(debugFolder);
-            }
             if (debugImages == null)
             {
-                image.Save(debugFolder + name + ".png");
+                // if (!Directory.Exists(debugFolder))
+                // {
+                //     Directory.CreateDirectory(debugFolder);
+                // }
+                // image.Save(debugFolder + name + ".png");
                 return;
             }
             DebugImage debugImage = new DebugImage();
@@ -466,18 +514,6 @@ namespace Signrider
             debugImage.Name = name;
             debugImages.Add(debugImage);
         }
-
-        private void saveDebugImage(GrayImage image, string name)
-        {
-            //BGRImage bgrimage = image.Convert<Bgr, Byte>();
-            saveDebugImage(image.Convert<Bgr, Byte>(), name);
-        }
-
-        private void saveDebugImage(Image<Gray, float> image, string name)
-        {
-            saveDebugImage(image.Convert<Bgr, Byte>(), name);
-        }
-
 
         
         //TODO: LIST??
