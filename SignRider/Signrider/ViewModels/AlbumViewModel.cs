@@ -101,7 +101,16 @@ namespace Signrider
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
 
+            // Restore last folder
+            string lastTrainFolder = Properties.Settings.Default.LastTrainFolder;
+            if (!String.IsNullOrEmpty(lastTrainFolder))
+                folderBrowserDialog.SelectedPath = lastTrainFolder;
+
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            // Save folder path
+            Properties.Settings.Default.LastTrainFolder = folderBrowserDialog.SelectedPath;
+            Properties.Settings.Default.Save();
 
             string trainDir = folderBrowserDialog.SelectedPath;
             string shapeTrainDir = System.IO.Path.Combine(trainDir, "Shapes");
