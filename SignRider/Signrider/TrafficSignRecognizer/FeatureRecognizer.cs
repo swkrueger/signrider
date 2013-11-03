@@ -633,7 +633,10 @@ namespace Signrider
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
             Matrix<float> parameter = calculateParameters(preprosessedImage);
 
-            return classifySign(parameter, shape);
+            if (isTrained)
+                return classifySign(parameter, shape);
+            else
+                return SignType.Garbage;
         }
 
         private SignType classifySign(Matrix<float> parameters, SignShape shape)

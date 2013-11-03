@@ -40,7 +40,7 @@ namespace Signrider.Views
 
             DebugImage debugImage = (DebugImage)imageControl.DataContext;
 
-            CvInvoke.cvShowImage(debugImage.Name, debugImage.Image.Ptr);
+            CvInvoke.cvShowImage(viewModel.Name + ": " + debugImage.Name, debugImage.Image.Ptr);
         }
     }
 }

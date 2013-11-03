@@ -94,8 +94,15 @@ namespace Signrider
         public SignShape classify(GrayImage binaryImage, List<DebugImage> debugImages = null)
         {
             int[] featureVector = extractDtbFeatures(binaryImage, debugImages);
-            Matrix<float> data = new Matrix<float>(Array.ConvertAll<int,float>(featureVector, Convert.ToSingle));
-            return (SignShape)SvmModel.Predict(data);
+            if (isTrained)
+            {
+                Matrix<float> data = new Matrix<float>(Array.ConvertAll<int, float>(featureVector, Convert.ToSingle));
+                return (SignShape)SvmModel.Predict(data);
+            }
+            else
+            {
+                return SignShape.Garbage;
+            }
         }
 
         public void train(List<ShapeExample> examples)
@@ -256,7 +263,7 @@ namespace Signrider
             int resolution = featureVectorResolution;
 
             float plotXScale = 5;
-            float plotYScale = 3;
+            float plotYScale = 1;
             Image<Gray, Byte> plot =
                 new Image<Gray, Byte>(
                     (int)(numDimensions * plotXScale),
