@@ -19,12 +19,12 @@ namespace Signrider
 {
     public enum SignShape
     {
+        Garbage,
         Circle,
         Octagon,
         Rectangle,
         TriangleUp,
-        TriangleDown,
-        Garbage
+        TriangleDown
     };
 
     public struct ShapeExample

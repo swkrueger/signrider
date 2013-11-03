@@ -100,7 +100,7 @@ namespace Signrider
         public DebugImage() { }
         public DebugImage(IImage image, string name)
         {
-            this.Image = image;
+            this.Image = (IImage)image;
             this.Name = name;
         }
     }
@@ -111,7 +111,7 @@ namespace Signrider
         private const int featureVectorDimension = 128;
 
         // Preprocessor settings
-/*        private bool preprocessorResize = true;
+        private bool preprocessorResize = true;
         private bool preprocessorAddBorder = true;
         private bool preprocessorOpenFilter = false;
         private bool preprocessorPyr = true;
@@ -122,7 +122,7 @@ namespace Signrider
         // Debugging output settings
         private bool debugPlotFeatureVector = false;
         private bool debugPauseOnImageShow = true;
-        private bool debugPreprocessor = false;*/
+        private bool debugPreprocessor = false;
 
         // Private class variables
         //private SVM SvmModel = new SVM();
@@ -133,7 +133,7 @@ namespace Signrider
         List<DebugImage> debugImages;
         string debugFolder;
 
-        private int signShapeCount = Enum.GetValues(typeof(SignShape)).Length - 1;
+        private int signShapeCount = Enum.GetValues(typeof(SignShape)).Length;
 
         public bool isTrained { get; private set; }
 
@@ -206,11 +206,26 @@ namespace Signrider
 
         private GrayImage preprocess(BGRImage aBGRImage, GrayImage aGrayImage)
         {
-            BGRImage rgbiamge = aBGRImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            GrayImage grayiamge = aGrayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
-            saveDebugImage(rgbiamge, "Original RGB Image");
-            saveDebugImage(grayiamge, "Original Gray Image");
-            saveDebugImage(rgbiamge.Canny(500, 300),"Original Edge");
+            saveDebugImage(aBGRImage, "Original RGB Image");
+            saveDebugImage(aGrayImage, "Original Gray Image");
+            saveDebugImage(aBGRImage.Canny(500, 300),"Original Edge");
+            BGRImage bgrImage;
+            GrayImage grayImage;
+            if (preprocessorResize)
+            {
+                bgrImage = aBGRImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+                grayImage = aGrayImage.Resize(300, 300, INTER.CV_INTER_LINEAR);
+            }
+            else
+            {
+                bgrImage = aBGRImage.Clone();
+                grayImage = aGrayImage.Clone();
+            }
+
+
+            BGRImage rgbiamge = bgrImage.Clone();
+            GrayImage grayiamge =  grayImage.Clone();
+            
 
             rgbiamge = rgbiamge.And(rgbiamge, grayiamge);
             saveDebugImage(rgbiamge,"After And");
@@ -304,15 +319,15 @@ namespace Signrider
             saveDebugImage(splitimg[2], "after Morph");
             saveDebugImage(splitimg[2].Canny(500, 300), "Edge after morph");
 
-            Image<Gray, byte> grayImage = splitimg[2];
+            Image<Gray, byte> grayImage2 = splitimg[2];
  
             Image<Gray, byte> paddedIamge= new Image<Gray, byte>(350,350);
             
 
-            CvInvoke.cvCopyMakeBorder(grayImage, paddedIamge, new Point(25, 25), BORDER_TYPE.CONSTANT,new MCvScalar(0));
+            CvInvoke.cvCopyMakeBorder(grayImage2, paddedIamge, new Point(25, 25), BORDER_TYPE.CONSTANT,new MCvScalar(0));
             paddedIamge._ThresholdBinary(new Gray(120), new Gray(255));
             saveDebugImage(paddedIamge, "Binary image (larger)");
-            grayImage = paddedIamge.Copy();
+            grayImage2 = paddedIamge.Copy();
 
             Image<Gray, byte> maskImage = new Image<Gray, byte>(350, 350);
              for (var contour = paddedIamge.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
@@ -336,7 +351,7 @@ namespace Signrider
 
             maskImage._Not();
             paddedIamge._And(maskImage);
-            grayImage._And(maskImage);
+            grayImage2._And(maskImage);
             maskImage._Not();
             paddedIamge._ThresholdBinaryInv(new Gray(128), new Gray(255));
                         for (var contour = paddedIamge.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
@@ -362,7 +377,7 @@ namespace Signrider
         //CvInvoke.cvShowImage("After hull2 mask", maskImage);
         //CvInvoke.cvShowImage("After hull2 canny", grayImage.Canny(400, 300));
         saveDebugImage(paddedIamge.Canny(400, 300), "Edge After bw Grading removed BW");
-        saveDebugImage(grayImage.Canny(400, 300), "Edge After bw Grading removed Gray");
+        saveDebugImage(grayImage2.Canny(400, 300), "Edge After bw Grading removed Gray");
 
         rgbiamge.Dispose();
         grayiamge.Dispose();
@@ -492,7 +507,7 @@ namespace Signrider
             edge.Dispose();
 
             // FIXME: This can cause problems!!
-            GC.Collect();
+            //GC.Collect();
 
             return returnMatrix;
 
@@ -510,7 +525,7 @@ namespace Signrider
                 return;
             }
             DebugImage debugImage = new DebugImage();
-            debugImage.Image = image;
+            debugImage.Image = (IImage)image.Clone();
             debugImage.Name = name;
             debugImages.Add(debugImage);
         }
@@ -528,9 +543,10 @@ namespace Signrider
             for (int i = 0; i < trainlist.Count(); i++)
                 trainlist[i] = new List<FeatureExampleElement>();
 
-            for (int i = 0; i < imagesCount; i++)
+            //for (int i = 0; i < imagesCount; i++)
+            while(images.Count() > 0)
             {
-                FeatureExample image = images[i];
+                FeatureExample image = images[0];
                 debugFolder = image.directory + image.name + "\\";
                 //GrayImage preprosessedImage = preprocess(image);
                 GrayImage preprosessedImage = preprocess(image.rgbImage, image.grayImage);
@@ -542,14 +558,18 @@ namespace Signrider
 
                SignShape shape = image.shape;
                //TODO: change??
+               Console.WriteLine(shape.ToString());
+                if ((int)shape == 0)
+                    MessageBox.Show("HIR2");
                if (shape == SignShape.Garbage)
                {
                    for (int j = 0; j < trainlist.Count(); j++)
                        trainlist[j].Add(element);
+                   MessageBox.Show("HIR");
                }
                else
                     trainlist[(int)shape].Add(element);
-               
+                images.Remove(image);
             }
             trainSVM(trainlist);
        /*     Console.WriteLine("Start SVM training");
@@ -581,8 +601,11 @@ namespace Signrider
         {
             isTrained = true;
             //foreach (List<FeatureExampleElement> featureExampleElementList in trainlist)
-            for (int i = 0; i < trainlist.Count(); i++)
+            for (int i = 1; i < trainlist.Count(); i++)
             {
+                if (i == 2) //octagon
+                    continue;
+
                 List<FeatureExampleElement> featureExampleElementList = trainlist.ElementAt(i);
                 int count = featureExampleElementList.Count();
                 Matrix<float> trainData = new Matrix<float>(count, 128);
@@ -604,6 +627,7 @@ namespace Signrider
                         trainData[j, k] = parameters[0, k];
                     trainClasses[j, 0] = (float)featureExampleElement.type;
                 }
+                MessageBox.Show("Please provide a complete training dataset. Dataset for HIER " + i.ToString() + " " + trainData.Size.Height.ToString());
                 bool trained = SVMModels[i].Train(trainData, trainClasses, null, null, SVMParameters);
                 isTrained = isTrained & trained;
                 //trainData.Add(entry.Value.First().parameter);
@@ -616,6 +640,8 @@ namespace Signrider
 
         public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
         {
+            if (shape == SignShape.Octagon)
+                return SignType.Stop;
             debugImages = aDebugImage;
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
             Matrix<float> parameter = calculateParameters(preprosessedImage);
@@ -662,6 +688,9 @@ namespace Signrider
                     if (Enum.IsDefined(typeof(SignShape), signShapeString))
                         shape = (SignShape)Enum.Parse(typeof(SignShape), signShapeString);
                     else
+                        continue;
+
+                    if (shape == SignShape.Octagon)
                         continue;
 
                     SignType type;
