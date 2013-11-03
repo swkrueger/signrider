@@ -25,10 +25,7 @@ namespace Signrider
     //-> class executing colour segmentation
     public class ColourSegmenter
     {
-        private int minimumContourArea = 1000;
-        private int minimumSegmentWidth = 30;
-        private int minimumSegmentHeight = 30;
-        private int minimumAspectRatio = 2; //1:??
+
         private enum SignNotFound { HSV, tryGammaCorrect};
 
 
@@ -36,9 +33,14 @@ namespace Signrider
         {
             Boolean isSignFound = false;
             SignNotFound signNotFound = SignNotFound.HSV;
+            int minimumContourArea = (image.Height*image.Width) > 1000000 ? 1000 : 600;
+            int minimumSegmentWidth = 30;
+            int minimumSegmentHeight = 30;
+
             List<ColourSegment> colourSegmentList = new List<ColourSegment>();
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
             {
+                int minimumAspectRatio = colour == SignColour.RED ? 2 : 3;
                 isSignFound = false;
                 signNotFound = SignNotFound.HSV;
                 do

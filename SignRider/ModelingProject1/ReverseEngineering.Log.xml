@@ -6,22 +6,47 @@
   <MessageClass Name="Error" Label="Error" Option="Show errors" />
   <MessageClass Name="Property" Label="Property" Option="Show metadata" />
   <MessageClass Name="Diagnostic" Label="Message" Option="Show diagnostic messages" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="High" Text="Reverse Engineering Started." />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'Boolean' -  (PrimitiveType)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider' -  (Package)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegmenter' -  (Class)   (partially reverse engineered - definition not updated) " />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::FeatureRecognizer' -  (Class)   (partially reverse engineered - definition not updated) " />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ShapeClassifier' -  (Class)   (partially reverse engineered - definition not updated) " />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer' -  (Class)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::FeatureRecognizer' -  (Property)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::isTrained' -  (Operation)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::Segmenter' -  (Property)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::ShapeClassifier' -  (Property)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::train' -  (Operation)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::train::featureTrainDir' -  (Parameter)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::TrafficSignRecognizer::train::shapeTrainDir' -  (Parameter)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'String' -  (PrimitiveType)" />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="High" Text="(1) type(s) fully reverse engineered." />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="High" Text="(3) type(s) partially reverse engineered.  These types were not included in the original selection so their full definitions are not reverse engineered.  Instead, this shallow operation has simply ensured these types exist in the UML model because they are needed in order to fully describe other elements." />
-  <Message Timestamp="2013-11-02T17:51:59" Importance="High" Text="The reverse engineering operation completed with (0) error(s), and (0) warning(s)." />
+  <Message Timestamp="2013-11-03T18:22:44" Importance="High" Text="Reverse Engineering Started." />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: '3587c7e5-e28c-41ed-a1cf-65b219149325' -  (ClassifierTemplateParameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: '6607cacb-46ab-423e-9caa-97f35fba6bdb' -  (ClassifierTemplateParameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Image' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Image&lt;Bgr‎, Byte‎&gt;' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Image&lt;Gray‎, Byte‎&gt;' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Structure' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Structure::Bgr' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Emgu::CV::Structure::Gray' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment' -  (Class)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::binaryCrop' -  (Property)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::colour' -  (Property)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::ColourSegment' -  (Operation)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::ColourSegment::binaryCrop' -  (Parameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::ColourSegment::colour' -  (Parameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::ColourSegment::contour' -  (Parameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::ColourSegment::rgbCrop' -  (Parameter)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::contour' -  (Property)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::Dispose' -  (Operation)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::ColourSegment::rgbCrop' -  (Property)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Signrider::SignColour' -  (Enumeration)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Byte' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Drawing' -  (Package)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Drawing::Point' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::IDisposable' -  (Interface)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Signrider::ColourSegment to ModelingProject1::Emgu::CV::Image&lt;Bgr‎, Byte‎&gt; (Association)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Signrider::ColourSegment to ModelingProject1::Emgu::CV::Image&lt;Gray‎, Byte‎&gt; (Association)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Signrider::ColourSegment to ModelingProject1::System::Drawing::Point (Association)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Signrider::ColourSegment to ModelingProject1::Signrider::SignColour (Association)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Signrider::ColourSegment to ModelingProject1::System::IDisposable (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image&lt;Bgr‎, Byte‎&gt; to ModelingProject1::Emgu::CV::IImage (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image&lt;Bgr‎, Byte‎&gt; to ModelingProject1::System::IDisposable (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image to ModelingProject1::Emgu::CV::IImage (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image to ModelingProject1::System::IDisposable (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image&lt;Gray‎, Byte‎&gt; to ModelingProject1::Emgu::CV::IImage (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Emgu::CV::Image&lt;Gray‎, Byte‎&gt; to ModelingProject1::System::IDisposable (InterfaceRealization)" />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="High" Text="(1) type(s) fully reverse engineered." />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="High" Text="(9) type(s) partially reverse engineered.  These types were not included in the original selection so their full definitions are not reverse engineered.  Instead, this shallow operation has simply ensured these types exist in the UML model because they are needed in order to fully describe other elements." />
+  <Message Timestamp="2013-11-03T18:22:45" Importance="High" Text="The reverse engineering operation completed with (0) error(s), and (0) warning(s)." />
 </Log>

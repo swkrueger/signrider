@@ -69,6 +69,13 @@
               LastKnownName="IDisposable"
               LastKnownLocation="Package4_1750.uml" />
           </interfaceRealization>
+          <interfaceRealization
+            Id="6e545330-5111-4f13-b58c-a7b0ae0d0345">
+            <interfaceMoniker
+              Id="106255a9-1703-4511-ad67-f511cd448e55"
+              LastKnownName="IImage"
+              LastKnownLocation="Package2_1750.uml" />
+          </interfaceRealization>
         </suppliersInternal>
         <signatures>
           <templateBinding
