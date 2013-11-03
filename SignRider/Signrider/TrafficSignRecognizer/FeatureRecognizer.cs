@@ -157,12 +157,21 @@ namespace Signrider
             //p.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
             //SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
             SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            //SVMParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.RBF;
             SVMParameters.Gamma = 3;
             SVMParameters.Degree = 3;
             SVMParameters.C = 1;
             SVMParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
+            //SVMParameters.Nu
+            //SVMParameters.P
+            //SVMParameters.Coef0 = 
             paramsm = new MCvSVMParams();
-            paramsm.kernel_type = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            paramsm.svm_type = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
+            paramsm.kernel_type = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
+            paramsm.gamma = 2;
+            paramsm.degree = 3;
+            paramsm.C = 3;
+            paramsm.term_crit = new MCvTermCriteria(100, 0.00001);
             //debugImages = new List<DebugImage>();
             debugImages = null;
 
@@ -212,6 +221,73 @@ namespace Signrider
                 }
             }
             return GW;
+        }
+
+        private GrayImage removeGradient(GrayImage image)
+        {
+            GrayImage grayImage = image.Copy();
+StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+element = new StructuringElementEx(2, 2, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
+grayImage._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
+saveDebugImage(grayImage, "after Morph");
+saveDebugImage(grayImage.Canny(500, 300), "Edge after morph");
+element.Dispose();
+
+
+
+            //grayImage._ThresholdBinary(new Gray(120), new Gray(255));
+            GrayImage paddedImage = new GrayImage(350, 350);
+            CvInvoke.cvCopyMakeBorder(grayImage, paddedImage, new Point(25, 25), BORDER_TYPE.CONSTANT, new MCvScalar(0));
+            //grayImage.Dispose();
+            grayImage = paddedImage;
+            
+            saveDebugImage(grayImage, "Binary image (larger)");
+
+                            //Image<Gray, byte> maskImage = new Image<Gray, byte>(350, 350);
+                for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                {
+                    Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                    Point[] points = pointsSeq.ToArray();
+                    //                filledImage.FillConvexPoly(points, new Gray(255));
+                    MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
+
+
+                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString() + box.center.X.ToString());
+                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                    if (box.size.Height < 5 || box.size.Width < 5)
+                        grayImage.FillConvexPoly(points, new Gray(0));
+
+                    //grayImage.Draw(box, new Gray(0), -1);
+                    //if (box.size.Width < 5)
+                    //    grayImage.Draw(box, new Gray(0), -1);
+                    //grayImage.Draw(box, new Gray(255), 1);
+                }
+
+                //maskImage._Not();
+                //paddedIamge._And(maskImage);
+                //grayImage2._And(maskImage);
+                //maskImage._Not();
+                grayImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+                for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                {
+                    Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                    Point[] points = pointsSeq.ToArray();
+                    //                filledImage.FillConvexPoly(points, new Gray(255));
+                    MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
+
+                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
+                    if (box.size.Height < 5 || box.size.Width < 5)
+                    {
+                        grayImage.FillConvexPoly(points, new Gray(0));
+                        //maskImage.FillConvexPoly(points, new Gray(255));//TODO: ander mask maak
+                    }
+
+                    ///   else filledImage.Draw(box, new Gray(0), 1);
+                }
+                grayImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+                saveDebugImage(grayImage, "Grading removed");
+
+                return grayImage.GetSubRect(new Rectangle(25,25,300,300));
         }
 
         //Return 
@@ -283,7 +359,7 @@ namespace Signrider
                 saveDebugImage(bgrImage, "After Remove Background");
             }
 
-            grayImage.Dispose();
+           // grayImage.Dispose();
 
             Image<Gray, Byte>[] splitimg = bgrImage.Convert<Hsv, Byte>().Split();
             saveDebugImage(splitimg[2], "Lightness");
@@ -294,23 +370,9 @@ namespace Signrider
 
             if (preprocessorRemoveSaturation)
             {
-                //splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
-                splitimg[1]._ThresholdBinary(new Gray(100), new Gray(255));
+                splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
                 saveDebugImage(splitimg[1], "Binary");
-
-
-                GrayImage filledImage = splitimg[1];
-                for (var contour = splitimg[1].FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                {
-                    //Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                    Point[] points = contour.ToArray();
-                    filledImage.FillConvexPoly(points, new Gray(255));
-                }
-                filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
-                saveDebugImage(filledImage, "After hull");
-
-                splitimg[2]._Or(filledImage);
-                splitimg[2]._Or(splitimg[1]);
+                splitimg[2]._And(splitimg[1]);
                 saveDebugImage(splitimg[2], "After Saturation correction");//AND HALL
 
             }
@@ -329,79 +391,101 @@ namespace Signrider
                 if (scaler > 1)
                 {
                     grayImage._Mul(scaler);
-                    grayImage._Mul(scaler);
                     determineScaler(grayImage);
                     saveDebugImage(grayImage, "Corrected lightness");
                 }
             }
             CvInvoke.cvMerge(splitimg[0], splitimg[1], splitimg[2], IntPtr.Zero, bgrImage);
             saveDebugImage(bgrImage, "BGR image after saturation removed");
+
+
+//GrayImage tempGray = grayImage.ThresholdBinaryInv(new Gray(120), new Gray(255));
+GrayImage tempGray = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+    saveDebugImage(tempGray, "Invers Gray");
+
+
+splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
+GrayImage filledImage = splitimg[1].Copy();
+for (var contour = splitimg[1].FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+{
+    //Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+    Point[] points = contour.ToArray();
+    filledImage.FillConvexPoly(points, new Gray(255));
+}
+filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+filledImage._Or(splitimg[1]);
+saveDebugImage(filledImage, "After hull");
+GrayImage one = new GrayImage(300, 300, new Gray(255));
+double mindotprot = filledImage.DotProduct(one);
+tempGray._Or(filledImage);
+tempGray._ThresholdBinaryInv(new Gray(100), new Gray(255));
+tempGray = removeGradient(tempGray);
+saveDebugImage(tempGray, "White");
+mindotprot = tempGray.DotProduct(one);
+Console.WriteLine((mindotprot).ToString());
+
+
+if (mindotprot < 1e8)
+{
+    filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+    saveDebugImage(filledImage, "filled image");
+    grayImage._And(filledImage);
+    grayImage = removeGradient(grayImage);
+}
+else
+    grayImage = tempGray;
+
+saveDebugImage(grayImage, "Final White");
+/*            
+GrayImage filledImage2 = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+saveDebugImage(filledImage2, "test debug");
+filledImage2._And(filledImage.ThresholdBinaryInv(new Gray(128), new Gray(255)));
+saveDebugImage(filledImage2, "test debug2");
+double dotprot = filledImage2.DotProduct(one);
+filledImage2 = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+filledImage2._ThresholdBinaryInv(new Gray(120), new Gray(255));
+filledImage2._And(filledImage.ThresholdBinaryInv(new Gray(128), new Gray(255)));
+saveDebugImage(filledImage2, "test debug 2");
+double dotprot2 = filledImage2.DotProduct(one);
+Console.WriteLine((dotprot).ToString() + " " + (dotprot2).ToString() + " " + mindotprot.ToString());
+filledImage2._ThresholdBinaryInv(new Gray(120), new Gray(255));
+grayImage._Or(filledImage);
+saveDebugImage(grayImage, "test debug 3");
+one.Dispose();
+filledImage2.Dispose();
+
+if (dotprot > dotprot2)
+{
+    filledImage2 = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+    grayImage = filledImage2.And(filledImage.ThresholdBinaryInv(new Gray(128), new Gray(255)));
+}
+else
+{
+    filledImage2 = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+    filledImage2._ThresholdBinaryInv(new Gray(120), new Gray(255));
+    grayImage = filledImage2.And(filledImage.ThresholdBinaryInv(new Gray(128), new Gray(255)));
+}
+saveDebugImage(grayImage, "Gray image");
+            
+//saveDebugImage(filledImage, "After hull2");
+*/
+
+
+
+
+
+
             splitimg[0].Dispose();
             splitimg[1].Dispose();
 
 
-            StructuringElementEx element = new StructuringElementEx(1, 1, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
-            element = new StructuringElementEx(2, 2, 0, 0, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE);
-            splitimg[2]._MorphologyEx(element, CV_MORPH_OP.CV_MOP_CLOSE, 1);
-            saveDebugImage(splitimg[2], "after Morph");
-            saveDebugImage(splitimg[2].Canny(500, 300), "Edge after morph");
-            element.Dispose();
 
-
-            grayImage._ThresholdBinary(new Gray(120), new Gray(255));
-            GrayImage paddedImage = new GrayImage(350, 350);
-            CvInvoke.cvCopyMakeBorder(grayImage, paddedImage, new Point(25, 25), BORDER_TYPE.CONSTANT, new MCvScalar(0));
-            grayImage.Dispose();
-            grayImage = paddedImage;
             
-            saveDebugImage(grayImage, "Binary image (larger)");
 
             if (preprocessorRemoveGrading)
             {
 
-                //Image<Gray, byte> maskImage = new Image<Gray, byte>(350, 350);
-                for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                {
-                    Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                    Point[] points = pointsSeq.ToArray();
-                    //                filledImage.FillConvexPoly(points, new Gray(255));
-                    MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
 
-
-                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString() + box.center.X.ToString());
-                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
-                    if (box.size.Height < 5 || box.size.Width < 5)
-                        grayImage.FillConvexPoly(points, new Gray(0));
-
-                    //grayImage.Draw(box, new Gray(0), -1);
-                    //if (box.size.Width < 5)
-                    //    grayImage.Draw(box, new Gray(0), -1);
-                    //grayImage.Draw(box, new Gray(255), 1);
-                }
-
-                //maskImage._Not();
-                //paddedIamge._And(maskImage);
-                //grayImage2._And(maskImage);
-                //maskImage._Not();
-                grayImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
-                for (var contour = grayImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                {
-                    Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
-                    Point[] points = pointsSeq.ToArray();
-                    //                filledImage.FillConvexPoly(points, new Gray(255));
-                    MCvBox2D box = PointCollection.MinAreaRect(Array.ConvertAll(points, item => (PointF)item));
-
-                    //Console.WriteLine("hight: " + box.size.Height.ToString() + " Witdh: " + box.size.Width.ToString());
-                    if (box.size.Height < 5 || box.size.Width < 5)
-                    {
-                        grayImage.FillConvexPoly(points, new Gray(0));
-                        //maskImage.FillConvexPoly(points, new Gray(255));//TODO: ander mask maak
-                    }
-
-                    ///   else filledImage.Draw(box, new Gray(0), 1);
-                }
-                grayImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
-                saveDebugImage(grayImage, "Grading removed");
                 
             }
 
@@ -462,26 +546,28 @@ namespace Signrider
                                 ckernel[l, k] = (float)GW[l, k + n * 10].Intensity / 10000;
                         ckernel.Center = new Point(5, 5);
 
-                        Image<Gray, float> cropImageFloat = cropImage.Convolution(ckernel);
+                        Image<Gray, float> convolutedImage = cropImage.Convolution(ckernel);
 
-                        cropImageFloat._ThresholdBinary(new Gray(0.1), new Gray(1));
+                        convolutedImage._ThresholdBinary(new Gray(0.1), new Gray(1));
                         rect = new Rectangle(c + n * 300, r, N, N);
                         divImg2.ROI = rect;
-                        CvInvoke.cvCopy(cropImageFloat, divImg2, IntPtr.Zero);
+                        CvInvoke.cvCopy(convolutedImage.Mul(255), divImg2, IntPtr.Zero);
                         divImg2.ROI = Rectangle.Empty;
 
                         Image<Gray, float> one = new Image<Gray, float>(75, 75, new Gray(1));
-                        double dotprot = cropImageFloat.DotProduct(one);
+                        double dotprot = convolutedImage.DotProduct(one);
 
                         returnMatrix[0, xAxisCursor] = (float)dotprot;
-                        if (isTraining)
+                       // Console.Write(dotprot."
+                        if (!isTraining)
                         {
                             histogram.Draw(new LineSegment2D(ppoint, new Point(xAxisCursor * 5, 200 - (int)dotprot / 2)), new Gray(255), 1);
                             ppoint = new Point(xAxisCursor * 5, 200 - (int)dotprot / 2);
-                            xAxisCursor++;
+
                         }
+                        xAxisCursor++;
                         one.Dispose();
-                        cropImageFloat.Dispose();
+                        convolutedImage.Dispose();
                     }
                     cropImage.Dispose();
                 }
@@ -616,13 +702,14 @@ namespace Signrider
                     trainClasses[j, 0] = (float)featureExampleElement.type;
                 }
                 bool trained = SVMModels[i].Train(trainData, trainClasses, null, null, SVMParameters);
+                //bool trained = SVMModels[i].TrainAuto(trainData, trainClasses, null, null, paramsm, 100);
                 isTrained = isTrained & trained;
                 //trainData.Add(entry.Value.First().parameter);
             }
-            /*
-            bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
-            //bool trained = SVMModel.TrainAuto(para, signType, null, null, paramsm, 3);*/
-            Console.WriteLine("Trained: " + isTrained.ToString());
+            
+            //bool trained = SVMModel.Train(para, signType, null, null, SVMParameters);
+
+            //Console.WriteLine("Trained: " + isTrained.ToString());
         }
 
         public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
