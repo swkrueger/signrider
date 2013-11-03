@@ -114,7 +114,7 @@ namespace Signrider
             foreach (ShapeExample example in testExamples)
             {
                 SignShape expectedShape = example.shape;
-                SignShape recognizedShape = classifier.classify(example.image);
+                SignShape recognizedShape = classifier.classify(example.image, example.colour);
 
                 Debug.WriteLine(
                     String.Format(

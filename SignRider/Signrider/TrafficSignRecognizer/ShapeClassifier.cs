@@ -55,8 +55,14 @@ namespace Signrider
         private bool debugPauseOnImageShow = true;
 
         // Private class variables
-        private SVM SvmModel = new SVM();
+        private struct ShapeSvm
+        {
+            public SVM model;
+            public List<SignShape> shapes;
+            public bool isTrained;
+        }
         private SVMParams SvmParameters;
+        private ShapeSvm[] svms;
 
         public bool isTrained { get; private set; }
 
@@ -73,6 +79,37 @@ namespace Signrider
             SvmParameters.Degree = 3;
             SvmParameters.C = 1;
             SvmParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
+
+            // Obtain the number of colour classes
+            int numSignColours = Enum.GetValues(typeof(SignColour)).Length;
+
+            // Create an empty SVM model for each colour
+            svms = new ShapeSvm[numSignColours];
+            for (int i = 0; i < numSignColours; ++i)
+            {
+                svms[i].model = new SVM();
+                svms[i].isTrained = false;
+                svms[i].shapes = new List<SignShape>();
+            }
+
+            // Define which shapes are used for each sign colour
+            svms[(int)SignColour.RED].shapes.AddRange(
+                new SignShape[] {
+                    SignShape.Garbage,
+                    SignShape.Circle,
+                    SignShape.Octagon,
+                    SignShape.TriangleUp,
+                    SignShape.TriangleDown
+                }
+            );
+
+            svms[(int)SignColour.BLUE].shapes.AddRange(
+                new SignShape[] {
+                    SignShape.Garbage,
+                    SignShape.Circle,
+                    SignShape.Rectangle
+                }
+            );
         }
 
         private void addDebugImage(List<DebugImage> debugImages, IImage image, string title = "Test Window")
@@ -91,13 +128,13 @@ namespace Signrider
             }
         }
 
-        public SignShape classify(GrayImage binaryImage, List<DebugImage> debugImages = null)
+        public SignShape classify(GrayImage binaryImage, SignColour colour, List<DebugImage> debugImages = null)
         {
             int[] featureVector = extractDtbFeatures(binaryImage, debugImages);
             if (isTrained)
             {
                 Matrix<float> data = new Matrix<float>(Array.ConvertAll<int, float>(featureVector, Convert.ToSingle));
-                return (SignShape)SvmModel.Predict(data);
+                return (SignShape)svms[(int)colour].model.Predict(data);
             }
             else
             {
@@ -107,29 +144,54 @@ namespace Signrider
 
         public void train(List<ShapeExample> examples)
         {
-            Matrix<float> trainData = new Matrix<float>(examples.Count, featureVectorDimension);
-            Matrix<float> trainClasses = new Matrix<float>(examples.Count, 1);
+            int numSignColours = Enum.GetValues(typeof(SignColour)).Length;
+            bool newIsTrained = true;
 
             // Calculate training data features
-            for (int i = 0; i < examples.Count; i++)
+            Matrix<float>[] trainData = new Matrix<float>[numSignColours];
+            Matrix<float>[] trainClasses = new Matrix<float>[numSignColours];
+
+            for (int colourIdx = 0; colourIdx < numSignColours; colourIdx++)
             {
-                ShapeExample example = examples[i];
+                int numColourExamples = 0;
+                for (int i = 0; i < examples.Count; i++)
+                    if (svms[colourIdx].shapes.Contains(examples[i].shape))
+                        ++numColourExamples;
 
-                int[] featureVector = extractDtbFeatures(example.image);
-                for (int j = 0; j < featureVectorDimension; j++)
-                    trainData[i, j] = featureVector[j];
+                trainData[colourIdx] = new Matrix<float>(numColourExamples, featureVectorDimension);
+                trainClasses[colourIdx] = new Matrix<float>(numColourExamples, 1);
 
-                trainClasses[i,0] = (int) example.shape;
+                int matrixIdx = 0;
+                for (int i = 0; i < examples.Count; i++)
+                {
+                    if (svms[colourIdx].shapes.Contains(examples[i].shape))
+                    {
+                        ShapeExample example = examples[i];
+                        int[] featureVector = extractDtbFeatures(example.image);
+                        for (int j = 0; j < featureVectorDimension; j++)
+                            trainData[colourIdx][i, j] = featureVector[j];
+
+                        trainClasses[colourIdx][i, 0] = (int)example.shape;
+                        ++matrixIdx;
+                    }
+                }
+
+                if (numColourExamples > 2)
+                {
+                    // Train SVM models
+                    svms[colourIdx].isTrained = svms[colourIdx].model.Train(
+                        trainData[colourIdx],
+                        trainClasses[colourIdx],
+                        null,
+                        null,
+                        SvmParameters
+                        );
+                }
+
+                newIsTrained = newIsTrained && svms[colourIdx].isTrained;
             }
 
-            // Train SVM model
-            isTrained = SvmModel.Train(
-                trainData,
-                trainClasses,
-                null,
-                null,
-                SvmParameters
-                );
+            isTrained = newIsTrained;
         }
 
         private GrayImage preprocessImage(GrayImage origImage, List<DebugImage> debugImages = null)

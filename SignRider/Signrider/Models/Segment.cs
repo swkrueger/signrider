@@ -54,7 +54,7 @@ namespace Signrider.Models
             this.type = SignType.Garbage;
 
             if (TrafficSignRecognizer.ShapeClassifier.isTrained)
-                this.shape = TrafficSignRecognizer.ShapeClassifier.classify(this.binaryImage);
+                this.shape = TrafficSignRecognizer.ShapeClassifier.classify(this.binaryImage, colourSegment.colour);
             else
                 this.shape = SignShape.Garbage;
 

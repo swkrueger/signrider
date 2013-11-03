@@ -33,7 +33,7 @@ namespace Signrider.ViewModels
             ColourSegmentationImages.Add(new DebugImage(segment.binaryImage, "Binary image"));
 
             List<DebugImage> shapeImages = new List<DebugImage>();
-            TrafficSignRecognizer.ShapeClassifier.classify(segment.binaryImage, shapeImages);
+            TrafficSignRecognizer.ShapeClassifier.classify(segment.binaryImage, segment.colour);
             foreach (DebugImage image in shapeImages)
                 ShapeClassifierImages.Add(image);
 
