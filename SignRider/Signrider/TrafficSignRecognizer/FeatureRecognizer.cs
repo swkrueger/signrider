@@ -422,7 +422,7 @@ tempGray._ThresholdBinaryInv(new Gray(100), new Gray(255));
 tempGray = removeGradient(tempGray);
 saveDebugImage(tempGray, "White");
 mindotprot = tempGray.DotProduct(one);
-Console.WriteLine((mindotprot).ToString());
+//Console.WriteLine((mindotprot).ToString());
 
 
 if (mindotprot < 1e8)
@@ -621,6 +621,9 @@ saveDebugImage(grayImage, "Gray image");
             //for (int i = 0; i < imagesCount; i++)
             while(images.Count() > 0)
             {
+                if (images.Count() % 20 == 0)
+                    Console.WriteLine("Images left to train: " + images.Count().ToString());
+
                 FeatureExample image = images[0];
                 debugFolder = image.directory + image.name + "\\";
                 //GrayImage preprosessedImage = preprocess(image);
@@ -640,6 +643,10 @@ saveDebugImage(grayImage, "Gray image");
                }
                else
                     trainlist[(int)shape].Add(element);
+
+               if (shape == SignShape.Octagon)
+                   trainlist[(int)SignShape.Circle].Add(element);
+
                 images.Remove(image);
                 image.rgbImage.Dispose();
                 image.grayImage.Dispose();
@@ -654,32 +661,40 @@ saveDebugImage(grayImage, "Gray image");
 
         public void test(List<FeatureExample> images)
         {
-  /*          int imagesCount = images.Count();
-            Matrix<SignShape, float> trainClasses = new Matrix<float>(1, 128);
-            for (int i = 0; i < imagesCount; i++)
+            int imagesCount = images.Count();
+            int garbageCorrect = 0;
+            int garbageIncorrect = 0;
+            int correct = 0;
+            int incorrect = 0;
+            //for (int i = 0; i < imagesCount; i++)
+            while (images.Count() > 0)
             {
-                FeatureExample image = images[i];
-                //GrayImage preprosessedImage = preprocess(image);
-                GrayImage preprosessedImage = preprocess(image.rgbImage, image.grayImage);
-                Matrix<float> parameter = calculateParameters(preprosessedImage);
-                //for (int j = 0; j < 128; j++)
-                //    trainClasses[0,j] = parameter[0, j];
-
-                //SVMModel.Predict(trainClasses);
-                MessageBox.Show("Image " + i.ToString() + ": " + classifySign(parameter, image.shape).ToString());
-                Console.WriteLine("DONE");
-            }*/
+                FeatureExample image = images[0];
+                SignType detectedSign = recognizeSign(image.rgbImage, image.grayImage, image.shape);
+                if (image.type == SignType.Garbage)
+                {
+                    if (detectedSign == SignType.Garbage)
+                        garbageCorrect++;
+                    else
+                        garbageIncorrect++;
+                }
+                else
+                {
+                    if (detectedSign == image.type)
+                        correct++;
+                    else
+                        incorrect++;
+                }
+                images.Remove(image);
+            }
+            MessageBox.Show("Garbage Incorrect: " + garbageIncorrect.ToString() + "\n " + "Correct: " + correct.ToString() + "\n " + "Incorrect: " + incorrect.ToString());
         }
 
         private void trainSVM(List<FeatureExampleElement>[] trainlist)
         {
             isTrained = true;
-            //foreach (List<FeatureExampleElement> featureExampleElementList in trainlist)
             for (int i = 1; i < trainlist.Count(); i++)
             {
-                if (i == 2) //octagon
-                    continue;
-
                 List<FeatureExampleElement> featureExampleElementList = trainlist.ElementAt(i);
                 int count = featureExampleElementList.Count();
                 Matrix<float> trainData = new Matrix<float>(count, 128);
@@ -714,8 +729,8 @@ saveDebugImage(grayImage, "Gray image");
 
         public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
         {
-            if (shape == SignShape.Octagon)
-                return SignType.Stop;
+            if (shape == SignShape.Garbage)
+                return SignType.Garbage;
             debugImages = aDebugImage;
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
             Matrix<float> parameter = calculateParameters(preprosessedImage);
@@ -749,8 +764,8 @@ saveDebugImage(grayImage, "Gray image");
                     if (!System.IO.File.Exists(rgbFile))
                         continue;
 
-                    Debug.WriteLine("Loaded image: " + bwFile);
-                    Debug.Flush();
+                    //Debug.WriteLine("Loaded image: " + bwFile);
+                    //Debug.Flush();
 
                     string[] pathDirectories = bwFile.Split(Path.DirectorySeparatorChar);
                     int numPathDirectories = pathDirectories.Count();
@@ -765,9 +780,6 @@ saveDebugImage(grayImage, "Gray image");
                     if (Enum.IsDefined(typeof(SignShape), signShapeString))
                         shape = (SignShape)Enum.Parse(typeof(SignShape), signShapeString);
                     else
-                        continue;
-
-                    if (shape == SignShape.Octagon)
                         continue;
 
                     SignType type;

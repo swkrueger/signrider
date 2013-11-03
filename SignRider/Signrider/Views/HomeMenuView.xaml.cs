@@ -177,15 +177,17 @@ namespace Signrider
         FeatureRecognizer featureRecognizer;
         private void featureRecognizerTrainButton_Click(object sender, RoutedEventArgs e)
         {
-            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train\\");
+            //List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\train\\");
+            //List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("C:\\Users\\Hendrik\\Downloads\\New train and test\\TrainingSet\\Features");
+            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("C:\\Users\\Hendrik\\Desktop\\TrainingSet2 reduced2\\Features");
             featureRecognizer = new FeatureRecognizer();
             featureRecognizer.train(examples);
         }
 
         private void featureRecognizerTestButton_Click(object sender, RoutedEventArgs e)
         {
-            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("..\\ShapeTestData\\test\\");
-            //FeatureRecognizer featureRecognizer = new FeatureRecognizer();
+            //List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("C:\\Users\\Hendrik\\Downloads\\New train and test\\TestSet\\Features");
+            List<FeatureExample> examples = FeatureRecognizer.extractExamplesFromDirectory("C:\\Users\\Hendrik\\Desktop\\TrainingSet2 reduced2\\Features");
             featureRecognizer.test(examples);
         }
     }
