@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="aa45aa51-810f-4ce6-8301-da64a6281141"
+  name="ML"
+  visibility="Private" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <referencesInternal>
+    <reference
+      Id="17b20a86-4dff-46e4-8061-36938b951b96"
+      handle="viewcode://./CodeSchema_Namespace?Namespace%3DEmgu.CV.ML"
+      tag="ViewCode" />
+  </referencesInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="481aab81-a4e5-4eec-bce5-44fc2d4d7ef3"
+        name="SVM"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="414d8972-766b-4394-a651-f011fa16544f"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.ML.dll Namespace%3DEmgu.CV.ML Type%3DSVM"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="64e3aceb-9fa7-4b63-92a1-1ff36867cfc4"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="82be4575-c2d7-4b2b-85a9-ff13e308f7a6">
+                <propertyInstance
+                  Id="859e3934-8108-463b-a5da-37fd5162f7bb"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="4ba5818c-5e89-44f6-a640-c1c8fa277643">
+                <propertyInstance
+                  Id="3dbec674-069e-487c-a52f-dd5bc27ee213"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="6827e6fc-ccc1-472c-9f2d-65afcbf9b502">
+                <propertyInstance
+                  Id="a79e1910-c529-4387-bd02-1e99a2e4a5a7"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="2358e694-ac66-40d9-bfe1-a49be6c02c6c">
+                <propertyInstance
+                  Id="63a1bafb-5ebb-4e4b-9f4e-5ff7eee577d0"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="5f7db27f-066b-47e2-88c9-674ff32c7ddd">
+                <propertyInstance
+                  Id="3dd57d39-99b3-4bb9-a718-e57de9cbc13c"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="807ac3ac-50f4-4617-8bb8-a17d94afe394"
+        name="SVMParams"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="09d65bc2-d21e-4a61-b798-47576d3283eb"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.ML.dll Namespace%3DEmgu.CV.ML Type%3DSVMParams"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="afc50509-d2a6-4607-a3cd-c30ace3b7f8a"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="853f51a0-d832-4f93-b00b-2b834571bcc8">
+                <propertyInstance
+                  Id="0cfc554b-4cdb-42bd-b2b5-ed20906dbf6e"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="38fb9c20-b363-4f0c-891b-7c8a08075020">
+                <propertyInstance
+                  Id="ab7f3633-965f-418e-9b9f-0314ba29bd8f"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="fbbb3d6e-d8c1-4246-a39f-30bd822b856b">
+                <propertyInstance
+                  Id="0b7e4f51-901c-438c-a263-4b56b2207e3b"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="46cf115c-cf64-4f22-8c79-eb8fc15a3ea8">
+                <propertyInstance
+                  Id="75b1d23a-7cd1-4507-aae9-58357b065641"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="a59eb956-e104-4d6a-836b-1eaaf573c18a">
+                <propertyInstance
+                  Id="c17f3779-e89c-40e8-bd16-ebda6e9ea620"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+</package>

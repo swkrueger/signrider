@@ -1,0 +1,621 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="2c4a5eb6-adc7-42b3-a034-d327a4de2768" name="UMLClassDiagram1" linkedPackageId="032f3b65-0e11-4ad3-8ab3-23f28ac61d11" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="fd304637-de01-4cce-a62f-3580046b3161">
+      <profileInstance Id="cfb73cdc-ce19-4251-82b5-8a3b26ee2451" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="685539ae-f002-4f32-aad7-dc5d19a6bd8f">
+      <profileInstance Id="38d6c372-1c42-4ede-95ef-a0a17d5f8977" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="e3c12a2b-8c63-49b5-807f-e9bb1d007d86">
+      <profileInstance Id="f1323bef-da7e-4adf-8412-0f2c50d85d25" name="CSharpProfile">
+        <elementDefinition Id="33f3845e-b266-4d41-8926-b60f2a226f66" />
+      </profileInstance>
+      <elementDefinition Id="e8aeae4c-2e1b-478f-8f7f-e02506ab3707" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasPackages>
+      <package Id="eb78fdeb-1cff-4c35-a376-1f42cdf02f46" name="Signrider" visibility="Private">
+        <referencesInternal>
+          <reference Id="80b1d984-0eb2-4d7a-bbd4-6dd5adb5169a" handle="viewcode://./CodeSchema_Namespace?Namespace%3DSignrider" tag="ViewCode">
+            <elementDefinition Id="3e8a23a3-367b-4037-99c3-84b64b3196c5" />
+          </reference>
+        </referencesInternal>
+        <elementDefinition Id="0249d89b-6f1d-4d20-b9bb-b7372a680625" />
+        <packagedElements>
+          <packageHasNamedElement>
+            <class Id="dee0873c-336f-46b2-a1f9-3e36e60fdfe5" name="ColourSegment" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <referencesInternal>
+                <reference Id="15ee2059-2845-44df-9221-14bc136fed96" handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment" tag="ViewCode">
+                  <elementDefinition Id="b3f9fd9e-d054-4f9e-a117-56e78497a1a0" />
+                </reference>
+              </referencesInternal>
+              <appliedStereotypesInternal>
+                <stereotypeInstance Id="0284b4dd-647c-48ee-97b5-93b9d501c260" name="class" profile="CSharpProfile">
+                  <elementDefinition Id="dd6ca3c6-fc7d-4aee-9b4e-a727afbdb595" />
+                  <propertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="80258a84-e25d-440c-809a-8ca16c3a46c7">
+                      <propertyInstance Id="ce8b338b-c158-4a5e-b011-9556a116a4ac" name="ClrAttributes">
+                        <elementDefinition Id="ba16ac61-1e10-4b47-9a6b-cf11c3ae8ee6" />
+                      </propertyInstance>
+                      <elementDefinition Id="c4acfb68-b18f-4a63-a82f-86b25dd9d689" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="6163ba2b-c8fc-4ba1-8855-27c92672a975">
+                      <propertyInstance Id="6f8c3df5-69dc-4351-96da-1af7768b90f0" name="IsPartial" value="false">
+                        <elementDefinition Id="e7a7b07c-fa8f-485e-8836-15c35a182dcb" />
+                      </propertyInstance>
+                      <elementDefinition Id="811b9f48-a9e8-4f64-890b-fff74345dde6" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="5b8d8c6c-ea93-4cb7-af75-8ea60e2198b8">
+                      <propertyInstance Id="d40ae272-b5de-4252-8f71-2fb60feab7eb" name="IsStatic" value="False">
+                        <elementDefinition Id="f4d02af3-19ad-4f15-a05e-e89ceca0b833" />
+                      </propertyInstance>
+                      <elementDefinition Id="332b4510-63ea-452f-a6da-58474f011fac" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="1ef0e18c-f62b-4c94-813c-67593d1d7ea0">
+                      <propertyInstance Id="13ad5fb7-3879-4808-8b39-278bab284137" name="IsUnsafe" value="false">
+                        <elementDefinition Id="49f93018-f3fb-4738-83c8-b0a6b664fa7b" />
+                      </propertyInstance>
+                      <elementDefinition Id="02b488e1-d8cd-4d16-80d6-d1c138a5bccd" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="4ce3cb11-b6d5-48c1-9298-b758a3c5190b">
+                      <propertyInstance Id="dbbabad3-385e-46f1-894e-ae2f9f1a031f" name="PackageVisibility" value="internal">
+                        <elementDefinition Id="51b46057-bd97-405f-b695-278cd71db354" />
+                      </propertyInstance>
+                      <elementDefinition Id="57e68ee1-ab0a-4574-96ec-f5a5edaa3364" />
+                    </stereotypeInstanceHasPropertyInstances>
+                  </propertyInstances>
+                </stereotypeInstance>
+              </appliedStereotypesInternal>
+              <elementDefinition Id="02bbfce0-a52e-4c99-924f-ca735358daf2" />
+              <ownedAttributesInternal>
+                <property Id="ec6855f9-bb2c-4de5-a0ca-2efd8bee9b53" name="rgbCrop" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <referencesInternal>
+                    <reference Id="eaa4d486-92ac-474f-931c-7b2aa2e4ae16" handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3DrgbCrop" tag="ViewCode">
+                      <elementDefinition Id="4637cb0a-3dab-4e47-a693-39534c00e89c" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="2e1b1240-8069-442d-85c5-654fb9596902" name="property" profile="CSharpProfile">
+                      <elementDefinition Id="73d83aad-4676-47e7-9637-9be38d37db19" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="a7f71792-d20b-4775-8d06-10dae2f355c5">
+                          <propertyInstance Id="97fc2a35-5c1f-45ab-91d6-242d4e85c046" name="ClrAttributes">
+                            <elementDefinition Id="718ae24a-481e-4104-9a66-9830ca044279" />
+                          </propertyInstance>
+                          <elementDefinition Id="3d9c0d33-f551-42f3-afb9-e45ea09ac14d" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="14cd44c9-1a98-4604-a9fd-529bc3a86183">
+                          <propertyInstance Id="b942643a-b93c-4ef1-ac94-bbc8e9042058" name="Get" value="public">
+                            <elementDefinition Id="49e5e920-17cf-4247-b148-8f10ad574283" />
+                          </propertyInstance>
+                          <elementDefinition Id="f671aec5-8e28-4093-ad21-ea14add60fd6" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="fcb05e76-c938-479a-8e77-6d4423585ee3">
+                          <propertyInstance Id="7bb534bb-b340-45d5-aa66-abc197e38ca8" name="HasBody" value="false">
+                            <elementDefinition Id="7a6821c8-7f08-454c-91c0-ee8ea16e34ba" />
+                          </propertyInstance>
+                          <elementDefinition Id="6caec6f7-2c72-491f-8f66-2131a88163a5" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="36df52c5-f931-4006-a105-c324a9390939">
+                          <propertyInstance Id="39acc4df-a5b3-4327-a384-a10e9576f5d9" name="IsUnsafe" value="false">
+                            <elementDefinition Id="e838c171-b34a-4ce5-8642-3a925502fa5d" />
+                          </propertyInstance>
+                          <elementDefinition Id="c101dea4-9586-478d-936c-c99a4acebde4" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="472834cf-9be1-4ca6-9f05-016ef2cd6add">
+                          <propertyInstance Id="e31e4173-aaed-4fb3-9b51-be3729251b5c" name="Inheritance" value="none">
+                            <elementDefinition Id="d1f4a04c-2252-49b4-b07e-df0236fa9f3b" />
+                          </propertyInstance>
+                          <elementDefinition Id="78522f2d-3585-449e-b9aa-3fbbee812d89" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="55553a05-b3d9-4eb8-b1bc-bd9e24a962c8">
+                          <propertyInstance Id="8713f532-f7c9-4a32-b8cc-24b19d9c4c75" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="2e19a2e2-f594-40e5-8543-c38f9a3397bd" />
+                          </propertyInstance>
+                          <elementDefinition Id="07245857-5021-4146-9555-c586cda5fef9" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="f92274f4-bf87-484a-91b1-1100b051f857">
+                          <propertyInstance Id="e1ac7bbf-3395-46fd-a67c-02db8ab727d6" name="Set" value="public">
+                            <elementDefinition Id="f635d467-b775-4475-8cc7-0220bd5a45d5" />
+                          </propertyInstance>
+                          <elementDefinition Id="ce5c0686-1867-4455-851c-550d421c256f" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <elementDefinition Id="c59429fd-20bb-4cf5-a605-1887df113491" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="c7cff858-beec-4784-9b66-f7e2ead5deb4" LastKnownName="Image&lt;Bgr‎, Byte‎&gt;" />
+                  </type_NamedElement>
+                </property>
+                <property Id="7482df2b-6adb-4c05-8f4e-23c373f0985a" name="binaryCrop" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <referencesInternal>
+                    <reference Id="bf872b6b-4d7a-4446-9119-f8b7ceaef55b" handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3DbinaryCrop" tag="ViewCode">
+                      <elementDefinition Id="6a1092bb-a629-4f2e-9681-5f5dad60b96b" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="2d4f6fb4-af01-4677-803b-6abe3baa3de6" name="property" profile="CSharpProfile">
+                      <elementDefinition Id="03b400e8-b0b0-4403-9f29-1853b64bc14f" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="56d80c0b-4833-4eaa-801a-b90d5021b653">
+                          <propertyInstance Id="9877ecb2-7417-4bff-90b2-d4f1c4a5728e" name="ClrAttributes">
+                            <elementDefinition Id="cbde1e40-6a3f-4740-93e1-0553018edd39" />
+                          </propertyInstance>
+                          <elementDefinition Id="86e8d680-c08f-4b04-93c4-96e9dcac68a7" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="0cd32009-7b34-45d3-b60e-f4c8c6e175b3">
+                          <propertyInstance Id="00da0ee8-9d01-4cd0-b309-a586b69313b7" name="Get" value="public">
+                            <elementDefinition Id="8ea260fe-6ef3-4dcb-b23b-e3406a835f49" />
+                          </propertyInstance>
+                          <elementDefinition Id="d8c59af3-4575-4fe8-a2fa-2556d37d3e52" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="2222d98e-ef88-421e-b5b7-decb0e7e1827">
+                          <propertyInstance Id="147701af-f7e6-457f-9a7f-1021bc8f6d90" name="HasBody" value="false">
+                            <elementDefinition Id="29d952da-9284-4ef8-9a83-21e92541445d" />
+                          </propertyInstance>
+                          <elementDefinition Id="9ab33af4-0b88-4313-b251-980d19ce4a97" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="8847aa24-6df4-41a3-90c3-96eebe247b3f">
+                          <propertyInstance Id="0fdd6f16-e1ba-4234-8349-a04d2944de8e" name="IsUnsafe" value="false">
+                            <elementDefinition Id="023c104b-da35-4aef-b436-d5916113c347" />
+                          </propertyInstance>
+                          <elementDefinition Id="ffdd48cf-12c1-4409-9e91-ee354f039a83" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="39544cd5-b04d-41ae-a397-366dc4f7aa07">
+                          <propertyInstance Id="ebe73da6-d013-4e88-b4e5-4f7e9fb38e9e" name="Inheritance" value="none">
+                            <elementDefinition Id="f871839e-67d8-4e3b-b8d5-ca240493688c" />
+                          </propertyInstance>
+                          <elementDefinition Id="ebbf81a4-39b0-421b-8004-9203bbc6ea4b" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="d0294736-7f04-4085-9c03-407f5b5821a7">
+                          <propertyInstance Id="470444ce-6f04-4a39-994c-94b6ecbec20b" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="9f0ca80b-bce8-4287-8698-4e0a738a48ac" />
+                          </propertyInstance>
+                          <elementDefinition Id="a4232117-44ce-4b1e-abe0-bb856931736b" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="5e070cae-874c-4384-b214-4218a69639e5">
+                          <propertyInstance Id="db19ca57-b52d-453b-aa5b-c70cd9c44f6f" name="Set" value="public">
+                            <elementDefinition Id="ffa2fe82-0569-4710-ac74-691f8ceedd38" />
+                          </propertyInstance>
+                          <elementDefinition Id="e351020e-f502-47c9-95a6-8d33b73057a1" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <elementDefinition Id="2df1d65a-e1cf-416a-a967-60d0e0b90bc9" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="dd9657de-fc50-470a-9fb6-f3268108e238" LastKnownName="Image&lt;Gray‎, Byte‎&gt;" />
+                  </type_NamedElement>
+                </property>
+                <property Id="0a5aedfb-7b9b-484e-b3b7-2a4e768743ab" name="contour" isLeaf="false" isStatic="false" isReadOnly="false" isOrdered="true" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <referencesInternal>
+                    <reference Id="ccff3371-9459-4ca1-91e5-eb6cfcf33307" handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3Dcontour" tag="ViewCode">
+                      <elementDefinition Id="7b7faa8e-f7a1-4c4a-bd38-5d9b66efa4ba" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="6fc7c6fd-9817-4662-aa51-3f4eeaf86585" name="property" profile="CSharpProfile">
+                      <elementDefinition Id="6df62c59-1a46-422a-a11e-76e7028e4cc8" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="66e7d5c6-28e2-4bff-9b70-0afe13815345">
+                          <propertyInstance Id="e70865ce-08f7-4b30-af5c-0bfbc32ef73f" name="ClrAttributes">
+                            <elementDefinition Id="810d1597-a23c-441f-8d4c-9feeb2f44941" />
+                          </propertyInstance>
+                          <elementDefinition Id="87fcacba-0d20-4827-b81b-904e7ecc203c" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="75d2b72e-693a-4480-9e3a-ba4486b36dc7">
+                          <propertyInstance Id="c88e9287-2d8a-496a-9b3a-9cfddcded303" name="Get" value="public">
+                            <elementDefinition Id="39e30133-ee20-4922-a96a-99edbb3257e8" />
+                          </propertyInstance>
+                          <elementDefinition Id="6ad99b01-46ae-48ec-8ede-c21d55905644" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="be58b0fd-cbad-4782-8dd4-e0ffd20ab9cf">
+                          <propertyInstance Id="f5854caf-251b-41dd-afc9-6cd1c9bb09ba" name="HasBody" value="false">
+                            <elementDefinition Id="893eb46a-9316-41e2-b975-ed8188da0b92" />
+                          </propertyInstance>
+                          <elementDefinition Id="bc64fb78-bb80-491c-9f72-7db425257231" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="9fcd8000-d75f-4753-9c88-b2e7feeed2db">
+                          <propertyInstance Id="833bbabc-eb42-43a0-9b86-6f037e4491b7" name="IsUnsafe" value="false">
+                            <elementDefinition Id="bd91ba10-1274-4c32-8d15-59c3846bb505" />
+                          </propertyInstance>
+                          <elementDefinition Id="0b995d65-d727-40c6-8df1-683eb1b1ee09" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="3cd9dca9-0cc4-490f-9b74-b3141bc2f405">
+                          <propertyInstance Id="7c16f2ca-f6bb-4e4c-b3b3-403a5cd93286" name="Inheritance" value="none">
+                            <elementDefinition Id="6c5fe037-8c33-412e-8bdf-a09989c62dc9" />
+                          </propertyInstance>
+                          <elementDefinition Id="e76bfbe5-f8f4-4070-86bd-c3ce19acf9b0" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="f67bb4a9-2785-4b35-a6db-fd7b2e48415d">
+                          <propertyInstance Id="eaa01322-ac2d-4b34-bd14-1dfd263e5f16" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="2107e385-3d7d-4063-8caf-13bb6663cafd" />
+                          </propertyInstance>
+                          <elementDefinition Id="5b93dd6d-5c5b-429f-87c5-3f830a1010f7" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="13166bd5-84a3-45dc-9d0f-1218375d12dc">
+                          <propertyInstance Id="e8b1772c-59d8-45fb-89bf-148ca26b524d" name="Set" value="public">
+                            <elementDefinition Id="cde26146-cfc4-471b-b3c4-98ffc6454dd1" />
+                          </propertyInstance>
+                          <elementDefinition Id="79be6450-6a8c-4c9d-b765-d93006eb4c43" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <lowerValueInternal>
+                    <literalString Id="a27f14f2-c8a0-45cd-8167-1d0488bc79ca" name="Lower" value="*">
+                      <elementDefinition Id="fe79d016-ad04-4211-aac8-738137f36967" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="f63ee3eb-75a3-458f-b930-66f95b24186c" name="Upper" value="*">
+                      <elementDefinition Id="2d3812d2-b22c-4207-a117-7a4de7493f84" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="57e9b3d7-2f7b-4b03-8128-03a6f9599bc8" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="c870e95a-5973-465a-8d87-72969875abfb" LastKnownName="Point" />
+                  </type_NamedElement>
+                </property>
+                <property Id="c982842a-5166-4645-af46-0d804e382d5b" name="colour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <referencesInternal>
+                    <reference Id="9a7b84c3-9687-4dc8-926c-7b7b9931daee" handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3Dcolour" tag="ViewCode">
+                      <elementDefinition Id="1567ae2f-0f7e-414c-ac50-29aeb7851138" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="5a9a70fb-c091-44ff-b0ad-d1cdcb0ea420" name="property" profile="CSharpProfile">
+                      <elementDefinition Id="e51f2546-eefe-4d20-a049-759665380c31" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="6ab9e3b9-1556-4982-a937-f85acc91bc49">
+                          <propertyInstance Id="9f2d7c24-7892-4c37-aba9-b727b8ec3cdb" name="ClrAttributes">
+                            <elementDefinition Id="1a10a0e8-38ed-4a13-8874-c328ef828a1f" />
+                          </propertyInstance>
+                          <elementDefinition Id="ea8b3b26-1f3f-4f8e-a611-667f4afa9317" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="3fe0daa8-7c14-4364-978d-579a0368675a">
+                          <propertyInstance Id="0ffd6f8a-f349-4e54-9150-08018a4045fa" name="Get" value="public">
+                            <elementDefinition Id="52d04bf6-b5ee-4b2d-a881-9b04353f2cf1" />
+                          </propertyInstance>
+                          <elementDefinition Id="8369a35f-111a-4df7-aabb-21682f168e98" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="c19be689-fd2e-4822-b047-a31eba8da1ab">
+                          <propertyInstance Id="4bbb2f68-9a04-4d76-9785-1a5be0fc2b11" name="HasBody" value="false">
+                            <elementDefinition Id="7d35417b-c6c5-4b5d-b853-9ee627cff332" />
+                          </propertyInstance>
+                          <elementDefinition Id="ee601722-f05d-4f32-ba79-7e0d03d57c52" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="cef58b67-4977-4e93-946f-95ce30dca135">
+                          <propertyInstance Id="6b5410da-2d11-4b4a-a7ac-e5d7884340fe" name="IsUnsafe" value="false">
+                            <elementDefinition Id="beb3dca6-ab46-409a-b4b5-59fc98a1752a" />
+                          </propertyInstance>
+                          <elementDefinition Id="787c4163-de9d-42e5-8d1c-13f5c5baa063" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="61c99151-30e0-490b-95ed-d82ba825a4df">
+                          <propertyInstance Id="a28f0e42-0961-4d32-b1f4-47621414ee8d" name="Inheritance" value="none">
+                            <elementDefinition Id="004cb106-feee-4149-bcdb-a2770dbb6efb" />
+                          </propertyInstance>
+                          <elementDefinition Id="3c356782-73e2-4e69-8725-e7f8817b4fe0" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="8b64b0c2-7190-4ba6-8c12-20d088c55e26">
+                          <propertyInstance Id="80dfa473-51a1-4bd6-952e-75ba4bb0be0d" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="7c608d48-aac3-4344-b063-3cdd8fed8200" />
+                          </propertyInstance>
+                          <elementDefinition Id="2d7b59b8-749e-4604-bf25-e29d228c962d" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="43efdb19-08b3-46bd-9c3b-58c66f56471b">
+                          <propertyInstance Id="00d13c7c-e591-426a-bf59-ded5cef394a8" name="Set" value="public">
+                            <elementDefinition Id="a2cc91de-d398-4edb-8903-7fb47b3ac5df" />
+                          </propertyInstance>
+                          <elementDefinition Id="0634666d-49d5-4811-8d55-a47c993794ec" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <elementDefinition Id="1b454262-eca5-4e43-96f2-9ca796d13e70" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="87aa30e1-5afa-4794-904e-5c755bdfbe9f" LastKnownName="SignColour" />
+                  </type_NamedElement>
+                </property>
+              </ownedAttributesInternal>
+              <ownedOperationsInternal>
+                <operation Id="662877dd-7d80-49bf-a37d-252a7c4cd338" name="ColourSegment" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <referencesInternal>
+                    <reference Id="ca438b99-24dc-4909-a564-e08baf7efea2" handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3D(Name%3D.ctor OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DBgr)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DGray)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2FSystem.Drawing.dll&quot; Namespace%3DSystem.Drawing Type%3D(Name%3DPoint ArrayRank%3D1 ParentType%3DPoint))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DSignColour)])" tag="ViewCode">
+                      <elementDefinition Id="296b0a34-2ea7-4d29-b22f-406219abf1b7" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="0d82e498-638f-4a26-bdfb-f79db27b9b3b" name="method" profile="CSharpProfile">
+                      <elementDefinition Id="bfb3d4ac-572d-46ac-b24e-aaa5224fa06c" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="c883acdd-4881-49f7-9b1b-6e8ee0eef1ae">
+                          <propertyInstance Id="d15afcbd-9938-4586-a841-33776ee4b483" name="ClrAttributes">
+                            <elementDefinition Id="fcc8bbe2-9e71-4531-a2b5-401828abeec3" />
+                          </propertyInstance>
+                          <elementDefinition Id="d91c98c6-8bec-40d4-ad46-c3e2c53845c2" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="2f265032-cfa8-4dea-919a-f1a5d6d1ccdc">
+                          <propertyInstance Id="320be639-24cc-460c-8d2d-32bb40cd1a01" name="IsPartial" value="false">
+                            <elementDefinition Id="3444be31-b4f8-4525-8709-ce90ed624963" />
+                          </propertyInstance>
+                          <elementDefinition Id="02e7d3b8-3685-462a-b0ad-18275fa78322" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="3a08bb69-e159-4864-8b23-12fafd9babf7">
+                          <propertyInstance Id="f7055e7a-3440-45b0-a842-c4198ab44595" name="IsUnsafe" value="false">
+                            <elementDefinition Id="e590e9bd-5361-4ef3-b95c-75e97e3efc84" />
+                          </propertyInstance>
+                          <elementDefinition Id="a0b3c650-4ad0-4c1b-8b56-3638ac83d4bb" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="cc017a39-c77b-4b29-b26e-03263966d825">
+                          <propertyInstance Id="325bc996-d931-4337-9f17-f0191c2a22f3" name="Inheritance" value="none">
+                            <elementDefinition Id="0baf734e-09b4-4632-a0a5-0ecdf90e392a" />
+                          </propertyInstance>
+                          <elementDefinition Id="65aa5839-82ac-44fa-8e1d-e3b85d3e8869" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="69f05ce3-4d12-40a0-8ba1-bb8baf40f093">
+                          <propertyInstance Id="849f2db3-86e5-4a66-bed4-060863ef7c84" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="592422a3-80cc-4e02-908b-49c2b3e58d5b" />
+                          </propertyInstance>
+                          <elementDefinition Id="f8c215ba-20eb-4eb1-94c3-645709c79bf0" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="f6fefebf-29ad-4a18-a7d4-ba674cfb6180">
+                          <propertyInstance Id="51fb7865-171b-4c5a-97b9-60db9d828503" name="params" value="false">
+                            <elementDefinition Id="90b8cf28-c816-4807-8391-c35442231c83" />
+                          </propertyInstance>
+                          <elementDefinition Id="5d86b732-ea92-49da-956b-68d451a96d70" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <elementDefinition Id="5b98bafb-8e43-4b04-b3bf-7bfea47dc408" />
+                  <ownedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="e9e10624-ac37-4240-85fa-21f6bc9a250a" name="rgbCrop" direction="In">
+                        <referencesInternal>
+                          <reference Id="8adb56e7-32e6-4b13-9508-e1c68433ac59" handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3D(Name%3D.ctor OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DBgr)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DGray)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2FSystem.Drawing.dll&quot; Namespace%3DSystem.Drawing Type%3D(Name%3DPoint ArrayRank%3D1 ParentType%3DPoint))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DSignColour)]) ParameterIdentifier%3DrgbCrop" tag="ViewCode">
+                            <elementDefinition Id="4efff9cb-4531-4424-bdfb-8cebc9bc7231" />
+                          </reference>
+                        </referencesInternal>
+                        <elementDefinition Id="8a571625-2c54-4e41-a954-e2576568cf7b" />
+                        <type_NamedElement>
+                          <referencedTypeMoniker Id="c7cff858-beec-4784-9b66-f7e2ead5deb4" LastKnownName="Image&lt;Bgr‎, Byte‎&gt;" />
+                        </type_NamedElement>
+                      </parameter>
+                    </operationHasOwnedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="d3c7e2c8-49f0-45a4-8cf4-852f9cabf62c" name="binaryCrop" direction="In">
+                        <referencesInternal>
+                          <reference Id="0ad29fb1-3229-458a-a3ac-6d42bb319ba2" handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3D(Name%3D.ctor OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DBgr)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DGray)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2FSystem.Drawing.dll&quot; Namespace%3DSystem.Drawing Type%3D(Name%3DPoint ArrayRank%3D1 ParentType%3DPoint))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DSignColour)]) ParameterIdentifier%3DbinaryCrop" tag="ViewCode">
+                            <elementDefinition Id="27420e42-ac8a-48b6-aa9e-62a6eeb8ec0d" />
+                          </reference>
+                        </referencesInternal>
+                        <elementDefinition Id="7fc18e0f-e44e-4e8a-8271-59b7a41777a5" />
+                        <type_NamedElement>
+                          <referencedTypeMoniker Id="dd9657de-fc50-470a-9fb6-f3268108e238" LastKnownName="Image&lt;Gray‎, Byte‎&gt;" />
+                        </type_NamedElement>
+                      </parameter>
+                    </operationHasOwnedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="bd0ad724-5452-4c82-ae44-d14513b82ce9" name="contour" direction="In" isOrdered="true">
+                        <referencesInternal>
+                          <reference Id="83c62916-ef6a-4b32-aff9-c1128ef06fd7" handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3D(Name%3D.ctor OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DBgr)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DGray)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2FSystem.Drawing.dll&quot; Namespace%3DSystem.Drawing Type%3D(Name%3DPoint ArrayRank%3D1 ParentType%3DPoint))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DSignColour)]) ParameterIdentifier%3Dcontour" tag="ViewCode">
+                            <elementDefinition Id="196143d8-c0c6-45c7-9f4a-13b54af028fd" />
+                          </reference>
+                        </referencesInternal>
+                        <lowerValueInternal>
+                          <literalString Id="cc900f23-a19b-417a-ac61-482963928c9b" name="Lower" value="*">
+                            <elementDefinition Id="e1726333-1146-43be-a5aa-da84ab5e4c6b" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="8b62ce61-57ff-48a6-86be-9312ae2822e5" name="Upper" value="*">
+                            <elementDefinition Id="029f1041-6aec-444e-9181-5e079a3a3d32" />
+                          </literalString>
+                        </upperValueInternal>
+                        <elementDefinition Id="3dfd4f0b-905a-4dec-b602-6014654f0fc4" />
+                        <type_NamedElement>
+                          <referencedTypeMoniker Id="c870e95a-5973-465a-8d87-72969875abfb" LastKnownName="Point" />
+                        </type_NamedElement>
+                      </parameter>
+                    </operationHasOwnedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="dd59bbed-9fb1-431a-b759-bb7f83dc602d" name="colour" direction="In">
+                        <referencesInternal>
+                          <reference Id="ab6c1980-4e6e-46a7-9514-93839bfa1037" handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3D(Name%3D.ctor OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DBgr)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV Type%3D(Name%3DImage GenericParameterCount%3D2 GenericArguments%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Flib%2FEmgu.CV.dll Namespace%3DEmgu.CV.Structure Type%3DGray)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DByte)]))%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2FSystem.Drawing.dll&quot; Namespace%3DSystem.Drawing Type%3D(Name%3DPoint ArrayRank%3D1 ParentType%3DPoint))%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DSignColour)]) ParameterIdentifier%3Dcolour" tag="ViewCode">
+                            <elementDefinition Id="7493e28b-05cf-4d31-87de-3513a3311e5a" />
+                          </reference>
+                        </referencesInternal>
+                        <elementDefinition Id="711bbe97-ea58-4797-8670-20f915ce7d5d" />
+                        <type_NamedElement>
+                          <referencedTypeMoniker Id="87aa30e1-5afa-4794-904e-5c755bdfbe9f" LastKnownName="SignColour" />
+                        </type_NamedElement>
+                      </parameter>
+                    </operationHasOwnedParameters>
+                  </ownedParameters>
+                </operation>
+                <operation Id="7dc8a6ba-626b-4576-b4d1-3b9176327934" name="Dispose" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <referencesInternal>
+                    <reference Id="e4882e91-3e96-4114-b038-b73957129045" handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegment Member%3DDispose" tag="ViewCode">
+                      <elementDefinition Id="ef672002-b634-4575-993d-b3d457ea51d2" />
+                    </reference>
+                  </referencesInternal>
+                  <appliedStereotypesInternal>
+                    <stereotypeInstance Id="b84c104d-4bc1-4ee6-a172-c549d1049cd0" name="method" profile="CSharpProfile">
+                      <elementDefinition Id="0c0e22e2-f51b-4735-8b6c-609669f83de0" />
+                      <propertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="6393d67e-e1e9-4d06-a7e1-7dfc8ece77fd">
+                          <propertyInstance Id="39b755d4-fac0-4bb1-8cd9-7d1624d47960" name="ClrAttributes">
+                            <elementDefinition Id="c92efd69-7f76-486f-b0a7-3aac0573f577" />
+                          </propertyInstance>
+                          <elementDefinition Id="1a23dd5c-7249-413e-9dc3-32188ab9c56a" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="2871250f-eafa-4840-94bf-3f89443b58dd">
+                          <propertyInstance Id="9e45abde-f7fc-45ea-8d25-68629cdd6f7c" name="IsPartial" value="false">
+                            <elementDefinition Id="51a8b275-4641-43af-b4df-57e642f3e9b1" />
+                          </propertyInstance>
+                          <elementDefinition Id="6ed192e3-4020-4685-9be8-6aa9a34d6131" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="78b3c187-b52a-48b1-8dfc-45df97388f98">
+                          <propertyInstance Id="28d00e56-4c22-4ed9-998f-87938ed543ac" name="IsUnsafe" value="false">
+                            <elementDefinition Id="7d3567ea-b0a5-4c4f-895d-0fe1714c502a" />
+                          </propertyInstance>
+                          <elementDefinition Id="03b5a267-71fc-4e9c-92f0-3ed170967560" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="17401322-a2ad-4ad3-972c-fb685a0e34e6">
+                          <propertyInstance Id="e96ed385-fe0b-4ace-8e6e-eeb3a24a9cd8" name="Inheritance" value="none">
+                            <elementDefinition Id="77968b3f-fe38-4613-90d1-1fee9bad8683" />
+                          </propertyInstance>
+                          <elementDefinition Id="4c0dbd2a-cb13-4969-a43a-fdf533c6341a" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="dcb947d1-1cdb-49cc-8aaa-4afcb0b1c980">
+                          <propertyInstance Id="ce2416ea-b542-49be-bdad-6ec60b0a28d6" name="PackageVisibility" value="internal">
+                            <elementDefinition Id="8138da0c-a7d5-475d-906f-94de8f10db54" />
+                          </propertyInstance>
+                          <elementDefinition Id="22e1a019-8b06-4596-8c0a-e5d25ab0adab" />
+                        </stereotypeInstanceHasPropertyInstances>
+                        <stereotypeInstanceHasPropertyInstances Id="3ba80846-be43-4f23-b81a-9ddcbd59aa66">
+                          <propertyInstance Id="3d965a6d-8615-445a-9004-2b808e45bf7f" name="params" value="false">
+                            <elementDefinition Id="0c16b78a-d3b2-481f-8203-2454e8c897c3" />
+                          </propertyInstance>
+                          <elementDefinition Id="c972d1e9-5344-4165-aefb-81c38d5c779b" />
+                        </stereotypeInstanceHasPropertyInstances>
+                      </propertyInstances>
+                    </stereotypeInstance>
+                  </appliedStereotypesInternal>
+                  <elementDefinition Id="7819647e-833a-4f00-b7a1-b7d9d5029671" />
+                </operation>
+              </ownedOperationsInternal>
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="d805c94d-a6e0-4a43-b9f5-cdbe6f09179d" name="ColourSegmenter" visibility="Private" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <referencesInternal>
+                <reference Id="4cb6a173-6809-4c3c-a8f3-071fe4e9a9cc" handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DColourSegmenter" tag="ViewCode">
+                  <elementDefinition Id="1056af84-fa40-4b89-83cb-15dd803e7e4e" />
+                </reference>
+              </referencesInternal>
+              <appliedStereotypesInternal>
+                <stereotypeInstance Id="aa435641-41e9-40af-9c4c-bd077b2f8ec3" name="class" profile="CSharpProfile">
+                  <elementDefinition Id="dfc38864-b0dd-4097-88a7-f05638e99a4b" />
+                  <propertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="1ce4e52d-55da-4cf4-9deb-5eaeda64355c">
+                      <propertyInstance Id="0ca25188-073c-4a83-92e5-2773c1329b3d" name="ClrAttributes">
+                        <elementDefinition Id="d4aefe29-ba32-40d2-a265-b7d7b008359b" />
+                      </propertyInstance>
+                      <elementDefinition Id="66b99365-77d6-432f-874d-f6304ff76644" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="8ba62c98-02b7-4185-96a3-517fe9658ba0">
+                      <propertyInstance Id="a430d7d2-45ed-475b-9f46-3123d97df35c" name="IsPartial" value="false">
+                        <elementDefinition Id="4f13ef79-cb1d-4306-b305-2a9323fb39c7" />
+                      </propertyInstance>
+                      <elementDefinition Id="00fafe94-dbd9-454f-b0f1-096f72784db4" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="1fda507f-fc3c-4bc4-b939-57b7e71db00f">
+                      <propertyInstance Id="502a320b-7662-4178-ac32-cd5271f0cfa2" name="IsStatic" value="False">
+                        <elementDefinition Id="62a6857d-a126-4eeb-ba89-1812790d09cf" />
+                      </propertyInstance>
+                      <elementDefinition Id="ce8114aa-cf5c-4777-9dc4-aa7eb3ef79f1" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="a4e230ff-2a6c-4c0b-b815-816be11a3320">
+                      <propertyInstance Id="0330f0c6-31e4-49fd-8f00-86641a8d171f" name="IsUnsafe" value="false">
+                        <elementDefinition Id="0dabfede-ff8a-41a4-92f2-8a4dc7ad61c5" />
+                      </propertyInstance>
+                      <elementDefinition Id="ad8a9ba8-e6db-4898-af27-3235759931aa" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="2b4c84e3-fc31-444c-92d5-ff0d0fee4df1">
+                      <propertyInstance Id="5514ac52-c6a9-4b04-914c-81deb5b1c930" name="PackageVisibility" value="internal">
+                        <elementDefinition Id="9867173b-ddf5-4f38-8b4e-3c4319c9c81f" />
+                      </propertyInstance>
+                      <elementDefinition Id="520f8f56-faa2-45b5-9241-23087ebccaec" />
+                    </stereotypeInstanceHasPropertyInstances>
+                  </propertyInstances>
+                </stereotypeInstance>
+              </appliedStereotypesInternal>
+              <elementDefinition Id="edc07796-9ee1-43e2-b227-723a38e4687f" />
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="c34ad958-ae80-42be-a23a-61994d290641" name="DebugImage" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <referencesInternal>
+                <reference Id="ed4a6d52-2bcd-4000-ad05-eb61fa53c819" handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FCJ%2FSource%2FRepos%2Fsignrider%2FSignRider%2FSignrider%2Fbin%2FDebug%2FSignrider.exe Namespace%3DSignrider Type%3DDebugImage" tag="ViewCode">
+                  <elementDefinition Id="4678e6ea-2cf9-4448-8be5-bee9053f2e87" />
+                </reference>
+              </referencesInternal>
+              <appliedStereotypesInternal>
+                <stereotypeInstance Id="63b5bc3d-ab0c-41dd-94e2-75e3298cbb6e" name="class" profile="CSharpProfile">
+                  <elementDefinition Id="ead56385-ac86-474e-b082-c5194adc21d3" />
+                  <propertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="4d9b4a30-7448-4551-a31a-5f2894e883d2">
+                      <propertyInstance Id="5aaa9d1b-f2e8-487d-bf07-395032258153" name="ClrAttributes">
+                        <elementDefinition Id="276b7b28-4eff-44fa-85d9-457d517adb52" />
+                      </propertyInstance>
+                      <elementDefinition Id="da2a8847-8978-41d7-a532-9bc0861b8ccb" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="f3148c13-ab33-45f9-8b2e-48fe41f1b31c">
+                      <propertyInstance Id="471dc97a-f8f9-409d-9071-4ab813245449" name="IsPartial" value="false">
+                        <elementDefinition Id="6718723c-191a-4e40-a090-5d08287c4988" />
+                      </propertyInstance>
+                      <elementDefinition Id="386b5893-ee7e-4b62-985e-4aceeb8c2259" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="35a34685-12d8-4214-8798-5f1c28278d1d">
+                      <propertyInstance Id="c839485e-2024-4c6e-b37e-2eb32e8bf880" name="IsStatic" value="False">
+                        <elementDefinition Id="df121870-6082-4b4f-9f4a-0e50ed0cd5bf" />
+                      </propertyInstance>
+                      <elementDefinition Id="f51ed6b8-9bf9-4686-88f7-69206391c6c0" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="a7a15c01-e1e9-4152-999d-dedf221f05c8">
+                      <propertyInstance Id="e866e81d-5706-436c-8728-99d7a6cd795b" name="IsUnsafe" value="false">
+                        <elementDefinition Id="6c9b9178-5fbd-4077-875c-46b1de7e0081" />
+                      </propertyInstance>
+                      <elementDefinition Id="886521d1-db55-4019-971a-a1f7eb3265be" />
+                    </stereotypeInstanceHasPropertyInstances>
+                    <stereotypeInstanceHasPropertyInstances Id="116109da-3b45-4449-bf4a-a9e8458a67e0">
+                      <propertyInstance Id="d3c893c2-29b8-497f-b55a-f8787958fc1c" name="PackageVisibility" value="internal">
+                        <elementDefinition Id="464c50a8-0cf2-4965-bcbc-5aee637d63f3" />
+                      </propertyInstance>
+                      <elementDefinition Id="e2b60a97-196f-4f6c-baab-1558f5403445" />
+                    </stereotypeInstanceHasPropertyInstances>
+                  </propertyInstances>
+                </stereotypeInstance>
+              </appliedStereotypesInternal>
+              <elementDefinition Id="441440e7-5dd9-471f-b481-01e080df44ce" />
+            </class>
+          </packageHasNamedElement>
+        </packagedElements>
+      </package>
+    </logicalClassDesignerModelHasPackages>
+    <packageHasNamedElement>
+      <referencedType Id="c7cff858-beec-4784-9b66-f7e2ead5deb4" name="Image&lt;Bgr‎, Byte‎&gt;" isAbstract="false" isLeaf="false" cachedFullName="ModelingProject1::Emgu::CV::Image&lt;Bgr‎, Byte‎&gt;">
+        <elementDefinition Id="788ce333-1ed2-42b6-a933-f643bfe8d7af" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="dd9657de-fc50-470a-9fb6-f3268108e238" name="Image&lt;Gray‎, Byte‎&gt;" isAbstract="false" isLeaf="false" cachedFullName="ModelingProject1::Emgu::CV::Image&lt;Gray‎, Byte‎&gt;">
+        <elementDefinition Id="a5e7a449-4df6-44c1-aedf-8ce6ac9e13a6" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="c870e95a-5973-465a-8d87-72969875abfb" name="Point" isAbstract="false" isLeaf="false" cachedFullName="ModelingProject1::System::Drawing::Point">
+        <elementDefinition Id="fe244b29-5f91-43be-910b-f34e76b3174c" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="87aa30e1-5afa-4794-904e-5c755bdfbe9f" name="SignColour" isAbstract="false" isLeaf="false" cachedFullName="ModelingProject1::Signrider::SignColour">
+        <elementDefinition Id="8f66f488-d5f5-440f-8494-ef6401c46ac2" />
+      </referencedType>
+    </packageHasNamedElement>
+  </packagedElements>
+  <package Id="032f3b65-0e11-4ad3-8ab3-23f28ac61d11" name="ModelingProject1">
+    <elementDefinition Id="c1b178e3-4e9c-4a09-a760-750f6b755478" />
+  </package>
+</logicalClassDesignerModel>
