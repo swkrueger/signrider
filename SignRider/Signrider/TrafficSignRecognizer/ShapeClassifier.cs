@@ -40,6 +40,7 @@ namespace Signrider
         // Feature vector settings
         private const int featureVectorDimension = 128;
         private const int featureVectorResolution = 128;
+        private bool featureInterpolate = true;
 
         // Preprocessor settings
         private bool preprocessorResize = true;
@@ -295,22 +296,36 @@ namespace Signrider
 
             if (!reverseDirection)
             {
+                int prev = -1;
                 for (int i = 0; i < mat.Rows; i++)
                 {
                     int firstNonZero = 0;
                     while (firstNonZero < mat.Cols && mat[i, firstNonZero] < threshold)
                         ++firstNonZero;
+
+                    // Interpolate
+                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols/2)
+                        firstNonZero = prev;
+
                     indices[i] = firstNonZero;
+                    prev = firstNonZero;
                 }
             }
             else
             {
+                int prev = -1;
                 for (int i = 0; i < mat.Rows; i++)
                 {
                     int firstNonZero = 0;
                     while (firstNonZero < mat.Cols && mat[i, mat.Cols - firstNonZero - 1] < threshold)
                         ++firstNonZero;
+
+                    // Interpolate
+                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols/2)
+                        firstNonZero = prev;
+
                     indices[i] = firstNonZero;
+                    prev = firstNonZero;
                 }
             }
             return indices;
