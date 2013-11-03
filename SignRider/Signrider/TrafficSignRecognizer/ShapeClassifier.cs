@@ -39,7 +39,7 @@ namespace Signrider
     {
         // Feature vector settings
         private const int featureVectorDimension = 128;
-        private const int featureVectorResolution = 32;
+        private const int featureVectorResolution = 128;
 
         // Preprocessor settings
         private bool preprocessorResize = true;
@@ -67,8 +67,10 @@ namespace Signrider
             // SVM settings
             // TODO: Play with SVM parameters
             SvmParameters = new SVMParams();
-            SvmParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.LINEAR;
             SvmParameters.SVMType = Emgu.CV.ML.MlEnum.SVM_TYPE.C_SVC;
+            SvmParameters.KernelType = Emgu.CV.ML.MlEnum.SVM_KERNEL_TYPE.POLY;
+            SvmParameters.Gamma = 3;
+            SvmParameters.Degree = 3;
             SvmParameters.C = 1;
             SvmParameters.TermCrit = new MCvTermCriteria(100, 0.00001);
         }
@@ -114,13 +116,12 @@ namespace Signrider
             }
 
             // Train SVM model
-            isTrained = SvmModel.TrainAuto(
+            isTrained = SvmModel.Train(
                 trainData,
                 trainClasses,
                 null,
                 null,
-                SvmParameters.MCvSVMParams,
-                5
+                SvmParameters
                 );
         }
 
@@ -133,7 +134,7 @@ namespace Signrider
 
             // Resize to intermediate size
             if (preprocessorResize)
-                image = image.Resize(108, 108, INTER.CV_INTER_CUBIC);
+                image = image.Resize(128, 128, INTER.CV_INTER_CUBIC);
 
             // Create border
             if (preprocessorAddBorder)
