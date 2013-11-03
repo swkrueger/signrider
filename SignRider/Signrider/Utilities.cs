@@ -26,5 +26,64 @@ namespace Signrider
             
             return imageWithAlpha;
         }
+
+        public static Image<Gray, Byte> stripBorder(Image<Gray, Byte> image, Gray threshold)
+        {
+            bool found;
+
+            int left;
+            found = false;
+            for (left = 0; left < image.Cols; left++)
+            {
+                for (int r = 0; r < image.Rows && !found; ++r)
+                    if (image[r, left].Intensity >= threshold.Intensity)
+                        found = true;
+                if (found) break;
+            }
+
+            int right;
+            found = false;
+            for (right = image.Cols - 1; right >= 0; right--)
+            {
+                for (int r = 0; r < image.Rows && !found; ++r)
+                    if (image[r, right].Intensity >= threshold.Intensity)
+                        found = true;
+                if (found) break;
+            }
+
+            int top;
+            found = false;
+            for (top = 0; top < image.Rows; top++)
+            {
+                for (int c = 0; c < image.Cols && !found; ++c)
+                    if (image[top, c].Intensity >= threshold.Intensity)
+                        found = true;
+                if (found) break;
+            }
+
+            int bottom;
+            found = false;
+            for (bottom = image.Rows - 1; bottom >= 0; bottom--)
+            {
+                for (int c = 0; c < image.Cols && !found; ++c)
+                    if (image[bottom, c].Intensity >= threshold.Intensity)
+                        found = true;
+                if (found) break;
+            }
+
+            if (right < left)
+            {
+                left = 0;
+                right = 0;
+            }
+
+            if (bottom < top)
+            {
+                top = 0;
+                bottom = 0;
+            }
+
+            return image.Copy(new System.Drawing.Rectangle(left, top, right-left + 1, bottom-top + 1));
+        }
     }
 }

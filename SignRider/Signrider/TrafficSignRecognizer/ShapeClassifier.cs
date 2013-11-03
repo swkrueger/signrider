@@ -277,12 +277,7 @@ namespace Signrider
             // Crop border
             if (preprocessorStripBorder)
             {
-                // TODO: Use faster and more robust method
-                var contour = image.FindContours();
-                if (contour != null)
-                {
-                    image = image.Copy(contour.BoundingRectangle);
-                }
+                image =  Utilities.stripBorder(image, new Gray(100));
 
                 addDebugImage(debugImages, image, "After crop");
             }

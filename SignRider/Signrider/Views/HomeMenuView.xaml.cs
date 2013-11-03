@@ -50,6 +50,15 @@ namespace Signrider
                 //Show the image using ImageViewer from Emgu.CV.UI
                 CvInvoke.cvShowImage("Hello World Test Window", img.Ptr);
             }
+
+            // Test crop
+            using (Image<Gray, Byte> img = new Image<Gray, byte>(400, 200, new Gray(0)))
+            {
+                MCvFont f = new MCvFont(FONT.CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0);
+                img.Draw("Hello, world", ref f, new Point(10, 80), new Gray(255));
+                using (Image<Gray, Byte> img2 = Utilities.stripBorder(img, new Gray(100)))
+                    CvInvoke.cvShowImage("After crop", img2.Ptr);
+            }
         }
 
         private void colourSegmentiseTestButton_Click(object sender, RoutedEventArgs e)
