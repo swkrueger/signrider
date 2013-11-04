@@ -650,13 +650,14 @@ namespace Signrider
 
         public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
         {
-            if (shape == SignShape.Garbage)
+            if (shape == SignShape.Garbage && aDebugImage == null)
                 return SignType.Garbage;
+
             debugImages = aDebugImage;
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
             Matrix<float> parameter = calculateParameters(preprosessedImage);
 
-            if (isTrained)
+            if (isTrained && shape != SignShape.Garbage)
                 return classifySign(parameter, shape);
             else
                 return SignType.Garbage;
