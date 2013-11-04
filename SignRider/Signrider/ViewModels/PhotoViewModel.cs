@@ -50,6 +50,7 @@ namespace Signrider
         private Image<Bgr, Byte> canvasBackground;
         private int selectedIndex;
         private ObservableCollection<ViewModels.SegmentViewModel> segmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
+        private ObservableCollection<ViewModels.SegmentViewModel> signSegmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
         private bool showAllSegments;
         #endregion
 
@@ -76,6 +77,14 @@ namespace Signrider
             get
             {
                 return segmentViews;
+            }
+        }
+
+        public ObservableCollection<ViewModels.SegmentViewModel> SignSegmentViews
+        {
+            get
+            {
+                return signSegmentViews;
             }
         }
 
@@ -281,8 +290,14 @@ namespace Signrider
                             }
                     }
 
+                    segmentViews.Clear();
+                    signSegmentViews.Clear();
+
                     foreach (ViewModels.SegmentViewModel view in newSegmentViews)
+                    {
+                        if (!view.IsGarbage) signSegmentViews.Add(view);
                         segmentViews.Add(view);
+                    }
 
                     redrawCanvas();
                 }
