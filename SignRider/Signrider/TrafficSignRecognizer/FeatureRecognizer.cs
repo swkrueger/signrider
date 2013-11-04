@@ -481,6 +481,7 @@ namespace Signrider
             if (preprocessorCrop)
             {
                 grayImage = Utilities.stripBorder(grayImage, new Gray(128));
+                grayImage = grayImage.Resize(300, 300, INTER.CV_INTER_NN);
             }
 
             splitimg[0].Dispose();
