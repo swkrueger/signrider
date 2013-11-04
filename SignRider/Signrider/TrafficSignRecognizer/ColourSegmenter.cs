@@ -34,7 +34,7 @@ namespace Signrider
             Boolean isSignFound = false;
             SignNotFound signNotFound = SignNotFound.HSV;
             int minimumContourArea = (image.Height*image.Width) > 1000000 ? 1000 : 600;
-            int minimumSegmentWidth = 30;
+            int minimumSegmentWidth = (image.Height * image.Width) > 1000000 ? 30 : 20;
             int minimumSegmentHeight = 30;
 
             List<ColourSegment> colourSegmentList = new List<ColourSegment>();
@@ -56,11 +56,8 @@ namespace Signrider
                         image.CopyTo(imageGamma);
                         imageGamma._GammaCorrect(2.2);
                         fullBinaryImage = GetPixelMask("HSV", colour, imageGamma);
+                        imageGamma.Dispose();
                     }
-
-   
-                    Image<Gray, byte> binaryCrop = null;
-                    Image<Bgr, byte> rgbCrop = null;
 
                     // TODO: Check FindContour parameters
                     using (MemStorage storage = new MemStorage())
@@ -84,10 +81,12 @@ namespace Signrider
                                 {
                                     Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
                                     mask.Draw(contour, new Gray(255), -1);
-                                    binaryCrop = mask.Copy(rect);
-                                    rgbCrop = image.Copy(rect);
+                                    Image<Gray, byte> binaryCrop = mask.Copy(rect);
+                                    Image<Bgr, byte> rgbCrop = image.Copy(rect);
 
                                     colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour.ToArray(), colour));
+
+                                    mask.Dispose();
                                 }
                             }
                         }
@@ -132,10 +131,10 @@ namespace Signrider
 
             if (Colour == SignColour.RED)
             {
-                StartRangeH = 10;
+                StartRangeH = 12;
                 EndRangeH = 170;
                 StartRangeS = 50;
-                StartRangeV = 10;
+                StartRangeV = 30;
             }
             using (Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>())
             {
