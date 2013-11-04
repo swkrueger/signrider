@@ -299,7 +299,7 @@ namespace Signrider
                         ++firstNonZero;
 
                     // Interpolate
-                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols/2)
+                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols*8/10)
                         firstNonZero = prev;
 
                     indices[i] = firstNonZero;
@@ -316,7 +316,7 @@ namespace Signrider
                         ++firstNonZero;
 
                     // Interpolate
-                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols/2)
+                    if (featureInterpolate && prev != -1 && firstNonZero > mat.Cols*8/10)
                         firstNonZero = prev;
 
                     indices[i] = firstNonZero;
