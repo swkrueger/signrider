@@ -390,6 +390,36 @@ namespace Signrider
             return signature;
         }
 
+        public void exportModels(string exportDir)
+        {
+            foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
+            {
+                string modelPath = Path.Combine(exportDir, "SignShape-" + colour.ToString() + ".xml");
+                if (svms[(int)colour].isTrained)
+                    svms[(int)colour].model.Save(modelPath);
+            }
+        }
+
+        public void importModels(string importDir)
+        {
+            isTrained = true;
+
+            foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
+            {
+                string modelPath = Path.Combine(importDir, "SignShape-" + colour.ToString() + ".xml");
+
+                if (File.Exists(modelPath))
+                {
+                    svms[(int)colour].model.Load(modelPath);
+                    svms[(int)colour].isTrained = true;
+                }
+                else
+                {
+                    isTrained = false;
+                }
+            }
+        }
+
         public static List<ShapeExample> extractExamplesFromDirectory(string directory)
         {
             List<ShapeExample> examples = new List<ShapeExample>();

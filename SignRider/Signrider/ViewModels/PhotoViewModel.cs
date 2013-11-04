@@ -328,6 +328,15 @@ namespace Signrider
                 resizedImage = null;
             }
 
+            if (canvasBackground != null)
+            {
+                canvasBackground.Dispose();
+                canvasBackground = null;
+            }
+
+            segmentViews.Clear();
+            signSegmentViews.Clear();
+
             Canvas = null;
 
             segmentViews.Clear();

@@ -6,16 +6,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel Orientation="Vertical" Width="250" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Margin="5" Content="Load photos" Command="{Binding loadImageFromFileCommand}" />
-        <Button Margin="5" Content="Load directory photos" />
+        <Button Margin="5" Content="Load Photos" Command="{Binding loadImageFromFileCommand}" />
         <Button Margin="5" Content="Train" Command="{Binding trainFromDirectoryCommand}" />
-        <Button Margin="5" Content="Classify" />
-        <Button Margin="5" Content="Test from data set" />
-        <TextBlock Margin="0 20 0 0" Text="Temp commands:" HorizontalAlignment="Center" FontFamily="{StaticResource ResourceKey=HeaderFontFamily}" FontSize="20" />
-        <Button x:Name="helloWorldTestButton" Margin="5" Content="Hello World Test" Click="helloWorldTestButton_Click" />
-        <Button x:Name="colourSegmentiseTestButton" Margin="5" Content="Bulk Segmentise Images in Directory" Click="colourSegmentiseTestButton_Click" />
-        <Button x:Name="shapeClassifierTestButton" Margin="5" Content="Test Shape Classifier" Click="shapeClassifierTestButton_Click" />
-        <Button x:Name="featureRecognizerTestButton" Margin="5" Content="Recognizer Test" Click="featureRecognizerTestButton_Click" />
-        <Button x:Name="trainFeatureRecognizerButton" Margin="5" Content="Train Feature Recognizer" Click="featureRecognizerTrainButton_Click" />
+        <Button Margin="5" Content="Import Training Models" Command="{Binding importTrainingModelsCommand}" />
+        <Button Margin="5" Content="Export Training Models" Command="{Binding exportTrainingModelsCommand}" />
+        <Expander Margin="0 20 0 0" Header="Unit tests" HorizontalAlignment="Center">
+            <StackPanel>
+                <Button x:Name="helloWorldTestButton" Margin="5" Content="Hello World Test" Click="helloWorldTestButton_Click" />
+                <Button x:Name="colourSegmentiseTestButton" Margin="5" Content="Bulk Segmentise Images in Directory" Click="colourSegmentiseTestButton_Click" />
+                <Button x:Name="shapeClassifierTestButton" Margin="5" Content="Test Shape Classifier" Click="shapeClassifierTestButton_Click" />
+                <Button x:Name="featureRecognizerTestButton" Margin="5" Content="Recognizer Test" Click="featureRecognizerTestButton_Click" />
+                <Button x:Name="trainFeatureRecognizerButton" Margin="5" Content="Train Feature Recognizer" Click="featureRecognizerTrainButton_Click" />
+            </StackPanel>
+        </Expander>
     </StackPanel>
 </UserControl>

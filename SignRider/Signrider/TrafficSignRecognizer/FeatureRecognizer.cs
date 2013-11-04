@@ -665,7 +665,35 @@ namespace Signrider
 
         private SignType classifySign(Matrix<float> parameters, SignShape shape)
         {
+            if (shape == SignShape.Garbage)
+                return SignType.Garbage;
+
             return (SignType)(int)SVMModels[(int)shape].Predict(parameters);
+        }
+
+        public void exportModels(string exportDir)
+        {
+            foreach (SignShape shape in Enum.GetValues(typeof(SignShape)))
+            {
+                if (shape == SignShape.Garbage) continue;
+                string modelPath = Path.Combine(exportDir, "SignType-" + shape.ToString() + ".xml");
+                SVMModels[(int)shape].Save(modelPath);
+            }
+        }
+
+        public void importModels(string importDir)
+        {
+            isTrained = true;
+
+            foreach (SignShape shape in Enum.GetValues(typeof(SignShape)))
+            {
+                if (shape == SignShape.Garbage) continue;
+                string modelPath = Path.Combine(importDir, "SignType-" + shape.ToString() + ".xml");
+                if (File.Exists(modelPath))
+                    SVMModels[(int)shape].Load(modelPath);
+                else
+                    isTrained = false;
+            }
         }
 
         public static List<FeatureExample> extractExamplesFromDirectory(string dir)

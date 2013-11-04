@@ -97,6 +97,66 @@ namespace Signrider
         #endregion
 
         #region Commands
+        #region exportTrainingModelCommand
+        public void exportTrainingModels()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            // Restore last folder
+            string lastExportFolder = Properties.Settings.Default.LastExportFolder;
+            if (!String.IsNullOrEmpty(lastExportFolder))
+                folderBrowserDialog.SelectedPath = lastExportFolder;
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            // Save folder path
+            Properties.Settings.Default.LastExportFolder = folderBrowserDialog.SelectedPath;
+            Properties.Settings.Default.Save();
+
+            string exportDir = folderBrowserDialog.SelectedPath;
+
+            TrafficSignRecognizer.ShapeClassifier.exportModels(exportDir);
+            TrafficSignRecognizer.FeatureRecognizer.exportModels(exportDir);
+        }
+
+        public bool canExportTrainingModels() { return TrafficSignRecognizer.isTrained(); }
+
+        public ICommand exportTrainingModelsCommand
+        {
+            get { return new RelayCommand(exportTrainingModels, canExportTrainingModels); }
+        }
+        #endregion
+
+        #region importTrainingModelCommand
+        public void importTrainingModels()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            // Restore last folder
+            string lastExportFolder = Properties.Settings.Default.LastExportFolder;
+            if (!String.IsNullOrEmpty(lastExportFolder))
+                folderBrowserDialog.SelectedPath = lastExportFolder;
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            // Save folder path
+            Properties.Settings.Default.LastExportFolder = folderBrowserDialog.SelectedPath;
+            Properties.Settings.Default.Save();
+
+            string importDir = folderBrowserDialog.SelectedPath;
+
+            TrafficSignRecognizer.ShapeClassifier.importModels(importDir);
+            TrafficSignRecognizer.FeatureRecognizer.importModels(importDir);
+        }
+
+        public bool canImportTrainingModels() { return true; }
+
+        public ICommand importTrainingModelsCommand
+        {
+            get { return new RelayCommand(importTrainingModels, canImportTrainingModels); }
+        }
+        #endregion
+
         public void trainFromDirectory()
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
