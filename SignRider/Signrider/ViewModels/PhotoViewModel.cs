@@ -38,17 +38,19 @@ namespace Signrider
             IsBusyLoadingCanvas = false;
             IsBusyLoadingSegments = false;
             selectedIndex = -1;
+            ShowAllSegments = false;
         }
         #endregion
 
         #region Members
-        Photo _photo;
-        bool isActive;
+        private Photo _photo;
+        private bool isActive;
         private Image<Bgr, Byte> image;
         private Image<Bgr, Byte> resizedImage;
         private Image<Bgr, Byte> canvasBackground;
         private int selectedIndex;
-        ObservableCollection<ViewModels.SegmentViewModel> segmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
+        private ObservableCollection<ViewModels.SegmentViewModel> segmentViews = new ObservableCollection<ViewModels.SegmentViewModel>();
+        private bool showAllSegments;
         #endregion
 
         #region Properties
@@ -110,10 +112,27 @@ namespace Signrider
                 }
             }
         }
+
+        public bool ShowAllSegments {
+            get
+            {
+                return showAllSegments;
+            }
+            set
+            {
+                if (showAllSegments != value)
+                {
+                    showAllSegments = value;
+                    if (IsActive)
+                        redrawCanvas();
+                }
+            }
+        }
+
         public bool IsBusyLoadingImage { get; private set; }
         public bool IsBusyLoadingCanvas { get; private set; }
         public bool IsBusyLoadingSegments { get; private set; }
-        public string SegmentLoadingStatusString { get; private set; }
+        public string SegmentLoadingStatusString { get; set; }
         #endregion
 
         private void load()
@@ -164,6 +183,9 @@ namespace Signrider
             BGRImage imageWithContour = background.Copy();
             for (int i = 0; i < SegmentViews.Count(); i++)
             {
+                if (!ShowAllSegments && SegmentViews[i].IsGarbage)
+                    continue;
+
                 Point[] contour = SegmentViews[i].Segment.contour;
                 Point[] scaledContour = new Point[contour.Length];
                 for (int j = 0; j < contour.Length; ++j)
@@ -245,6 +267,19 @@ namespace Signrider
                     List<ViewModels.SegmentViewModel> newSegmentViews =
                         (List<ViewModels.SegmentViewModel>)args.Result;
                     IsBusyLoadingSegments = false;
+
+                    if (!TrafficSignRecognizer.isTrained())
+                        ShowAllSegments = true;
+                    else
+                    {
+                        ShowAllSegments = true;
+                        foreach (ViewModels.SegmentViewModel view in newSegmentViews)
+                            if (view.Segment.shape != SignShape.Garbage)
+                            {
+                                ShowAllSegments = false;
+                                break;
+                            }
+                    }
 
                     foreach (ViewModels.SegmentViewModel view in newSegmentViews)
                         segmentViews.Add(view);
