@@ -36,6 +36,9 @@ namespace Signrider
             int minimumContourArea = (image.Height*image.Width) > 1000000 ? 1000 : 600;
             int minimumSegmentWidth = (image.Height * image.Width) > 1000000 ? 30 : 20;
             int minimumSegmentHeight = 30;
+            Image<Gray, byte> fullBinaryImage = null;
+            Image<Gray, byte> binaryCrop = null;
+            Image<Bgr, byte> rgbCrop = null;
 
             List<ColourSegment> colourSegmentList = new List<ColourSegment>();
             foreach (SignColour colour in Enum.GetValues(typeof(SignColour)))
@@ -45,7 +48,6 @@ namespace Signrider
                 signNotFound = SignNotFound.HSV;
                 do
                 {
-                    Image<Gray, byte> fullBinaryImage = null;
                     if (signNotFound == SignNotFound.HSV)
                     {
                         fullBinaryImage = GetPixelMask("HSV", colour, image);
@@ -81,8 +83,8 @@ namespace Signrider
                                 {
                                     Image<Gray, byte> mask = fullBinaryImage.CopyBlank();
                                     mask.Draw(contour, new Gray(255), -1);
-                                    Image<Gray, byte> binaryCrop = mask.Copy(rect);
-                                    Image<Bgr, byte> rgbCrop = image.Copy(rect);
+                                    binaryCrop = mask.Copy(rect);
+                                    rgbCrop = image.Copy(rect);
 
                                     colourSegmentList.Add(new ColourSegment(rgbCrop, binaryCrop, contour.ToArray(), colour));
 
@@ -101,15 +103,12 @@ namespace Signrider
                     {
                         isSignFound = true;
                     }
-
-
-                    // Free memory
-                    //fullBinaryImage.Dispose();
-                    //mask.Dispose();
-                    //binaryCrop.Dispose();
-                    //rgbCrop.Dispose();
-
                 } while (!isSignFound);
+
+                // Free memory
+                fullBinaryImage.Dispose();
+                //if (binaryCrop != null) binaryCrop.Dispose();
+                //if (rgbCrop != null) rgbCrop.Dispose();
             }
             return colourSegmentList;
         }
