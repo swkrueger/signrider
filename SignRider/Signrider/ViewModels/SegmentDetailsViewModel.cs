@@ -38,7 +38,7 @@ namespace Signrider.ViewModels
                 ShapeClassifierImages.Add(image);
 
             List<DebugImage> featureImages = new List<DebugImage>();
-            TrafficSignRecognizer.FeatureRecognizer.recognizeSign(segment.bgrImage, segment.binaryImage, segment.shape, featureImages);
+            TrafficSignRecognizer.FeatureRecognizer.recognizeSign(segment.bgrImage, segment.binaryImage, segment.shape, segment.colour, featureImages);
             foreach (DebugImage image in featureImages)
                 FeatureRecognitionImages.Add(image);
         }

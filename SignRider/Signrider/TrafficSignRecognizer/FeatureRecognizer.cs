@@ -75,6 +75,8 @@ namespace Signrider
         MiscTriangleUp
     };
 
+
+
     public struct FeatureExample
     {
         public string name;
@@ -107,6 +109,58 @@ namespace Signrider
 
     public class FeatureRecognizer
     {
+        public bool[] SignTypeColor = new bool[]
+    {
+        //0 false //1 true
+        false,
+
+        // Circles
+        false, //MiscCircle,
+        false, //HawkersProhibited,
+        true, //KeepLeft,
+        false, //LeftTurnAheadProhibited,
+        true, //MinibusesOnly,
+        true, //MinimumSpeedLimit50,
+        true, //MotorCarsOnly,
+        false, //NoEntry,
+        false, //SpeedLimit40,
+        false, //SpeedLimit60,
+        false, //SpeedLimit80,
+        false, //SpeedLimit100,
+        false, //SpeedLimit120,
+        false, //StoppingProhibited,
+        false, //UTurnProhibited,
+
+        // Octagon
+        false, //Stop,
+
+        // Rectangle
+        true, //Countdown1,
+        true, //Countdown2,
+        true, //Countdown3,
+        true, //DualCarriagewayFreewayBegins,
+        true, //LimitedParkingReservation,
+
+        // TraingleDown
+        false, //Yield,
+        false, //YieldAtMinicircle,
+
+        // TriangleUp
+        false, //Crossroad,
+        false, //GeneralWarning,
+        false, //GentleCurveLeft,
+        false, //GentleCurveRight,
+        false, //PedestrianCrossing,
+        false, //PriorityCrossing,
+        false, //SideRoadJunctionLeft,
+        false, //SideRoadJunctionRight,
+        false, //SpeedHumps,
+        false, //TemporaryRoadWorks,
+        false, //TwowayTraffic,
+        false, //MiscTriangleUp
+    };
+
+
         // Constants
         private const int featureVectorDimension = 128;
         private const int calculateParametersImageSize = 300;
@@ -334,7 +388,7 @@ namespace Signrider
             return scaler;
         }
 
-        private GrayImage preprocess(BGRImage aBGRImage, GrayImage aGrayImage)
+        private GrayImage preprocess(BGRImage aBGRImage, GrayImage aGrayImage, bool restart = false)
         {
             saveDebugImage(aBGRImage, "Original RGB Image");
             saveDebugImage(aGrayImage, "Original Gray Image");
@@ -365,7 +419,9 @@ namespace Signrider
 
             if (preprocessorRemoveSaturation)
             {
+
                 splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
+                //splitimg[1]._And(splitimg[2].ThresholdBinary(new Gray(100), new Gray(255))); //NEW
                 saveDebugImage(splitimg[1], "Binary Saturation");
                 splitimg[2]._And(splitimg[1]);
                 saveDebugImage(splitimg[2], "Lightness After Saturation removal");//AND HALL
@@ -391,41 +447,35 @@ namespace Signrider
                 }
             }
 
-            if (preprocessorRemoveBorder)
+            if (preprocessorRemoveBorder && !restart)
             {
-                GrayImage tempGray = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
-                saveDebugImage(tempGray, "Invers BW Gray");
+                GrayImage returnImage = removeBorder(grayImage, splitimg[1]);
 
-                splitimg[1]._ThresholdBinaryInv(new Gray(100), new Gray(255));
-                GrayImage filledImage = splitimg[1].Copy();
-                for (var contour = splitimg[1].FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
-                {
-                    Point[] points = contour.ToArray();
-                    filledImage.FillConvexPoly(points, new Gray(255));
-                }
-                filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
-                filledImage._Or(splitimg[1]);
-                tempGray._Or(filledImage);
-                tempGray._ThresholdBinaryInv(new Gray(100), new Gray(255));
-                tempGray = removeGradient(tempGray);
-                saveDebugImage(tempGray, "White Added and Inverted");
+            /*    saveDebugImage(returnImage, "without hall");
                 GrayImage one = new GrayImage(300, 300, new Gray(255));
-                double mindotprot = tempGray.DotProduct(one);
+                double mindotprot = returnImage.DotProduct(one);
 
-                if (mindotprot < 1e8)
+                if (mindotprot < 1e7 && !restart)
                 {
-                    filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
-                    saveDebugImage(filledImage, "filled image");
-                    grayImage._And(filledImage);
-                    grayImage = removeGradient(grayImage);
-                    tempGray.Dispose();
-                }
-                else
-                    grayImage = tempGray;
-
-                saveDebugImage(grayImage, "Border Removed");
-                filledImage.Dispose();
-                one.Dispose();
+                    Console.WriteLine("restart");
+                    GrayImage filledImage = aGrayImage.Copy();
+                    BGRImage bbgrImage = aBGRImage.Copy();
+                    for (var contour = filledImage.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                    {
+                        Seq<Point> pointsSeq = contour.GetConvexHull(ORIENTATION.CV_CLOCKWISE);
+                        Point[] points = pointsSeq.ToArray();
+                        filledImage.FillConvexPoly(points, new Gray(255));
+                    }
+                    returnImage = preprocess(bbgrImage, filledImage, true);
+                    //saveDebugImage(returnImage, "wit hall");
+                    return returnImage;
+                }*/
+                grayImage = returnImage;
+            }
+            else
+            {
+                grayImage._GammaCorrect(2);
+                grayImage = grayImage.ThresholdBinary(new Gray(80), new Gray(255));
             }
 
             if (preprocessorCrop)
@@ -595,7 +645,7 @@ namespace Signrider
                     Console.WriteLine("Images left to test: " + images.Count().ToString());
 
                 FeatureExample image = images[0];
-                SignType detectedSign = recognizeSign(image.rgbImage, image.grayImage, image.shape);
+                SignType detectedSign = recognizeSign(image.rgbImage, image.grayImage, image.shape, image.color);
                 if (image.type == SignType.Garbage)
                 {
                     if (detectedSign == SignType.Garbage)
@@ -648,7 +698,55 @@ namespace Signrider
             //Console.WriteLine("Trained: " + isTrained.ToString());
         }
 
-        public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, List<DebugImage> aDebugImage = null)
+        public GrayImage removeBorder(GrayImage agrayImage, GrayImage splitimg, bool hull = false)
+        {
+            GrayImage grayImage = agrayImage.Copy();
+            GrayImage tempslit = splitimg.Copy();
+            GrayImage tempGray = grayImage.ThresholdBinary(new Gray(120), new Gray(255));
+            saveDebugImage(tempGray, "Invers BW Gray");
+
+            tempslit._ThresholdBinaryInv(new Gray(100), new Gray(255));
+            GrayImage filledImage = tempslit.Copy();
+            if (!hull)
+            {
+                for (var contour = tempslit.FindContours(CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE, RETR_TYPE.CV_RETR_CCOMP); contour != null; contour = contour.HNext)
+                {
+                    Point[] points = contour.ToArray();
+                    filledImage.FillConvexPoly(points, new Gray(255));
+                }
+            }
+            else
+            {
+
+            }
+            filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+            filledImage._Or(tempslit);
+            tempGray._Or(filledImage);
+            tempGray._ThresholdBinaryInv(new Gray(100), new Gray(255));
+            saveDebugImage(tempGray, "White added before grading");
+            tempGray = removeGradient(tempGray);
+            saveDebugImage(tempGray, "White Added and Inverted");
+            GrayImage one = new GrayImage(300, 300, new Gray(255));
+            double mindotprot = tempGray.DotProduct(one);
+
+            if (mindotprot < 1e8)
+            {
+                filledImage._ThresholdBinaryInv(new Gray(128), new Gray(255));
+                saveDebugImage(filledImage, "filled image");
+                grayImage._And(filledImage);
+                grayImage = removeGradient(grayImage);
+                tempGray.Dispose();
+            }
+            else
+                grayImage = tempGray;
+
+            saveDebugImage(grayImage, "Border Removed");
+            filledImage.Dispose();
+            one.Dispose();
+            return grayImage;
+        }
+
+        public SignType recognizeSign(BGRImage BGRimage, GrayImage grayImage, SignShape shape, SignColour color, List<DebugImage> aDebugImage = null)
         {
             if (shape == SignShape.Garbage && aDebugImage == null)
                 return SignType.Garbage;
@@ -657,8 +755,20 @@ namespace Signrider
             GrayImage preprosessedImage = preprocess(BGRimage, grayImage);
             Matrix<float> parameter = calculateParameters(preprosessedImage);
 
-            if (isTrained && shape != SignShape.Garbage)
-                return classifySign(parameter, shape);
+            SignType classifiedSign = classifySign(parameter, shape);
+
+            bool boolColor;
+            if (color == SignColour.RED)
+                boolColor = false;
+            else boolColor = true;
+
+             if (isTrained && shape != SignShape.Garbage)
+            {
+                if (boolColor != SignTypeColor[(int)classifiedSign])
+                    //Console.WriteLine("Color Mishaps");
+                    return SignType.Garbage;
+                return classifiedSign;
+            }
             else
                 return SignType.Garbage;
         }
