@@ -147,6 +147,9 @@ namespace Signrider
         public bool isTrained { get; private set; }
         public bool isTraining { get; private set; }
 
+        private List<ConvolutionKernelF> cKernelList = new List<ConvolutionKernelF>();
+        private Image<Gray, double> GWOutputImage = new Image<Gray, double>(1, 1);
+
         public FeatureRecognizer()
         {
             isTrained = false;
@@ -181,7 +184,22 @@ namespace Signrider
             {
                 SVM model = new SVM();
                 SVMModels.Add(model);
-//                MessageBox.Show(shape.ToString() + " " + ((int)shape).ToString());
+            }
+
+
+            int R = 10;
+            int C = 10;
+            double v = 2;
+            for (int i = 0; i < 8; i++)
+            {
+                GWOutputImage = GWOutputImage.ConcateHorizontal(GaborWavelet(R, C, i, v));
+                Image<Gray, double> GW = GaborWavelet(R, C, i, v);
+                ConvolutionKernelF ckernel = new ConvolutionKernelF(10, 10);
+                for (int l = 0; l < 10; l++)
+                    for (int k = 0; k < 10; k++)
+                        ckernel[l, k] = (float)GW[l, k].Intensity / 10000;
+                ckernel.Center = new Point(5, 5);
+                cKernelList.Add(ckernel);
             }
         }
 
@@ -496,6 +514,8 @@ saveDebugImage(grayImage, "Gray image");
             }
 
         bgrImage.Dispose();
+
+         grayImage =  Utilities.stripBorder(grayImage,new Gray(128));
         //saveDebugImage(grayImage.Canny(400, 300), "Final edge");
         return grayImage.Canny(400, 300);
         }
@@ -505,15 +525,6 @@ saveDebugImage(grayImage, "Gray image");
             Matrix<float> returnMatrix = new Matrix<float>(1, 128);
 
             int xAxisCursor = 0;
-            Image<Gray, double> GW = new Image<Gray, double>(1, 1);
-            int R = 10;
-            int C = 10;
-            double v = 2;
-            for (int i = 0; i < 8; i++)
-            {
-                GW = GW.ConcateHorizontal(GaborWavelet(R, C, i, v));
-            }
-            saveDebugImage(GW, "Gabor wavelet");
 
             Image<Gray, Byte> img = aimage.Copy();
             img = img.Resize(300, 300, INTER.CV_INTER_LINEAR);
@@ -540,13 +551,8 @@ saveDebugImage(grayImage, "Gray image");
 
                     for (int n = 0; n < 8; n++)
                     {
-                        ConvolutionKernelF ckernel = new ConvolutionKernelF(10, 10);
-                        for (int l = 0; l < 10; l++)
-                            for (int k = 0; k < 10; k++)
-                                ckernel[l, k] = (float)GW[l, k + n * 10].Intensity / 10000;
-                        ckernel.Center = new Point(5, 5);
-
-                        Image<Gray, float> convolutedImage = cropImage.Convolution(ckernel);
+                        saveDebugImage(GWOutputImage, "Gabor wavelet");
+                        Image<Gray, float> convolutedImage = cropImage.Convolution(cKernelList[n]);
 
                         convolutedImage._ThresholdBinary(new Gray(0.1), new Gray(1));
                         rect = new Rectangle(c + n * 300, r, N, N);
