@@ -860,11 +860,15 @@ namespace Signrider
                     //TODO:
                     example.name = (i++).ToString();
                     example.directory = dir;
+                    // example.grayImage = new GrayImage(bwFile).Resize(300, 300, INTER.CV_INTER_LINEAR, false);
+                    // example.rgbImage = new Image<Bgra, Byte>(rgbFile).Convert<Bgr, Byte>().Resize(300, 300, INTER.CV_INTER_LINEAR, false);
                     example.grayImage = new GrayImage(bwFile);
-                    example.rgbImage = new BGRImage(rgbFile);
+                    example.rgbImage = new Image<Bgr, Byte>(rgbFile);
                     example.color = color;
                     example.shape = shape;
                     example.type = type;
+
+                    GC.Collect();
 
                     examples.Add(example);
 

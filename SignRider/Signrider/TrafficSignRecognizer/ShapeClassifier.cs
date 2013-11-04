@@ -170,9 +170,9 @@ namespace Signrider
                         ShapeExample example = examples[i];
                         int[] featureVector = extractDtbFeatures(example.image);
                         for (int j = 0; j < featureVectorDimension; j++)
-                            trainData[colourIdx][i, j] = featureVector[j];
+                            trainData[colourIdx][matrixIdx, j] = featureVector[j];
 
-                        trainClasses[colourIdx][i, 0] = (int)example.shape;
+                        trainClasses[colourIdx][matrixIdx, 0] = (int)example.shape;
                         ++matrixIdx;
                     }
                 }
